@@ -1,0 +1,33 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="Current" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="pch.cpp">
+      <Filter>_pch</Filter>
+    </ClCompile>
+    <ClCompile Include="testSettingsAutorun.cpp" />
+    <ClCompile Include="testSettingsScroll.cpp" />
+    <ClCompile Include="testSettingsDialog.cpp" />
+    <ClCompile Include="testForwardToInstance.cpp" />
+    <ClCompile Include="testIncludeMain.cpp" />
+    <ClCompile Include="testWrapperTouchPad.cpp" />
+    <ClCompile Include="testWndProc.cpp" />
+    <ClCompile Include="testTray.cpp" />
+    <ClCompile Include="testMenu.cpp" />
+    <ClCompile Include="testRestoreTouchPadFromSuspend.cpp" />
+    <ClCompile Include="testRegistry.cpp" />
+    <ClCompile Include="testRvo.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="_pch">
+      <UniqueIdentifier>{ac2ab981-9f83-4a4a-9b73-ed178d9879e9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="fromSingle">
+      <UniqueIdentifier>{7a2a4595-fe23-442c-85ff-8ea4b1aa57d6}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="pch.h">
+      <Filter>_pch</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>
