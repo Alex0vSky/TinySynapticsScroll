@@ -2,9 +2,9 @@ name: cpp-linter
 
 on:
   push:
-    paths-ignore: "docs/**"
+    paths-ignore: "qa/UnitTest/ThirdParty/**"
   pull_request:
-    paths-ignore: "docs/**"
+    paths-ignore: "qa/UnitTest/ThirdParty/**"
 
 jobs:
   cpp-linter:
