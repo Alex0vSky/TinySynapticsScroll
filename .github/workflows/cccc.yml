@@ -7,16 +7,14 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-        with:
-          fetch-depth: 0
 
       - name: cccc action step
-        uses: ./ # Uses an action in the root directory
+        uses: sarnold/cccc-action@main
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          source_dirs: |
-            src
-          file_extensions: |
-            .h
-            .cc
-            .cpp
+
+      - name: upload metrics report
+        uses: actions/upload-artifact@v2
+        with:
+          name: metrics
+          path: ./metrics
