@@ -11,13 +11,12 @@ jobs:
           fetch-depth: 0
 
       - name: cccc action step
-        uses: sarnold/cccc-action@main
+        uses: ./ # Uses an action in the root directory
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          commit_report: true
-          target_branch: gh-pages
           source_dirs: |
             src
           file_extensions: |
             .h
             .cc
+            .cpp
