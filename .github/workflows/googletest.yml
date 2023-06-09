@@ -1,0 +1,7 @@
+name: Google Test
+on: [schedule]
+jobs:
+  google-tests:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@vX
