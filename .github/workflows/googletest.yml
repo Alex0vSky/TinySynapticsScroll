@@ -1,5 +1,5 @@
 name: Google Test
-on: [schedule]
+on: [workflow_dispatch]
 jobs:
   google-tests:
     runs-on: windows-latest
