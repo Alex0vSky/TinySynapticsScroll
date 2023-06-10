@@ -8,4 +8,4 @@ jobs:
       - name: Add MSBuild to PATH
         uses: microsoft/setup-msbuild@v1.1
       - name: Build test
-        run: MSBuild qa\UnitTest -p:Configuration=Debug;Platform=Win32
+        run: MSBuild qa\UnitTest -m -p:Configuration=Debug
