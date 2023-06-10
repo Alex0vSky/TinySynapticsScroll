@@ -9,3 +9,8 @@ jobs:
         uses: microsoft/setup-msbuild@v1.1
       - name: Build test
         run: MSBuild qa\UnitTest -m -p:Configuration=Debug
+      - name: Run test
+      - run: D:\a\turbo-octo-adventure\turbo-octo-adventure\qa\UnitTest\bin\x64\Debug\GTestEmptyWorkingSet.exe
+      - run: D:\a\turbo-octo-adventure\turbo-octo-adventure\qa\UnitTest\bin\x64\Debug\GTestDefWindowProc.exe
+      - run: D:\a\turbo-octo-adventure\turbo-octo-adventure\qa\UnitTest\bin\x64\Debug\GTestMem.exe
+      - run: D:\a\turbo-octo-adventure\turbo-octo-adventure\qa\UnitTest\bin\x64\Debug\GTest1.exe
