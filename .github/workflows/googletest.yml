@@ -10,7 +10,8 @@ jobs:
       - name: Build test
         run: MSBuild qa\UnitTest -m -p:Configuration=Debug
       - name: Run test
-      - run: D:\a\turbo-octo-adventure\turbo-octo-adventure\qa\UnitTest\bin\x64\Debug\GTestEmptyWorkingSet.exe
-      - run: D:\a\turbo-octo-adventure\turbo-octo-adventure\qa\UnitTest\bin\x64\Debug\GTestDefWindowProc.exe
-      - run: D:\a\turbo-octo-adventure\turbo-octo-adventure\qa\UnitTest\bin\x64\Debug\GTestMem.exe
-      - run: D:\a\turbo-octo-adventure\turbo-octo-adventure\qa\UnitTest\bin\x64\Debug\GTest1.exe
+        run: |
+          D:\a\turbo-octo-adventure\turbo-octo-adventure\qa\UnitTest\bin\x64\Debug\GTestEmptyWorkingSet.exe
+          D:\a\turbo-octo-adventure\turbo-octo-adventure\qa\UnitTest\bin\x64\Debug\GTestDefWindowProc.exe
+          D:\a\turbo-octo-adventure\turbo-octo-adventure\qa\UnitTest\bin\x64\Debug\GTestMem.exe
+          D:\a\turbo-octo-adventure\turbo-octo-adventure\qa\UnitTest\bin\x64\Debug\GTest1.exe
