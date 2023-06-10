@@ -33,5 +33,5 @@
 #pragma warning( push )
 #pragma warning( disable: 28251 )
 #pragma warning( disable: 4471 )
-#include "C:\Prj\_L\SynCOMAPIv1_0\Include/SynKit.h"
+#include "SynKit.h"
 #pragma warning( pop )

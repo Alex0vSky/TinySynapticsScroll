@@ -122,11 +122,9 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
-    <GenerateManifest>false</GenerateManifest>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
-    <GenerateManifest>false</GenerateManifest>
     <OutDir>$(SolutionDir)bin\$(Platform)\$(Configuration)\</OutDir>
     <IntDir>bin\$(Platform)\$(Configuration)\</IntDir>
   </PropertyGroup>
@@ -142,7 +140,7 @@
       <Optimization>Disabled</Optimization>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <PrecompiledHeader>Use</PrecompiledHeader>
-      <AdditionalIncludeDirectories>.\resource;.;.\src;</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.\resource;.;.\src;ThirdParty\SynCOMAPIv1_0\Include;</AdditionalIncludeDirectories>
       <DisableSpecificWarnings>4514;4820;4625;5026;4626;5027;</DisableSpecificWarnings>
       <PrecompiledHeaderFile>MsvcGenerated\stdafx.h</PrecompiledHeaderFile>
     </ClCompile>

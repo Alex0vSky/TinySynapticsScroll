@@ -9,7 +9,7 @@ class Registry {
 		: m_hRootKey( hRootKey ), m_hSubKey( hSubKey ), m_samDesired( samDesired )
 	{}
 public:
-	static const size_t s_hInitialSubKey = -1;
+	static const size_t s_hInitialSubKey = MAXSIZE_T;
 	~Registry() {
 		::RegCloseKey( m_hRootKey );
 		if ( reinterpret_cast< HKEY >( s_hInitialSubKey ) != m_hSubKey )
