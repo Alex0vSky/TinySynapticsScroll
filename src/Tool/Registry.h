@@ -9,10 +9,10 @@ class Registry {
 		: m_hRootKey( hRootKey ), m_hSubKey( hSubKey ), m_samDesired( samDesired )
 	{}
 public:
-	static const int s_hInitialSubKey = -1;
+	static const size_t s_hInitialSubKey = -1;
 	~Registry() {
 		::RegCloseKey( m_hRootKey );
-		if ( (HKEY)s_hInitialSubKey != m_hSubKey )
+		if ( reinterpret_cast< HKEY >( s_hInitialSubKey ) != m_hSubKey )
 			::RegCloseKey( m_hSubKey );
 	}
 	enum class EnuRootKey {
@@ -67,7 +67,7 @@ public:
 			samDesired = KEY_ALL_ACCESS;
 		else if ( EnuDesiredAccessRights::READ == enuRights )
 			samDesired = KEY_READ;
-		HKEY hSubKey = (HKEY)s_hInitialSubKey;
+		HKEY hSubKey = reinterpret_cast< HKEY >( s_hInitialSubKey );
 		DWORD ulOptions = REG_OPTION_NON_VOLATILE; // default
 		if ( ERROR_SUCCESS != ::RegOpenKeyExW( hRootKey, wcsSubKey, ulOptions, samDesired, &hSubKey ) )
 			::RegCreateKeyExW( hRootKey, wcsSubKey, 0, nullptr, ulOptions, samDesired, nullptr, &hSubKey, nullptr );

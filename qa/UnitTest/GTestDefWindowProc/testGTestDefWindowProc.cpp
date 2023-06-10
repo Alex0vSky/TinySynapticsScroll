@@ -2,7 +2,7 @@
 
 // There is user32.lib!_DefWindowProcA mapped/forward to ntdll.dll!_NtdllDefWindowProc_A
 struct MockMethodGlobal {
-	MOCK_METHOD(BOOL, DefWindowProcA_, (HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam) );
+	MOCK_METHOD(LRESULT, DefWindowProcA_, (HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam) );
 } *g_poMockMethodHolder;
 #include "..\..\..\src\Tool\Trait.h"
 #define DefWindowProcA(a0_, a1_, a2_, a3) \
@@ -16,7 +16,7 @@ using testing::_;
 using testing::Return;
 using namespace prj_sysw::TinySynapticsScroll;
 
-MOCK_STDCALL_FUNC(LONG, GetWindowLongA, HWND, int);
+MOCK_STDCALL_FUNC(LONG_PTR, GetWindowLongPtrA, HWND, int);
 
 namespace Window {
 
@@ -32,7 +32,7 @@ struct WndProcMockSep : public WndProcMockParrentSep_, public WndProcMockParrent
 NAMESPACE_TEST(ForwardToInstance_, Window, tooEarly) {
 	HWND m_hWnd = (HWND)1;
 	LRESULT lrReturnValue = (LRESULT)0x777;
-	EXPECT_MODULE_FUNC_CALL( GetWindowLongA, m_hWnd, GWLP_USERDATA )
+	EXPECT_MODULE_FUNC_CALL( GetWindowLongPtrA, m_hWnd, GWLP_USERDATA )
 		.WillOnce( Return( 0 ) );
 
 	g_poMockMethodHolder = new std::decay_t< decltype( *g_poMockMethodHolder ) >;

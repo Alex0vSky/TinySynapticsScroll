@@ -24,18 +24,18 @@ struct DialogFuncMock : public DialogFuncMockParrent_, public DialogFuncMockParr
 
 NAMESPACE_TEST(ForwardToInstance_, Dialog, tooEarly) {
 	HWND m_hDialog = (HWND)2;
-	EXPECT_MODULE_FUNC_CALL( GetWindowLongA, m_hDialog, GWLP_USERDATA )
+	EXPECT_MODULE_FUNC_CALL( GetWindowLongPtrA, m_hDialog, GWLP_USERDATA )
 		.WillOnce( Return( 0 ) );
 	EXPECT_FALSE( DialogFuncMock::systemCallback( m_hDialog, WM_USER, 0, 0 ) );
 }
 NAMESPACE_TEST(ForwardToInstance_, Dialog, init) {
 	HWND m_hDialog = (HWND)2;
 	DialogFuncMock oDialogFuncMock;
-	LONG loDialogFuncMock = reinterpret_cast< LONG >( &oDialogFuncMock );
-	EXPECT_MODULE_FUNC_CALL( SetWindowLongA, m_hDialog, GWLP_USERDATA, loDialogFuncMock )
+	LONG_PTR loDialogFuncMock = reinterpret_cast< LONG_PTR >( &oDialogFuncMock );
+	EXPECT_MODULE_FUNC_CALL( SetWindowLongPtrA, m_hDialog, GWLP_USERDATA, loDialogFuncMock )
 		.Times( 1 )
 		.WillOnce( Return( TRUE ) );
-	EXPECT_MODULE_FUNC_CALL( GetWindowLongA, m_hDialog, GWLP_USERDATA )
+	EXPECT_MODULE_FUNC_CALL( GetWindowLongPtrA, m_hDialog, GWLP_USERDATA )
 		.WillRepeatedly( Return( loDialogFuncMock ) );
 
 	EXPECT_CALL( oDialogFuncMock, dialogFunc_( WM_INITDIALOG, _, LPARAM( &oDialogFuncMock ) ) )
@@ -48,8 +48,8 @@ NAMESPACE_TEST(ForwardToInstance_, Dialog, init) {
 NAMESPACE_TEST(ForwardToInstance_, Dialog, failSetWindowLongPtrA) {
 	HWND m_hDialog = (HWND)2;
 	DialogFuncMock oDialogFuncMock;
-	LONG loDialogFuncMock = reinterpret_cast< LONG >( &oDialogFuncMock );
-	EXPECT_MODULE_FUNC_CALL( SetWindowLongA, m_hDialog, GWLP_USERDATA, loDialogFuncMock )
+	LONG_PTR loDialogFuncMock = reinterpret_cast< LONG_PTR >( &oDialogFuncMock );
+	EXPECT_MODULE_FUNC_CALL( SetWindowLongPtrA, m_hDialog, GWLP_USERDATA, loDialogFuncMock )
 		.Times( 1 )
 		.WillOnce( Return( FALSE ) );
 
@@ -79,11 +79,11 @@ NAMESPACE_TEST(ForwardToInstance_, Window, init) {
 	HWND m_hWnd = (HWND)1;
 	CREATESTRUCTA m_lpCreateStructA{ };
 	WndProcMock oWndProcMock;
-	LONG loDialogFuncMock = reinterpret_cast< LONG >( &oWndProcMock );
-	EXPECT_MODULE_FUNC_CALL( SetWindowLongA, m_hWnd, GWLP_USERDATA, loDialogFuncMock )
+	LONG_PTR loDialogFuncMock = reinterpret_cast< LONG_PTR >( &oWndProcMock );
+	EXPECT_MODULE_FUNC_CALL( SetWindowLongPtrA, m_hWnd, GWLP_USERDATA, loDialogFuncMock )
 		.Times( 1 )
 		.WillOnce( Return( TRUE ) );
-	EXPECT_MODULE_FUNC_CALL( GetWindowLongA, m_hWnd, GWLP_USERDATA )
+	EXPECT_MODULE_FUNC_CALL( GetWindowLongPtrA, m_hWnd, GWLP_USERDATA )
 		.WillRepeatedly( Return( loDialogFuncMock ) );
 
 	m_lpCreateStructA.lpCreateParams = &oWndProcMock;

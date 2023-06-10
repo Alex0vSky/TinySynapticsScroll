@@ -79,8 +79,8 @@ protected:
 		: m_oWndProc( nullptr, &m_oMockTray, &m_oMockMenu )
 	{}
 	void SetUp() override {
-		VERIFY_AND_CLEAR_MODULE_FUNC_EXPECTATIONS( SetWindowLongA );
-		VERIFY_AND_CLEAR_MODULE_FUNC_EXPECTATIONS( GetWindowLongA );
+		VERIFY_AND_CLEAR_MODULE_FUNC_EXPECTATIONS( SetWindowLongPtrA );
+		VERIFY_AND_CLEAR_MODULE_FUNC_EXPECTATIONS( GetWindowLongPtrA );
 		VERIFY_AND_CLEAR_MODULE_FUNC_EXPECTATIONS( DestroyWindow );
 		VERIFY_AND_CLEAR_MODULE_FUNC_EXPECTATIONS( PostQuitMessage );
 	}
@@ -89,11 +89,11 @@ protected:
 //typedef Context Initial;
 NAMESPACE_TEST_F(WndProc_, Context, first) {
 	CREATESTRUCTA m_lpCreateStructA{ };
-	LONG loWndProc = reinterpret_cast< LONG >( &m_oWndProc );
-	EXPECT_MODULE_FUNC_CALL( SetWindowLongA, m_hWnd, GWLP_USERDATA, loWndProc )
+	LONG_PTR loWndProc = reinterpret_cast< LONG_PTR >( &m_oWndProc );
+	EXPECT_MODULE_FUNC_CALL( SetWindowLongPtrA, m_hWnd, GWLP_USERDATA, loWndProc )
 		.Times( 1 )
 		.WillOnce( Return( TRUE ) );
-	EXPECT_MODULE_FUNC_CALL( GetWindowLongA, m_hWnd, GWLP_USERDATA )
+	EXPECT_MODULE_FUNC_CALL( GetWindowLongPtrA, m_hWnd, GWLP_USERDATA )
 		.WillRepeatedly( Return( loWndProc ) );
 
 	m_lpCreateStructA.lpCreateParams = &m_oWndProc;
@@ -107,8 +107,8 @@ NAMESPACE_TEST_F(WndProc_, Context, first) {
 }
 
 NAMESPACE_TEST_F(WndProc_, Context, childHandled) {
-	EXPECT_MODULE_FUNC_CALL( GetWindowLongA, m_hWnd, GWLP_USERDATA )
-		.WillRepeatedly( Return( reinterpret_cast< LONG >( &m_oWndProc ) ) );
+	EXPECT_MODULE_FUNC_CALL( GetWindowLongPtrA, m_hWnd, GWLP_USERDATA )
+		.WillRepeatedly( Return( reinterpret_cast< LONG_PTR >( &m_oWndProc ) ) );
 	m_oWndProc.setHwnd( m_hWnd );
 
 	EXPECT_CALL( m_oWndProc.m_oRestoreTouchPad, handleWindowMessage( m_hWnd, WM_USER, 0, 0 ) )
@@ -117,8 +117,8 @@ NAMESPACE_TEST_F(WndProc_, Context, childHandled) {
 }
 
 NAMESPACE_TEST_F(WndProc_, Context, WM_CLOSE_) {
-	EXPECT_MODULE_FUNC_CALL( GetWindowLongA, m_hWnd, GWLP_USERDATA )
-		.WillRepeatedly( Return( reinterpret_cast< LONG >( &m_oWndProc ) ) );
+	EXPECT_MODULE_FUNC_CALL( GetWindowLongPtrA, m_hWnd, GWLP_USERDATA )
+		.WillRepeatedly( Return( reinterpret_cast< LONG_PTR >( &m_oWndProc ) ) );
 	m_oWndProc.setHwnd( m_hWnd );
 
 	EXPECT_CALL( m_oWndProc.m_oRestoreTouchPad, handleWindowMessage( _, _, _, _ ) )
@@ -134,8 +134,8 @@ NAMESPACE_TEST_F(WndProc_, Context, WM_CLOSE_) {
 }
 
 NAMESPACE_TEST_F(WndProc_, Context, WM_DESTROY_) {
-	EXPECT_MODULE_FUNC_CALL( GetWindowLongA, m_hWnd, GWLP_USERDATA )
-		.WillRepeatedly( Return( reinterpret_cast< LONG >( &m_oWndProc ) ) );
+	EXPECT_MODULE_FUNC_CALL( GetWindowLongPtrA, m_hWnd, GWLP_USERDATA )
+		.WillRepeatedly( Return( reinterpret_cast< LONG_PTR >( &m_oWndProc ) ) );
 	m_oWndProc.setHwnd( m_hWnd );
 
 	EXPECT_CALL( m_oWndProc.m_oRestoreTouchPad, handleWindowMessage( _, _, _, _ ) )

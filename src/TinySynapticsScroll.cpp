@@ -9,6 +9,8 @@ int WINAPI WinMainCRTStartup(HINSTANCE, HINSTANCE, PWSTR, int) {
 	HINSTANCE hInst = ::GetModuleHandleA( NULL );
 #endif
 	UINT uExitCode = prj_sysw::TinySynapticsScroll::Main::run( hInst );
+#ifndef _DEBUG
 	::ExitProcess( uExitCode );
-	//return 0;
+#endif
+	return static_cast< int >( uExitCode );
 }

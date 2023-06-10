@@ -166,8 +166,8 @@ protected:
 	}
 	void SetUp() override {
 		// Override only for return value
-		EXPECT_MODULE_FUNC_CALL( GetWindowLongA, m_hDialog, GWLP_USERDATA )
-			.WillRepeatedly( Return( (LONG)&m_oDialog ) );
+		EXPECT_MODULE_FUNC_CALL( GetWindowLongPtrA, m_hDialog, GWLP_USERDATA )
+			.WillRepeatedly( Return( (LONG_PTR)&m_oDialog ) );
 	}
 };
 
@@ -182,6 +182,7 @@ NAMESPACE_TEST_F(DialogPopupSettings_, CDialogFunc, Scroll_enable_Acceleration) 
 	EXPECT_CALL( m_oScroll, enable( MockSettingsScroll::enuToggle::Acceleration ) )
 		.Times( 1 )
 		.WillOnce( Return( true ) );
+	auto asd0 = (LONG_PTR)&m_oDialog;
 	EXPECT_TRUE( m_pfnSystemCallback( m_hDialog, WM_COMMAND, MAKEWPARAM( IDC_CHECK_Acceleration, 0 ), 0 ) );
 	VERIFY_AND_CLEAR_MODULE_FUNC_EXPECTATIONS( IsDlgButtonChecked );
 }

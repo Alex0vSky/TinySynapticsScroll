@@ -20,17 +20,16 @@ namespace { class Environment0 : public ::testing::Environment {
 	}
 }; auto g_unused = testing::AddGlobalTestEnvironment( new Environment0 ); }
 
-using namespace prj_sysw::TinySynapticsScroll::Tool;
+namespace Registry_ {
 
-using testing::Return;
+using namespace prj_sysw::TinySynapticsScroll::Tool;
 using testing::StrEq;
 using testing::Eq;
-
 
 class RegistryContextHkcu : public ::testing::Test {
 protected:
 	using Registry = prj_sysw::TinySynapticsScroll::Tool::Registry;
-	decltype( testing::Eq(HKEY{}) ) m_oMatcher;
+	decltype( Eq(HKEY{}) ) m_oMatcher;
 	const wchar_t *m_wcsSubKey;
 	const wchar_t *m_wcsValueName;
 	const Registry::EnuRootKey m_enuRootKey;
@@ -38,7 +37,7 @@ protected:
 	const REGSAM m_samDesired;
 	const DWORD m_ulOptions;
 	RegistryContextHkcu() 
-		: m_oMatcher( testing::Eq( (HKEY)Registry::s_hInitialSubKey ) )
+		: m_oMatcher( Eq( (HKEY)Registry::s_hInitialSubKey ) )
 		, m_wcsSubKey( LR"(foo)" )
 		, m_wcsValueName( L"bar" )
 		, m_enuRootKey( Registry::EnuRootKey::HKCU )
@@ -189,6 +188,8 @@ NAMESPACED_TEST_F(Fail, String, Tool_Registry, SetValue) {
 	EXPECT_FALSE( bCreateAndSet );
 }
 
+} // namespace Create _
+
 class RegistryContextWithParam : public ::testing::TestWithParam< std::tuple< Registry::EnuRootKey, Registry::EnuDesiredAccessRights > > {
 protected:
 	using Registry = prj_sysw::TinySynapticsScroll::Tool::Registry;
@@ -229,6 +230,7 @@ TEST_P(RegistryContextWithParam, Tool_Registry_Test1 ) {
 		.Times( 1 );
 	EXPECT_MODULE_FUNC_CALL( RegCloseKey, hSubKey )
 		.Times( 1 );
+
 	Registry::openAlways( m_enuRootKey, L"foo", m_enuAccessRights );
 }
 
@@ -241,4 +243,4 @@ INSTANTIATE_TEST_SUITE_P(
 			)
 	);
 
-} // namespace Create _
+} // namespace Registry_ _

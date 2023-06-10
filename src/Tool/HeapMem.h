@@ -4,7 +4,7 @@ namespace prj_sysw { namespace TinySynapticsScroll { namespace Tool {
 class HeapMem {
 	mutable size_t m_cbAllocSize;
 	mutable LPBYTE m_lpMem;
-	LPBYTE alloc_(size_t cbAllocSize) const {
+	static LPBYTE alloc_(size_t cbAllocSize) {
 		auto p = ::HeapAlloc( ::GetProcessHeap( ), HEAP_ZERO_MEMORY, cbAllocSize );
 		return static_cast<LPBYTE>( p );
 	}

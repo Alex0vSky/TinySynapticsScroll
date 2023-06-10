@@ -79,7 +79,6 @@ NAMESPACE_TEST_F(Menu_HandleWindowMessage, FromTray, restore) {
 	EXPECT_TRUE( m_oMenu.handleWindowMessage( m_hWnd, c_uMessageId, 0, MAKELPARAM( WM_LBUTTONDBLCLK, 0 ) ) );
 }
 
-
 typedef Context FromContextMenu;
 NAMESPACE_TEST_F(Menu_HandleWindowMessage, FromContextMenu, itemExit) {
 	EXPECT_MODULE_FUNC_CALL( DestroyWindow, m_hWnd )
