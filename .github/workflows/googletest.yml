@@ -34,3 +34,8 @@ jobs:
         run: |
           "${env:GITHUB_WORKSPACE}/qa/UnitTest/bin/x64/Debug/GTestMem.exe" --gtest_brief=1 --gtest_output="xml:${env:RUNNER_TEMP}/GTestMem_Debug_x64.xml"
           type "${env:RUNNER_TEMP}/GTestMem_Debug_x64.xml"
+      - name: Run tests and collect reports5
+        if: always()
+        run: |
+          ${env:GITHUB_WORKSPACE}"/qa/UnitTest/bin/x64/Debug/GTestMem.exe" --gtest_brief=1 --gtest_output="xml:${env:RUNNER_TEMP}/GTestMem_Debug_x64.xml"
+          type ${env:RUNNER_TEMP}"/GTestMem_Debug_x64.xml"
