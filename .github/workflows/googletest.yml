@@ -5,13 +5,26 @@ jobs:
     runs-on: windows-latest
     steps:
       - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 18
       - name: Add MSBuild to PATH
         uses: microsoft/setup-msbuild@v1.1
-      - name: Build test
+      - name: Build tests
         run: MSBuild qa\UnitTest -m -p:Configuration=Debug
-      - name: Run test
+      - name: Run tests and collect reports
         run: |
-          D:\a\turbo-octo-adventure\turbo-octo-adventure\qa\UnitTest\bin\x64\Debug\GTestEmptyWorkingSet.exe
-          D:\a\turbo-octo-adventure\turbo-octo-adventure\qa\UnitTest\bin\x64\Debug\GTestDefWindowProc.exe
-          D:\a\turbo-octo-adventure\turbo-octo-adventure\qa\UnitTest\bin\x64\Debug\GTestMem.exe
-          D:\a\turbo-octo-adventure\turbo-octo-adventure\qa\UnitTest\bin\x64\Debug\GTest1.exe
+          echo "${env:GITHUB_ACTION_PATH}"
+          D:\a\turbo-octo-adventure\turbo-octo-adventure\qa\UnitTest\bin\x64\Debug\GTestEmptyWorkingSet.exe --gtest_brief=1 --gtest_output="xml:${env:RUNNER_TEMP}/GTest1_Debug_x64.xml"
+          D:\a\turbo-octo-adventure\turbo-octo-adventure\qa\UnitTest\bin\x64\Debug\GTestDefWindowProc.exe   --gtest_brief=1 --gtest_output="xml:${env:RUNNER_TEMP}/GTestDefWindowProc_Debug_x64.xml"
+          D:\a\turbo-octo-adventure\turbo-octo-adventure\qa\UnitTest\bin\x64\Debug\GTestMem.exe             --gtest_brief=1 --gtest_output="xml:${env:RUNNER_TEMP}/GTestEmptyWorkingSet_Debug_x64.xml"
+          D:\a\turbo-octo-adventure\turbo-octo-adventure\qa\UnitTest\bin\x64\Debug\GTest1.exe               --gtest_brief=1 --gtest_output="xml:${env:RUNNER_TEMP}/GTestMem_Debug_x64.xml"
+      - name: Merge reports
+        run: |
+         npm install -g junit-report-merger
+         jrm combined_Debug_x64.xml "${env:RUNNER_TEMP}/*_Debug_x64.xml"
+      - name: Public reports
+        uses: EnricoMi/publish-unit-test-result-action@v2
+        if: always()
+        with:
+          files: combined_Debug_x64.xml
