@@ -3,11 +3,20 @@ on: [workflow_dispatch]
 jobs:
   google-tests:
     runs-on: windows-latest
+    # for private GitHub repos
+    permissions:
+      contents: read
+      issues: read
+      checks: write
+      pull-requests: write
     steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-node@v3
         with:
           node-version: 18
+      - uses: actions/setup-python@v4
+        with:
+          python-version: 3.8
       - name: Add MSBuild to PATH
         uses: microsoft/setup-msbuild@v1.1
       - name: Build tests
@@ -15,11 +24,8 @@ jobs:
       - name: Run tests and collect reports
         run: |
           echo "${env:GITHUB_ACTION_PATH}"
-          echo ${env:GITHUB_ACTION_PATH}
-          echo $env:GITHUB_ACTION_PATH
           echo "${env:RUNNER_TEMP}"
-          echo ${env:RUNNER_TEMP}
-          echo $env:RUNNER_TEMP
+          echo "${env:GITHUB_WORKSPACE}"
           D:\a\turbo-octo-adventure\turbo-octo-adventure\qa\UnitTest\bin\x64\Debug\GTestEmptyWorkingSet.exe --gtest_brief=1 --gtest_output="xml:${env:RUNNER_TEMP}/GTest1_Debug_x64.xml"
           D:\a\turbo-octo-adventure\turbo-octo-adventure\qa\UnitTest\bin\x64\Debug\GTestDefWindowProc.exe   --gtest_brief=1 --gtest_output="xml:${env:RUNNER_TEMP}/GTestDefWindowProc_Debug_x64.xml"
           D:\a\turbo-octo-adventure\turbo-octo-adventure\qa\UnitTest\bin\x64\Debug\GTestMem.exe             --gtest_brief=1 --gtest_output="xml:${env:RUNNER_TEMP}/GTestEmptyWorkingSet_Debug_x64.xml"
