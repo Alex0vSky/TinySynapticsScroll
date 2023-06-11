@@ -14,26 +14,20 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           node-version: 18
-      - uses: actions/setup-python@v4
-        with:
-          python-version: 3.8
       - name: Add MSBuild to PATH
         uses: microsoft/setup-msbuild@v1.1
       - name: Build tests
-        run: MSBuild qa\UnitTest -m -p:Configuration=Debug
+        # only one for speedup
+        run: MSBuild qa\UnitTest\GTestMem -m -p:Configuration=Debug
       - name: Run tests and collect reports
         run: |
-          echo "${env:GITHUB_ACTION_PATH}"
-          echo "${env:RUNNER_TEMP}"
-          echo "${env:GITHUB_WORKSPACE}"
-          D:\a\turbo-octo-adventure\turbo-octo-adventure\qa\UnitTest\bin\x64\Debug\GTestEmptyWorkingSet.exe --gtest_brief=1 --gtest_output="xml:${env:RUNNER_TEMP}/GTest1_Debug_x64.xml"
-          D:\a\turbo-octo-adventure\turbo-octo-adventure\qa\UnitTest\bin\x64\Debug\GTestDefWindowProc.exe   --gtest_brief=1 --gtest_output="xml:${env:RUNNER_TEMP}/GTestDefWindowProc_Debug_x64.xml"
-          D:\a\turbo-octo-adventure\turbo-octo-adventure\qa\UnitTest\bin\x64\Debug\GTestMem.exe             --gtest_brief=1 --gtest_output="xml:${env:RUNNER_TEMP}/GTestEmptyWorkingSet_Debug_x64.xml"
-          D:\a\turbo-octo-adventure\turbo-octo-adventure\qa\UnitTest\bin\x64\Debug\GTest1.exe               --gtest_brief=1 --gtest_output="xml:${env:RUNNER_TEMP}/GTestMem_Debug_x64.xml"
+          "${env:GITHUB_WORKSPACE}\qa\UnitTest\bin\x64\Debug\GTestMem.exe" --gtest_brief=1 --gtest_output="xml:${env:RUNNER_TEMP}/GTestMem_Debug_x64.xml"
+          type "${env:RUNNER_TEMP}/GTestMem_Debug_x64.xml"
       - name: Merge reports
         run: |
-         npm install -g junit-report-merger
-         jrm combined_Debug_x64.xml "${env:RUNNER_TEMP}/*_Debug_x64.xml"
+          npm install -g junit-report-merger
+          jrm combined_Debug_x64.xml "${env:RUNNER_TEMP}/*_Debug_x64.xml"
+          type combined_Debug_x64.xml
       - name: Public reports
         uses: EnricoMi/publish-unit-test-result-action/composite@v2
         if: always()
