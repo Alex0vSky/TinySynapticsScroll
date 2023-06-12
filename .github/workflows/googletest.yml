@@ -16,11 +16,15 @@ jobs:
           node-version: 18
       - name: Add MSBuild to PATH
         uses: microsoft/setup-msbuild@v1.1
-      - name: Build tests
-        # only one for speedup
-        run: MSBuild qa\UnitTest\GTestMem -m -p:Configuration=Debug
-      - name: Run tests and collect reports7
+      - name: Build tests0
         if: always()
-        run: |
-          ."${env:GITHUB_WORKSPACE}\qa\UnitTest\GTestMem\bin\Debug\GTestMem.exe" --gtest_brief=1 --gtest_output="xml:${env:RUNNER_TEMP}/GTestMem_Debug_x64.xml"
-          type "${env:RUNNER_TEMP}/GTestMem_Debug_x64.xml"
+        run: MSBuild qa/UnitTest/GTestMem -m -p:Configuration=Debug;Platform=x86
+      - name: Build tests1
+        if: always()
+        run: MSBuild qa/UnitTest/GTestMem -m -p:Configuration=Debug;Platform=Win32
+      - name: Build tests2
+        if: always()
+        run: MSBuild qa/UnitTest -m -p:Configuration=Debug;Platform=x86
+      - name: Build tests3
+        if: always()
+        run: MSBuild qa/UnitTest -m -p:Configuration=Debug;Platform=Win32
