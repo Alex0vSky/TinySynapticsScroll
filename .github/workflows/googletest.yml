@@ -14,17 +14,17 @@ jobs:
       - uses: actions/cache@v3
         with:
             path: ${{ env.pythonLocation }}
-            key: ${{ env.pythonLocation }}-${{ hashFiles("setup.py") }}-${{ hashFiles("dev-requirements.txt") }}
+            key: ${{ env.pythonLocation }}-${{ hashFiles('setup.py') }}-${{ hashFiles('dev-requirements.txt') }}
       - name: Get npm cache directory
         id: npm-cache-dir
         shell: pwsh
-        run: echo "dir=$(npm config get cache)" >> ${env:GITHUB_OUTPUT}
+        run: echo 'dir=$(npm config get cache)' >> ${env:GITHUB_OUTPUT}
       - name: Setup cache npm
         uses: actions/cache@v3
         id: npm-cache # use this to check for "cache-hit" ==> if: steps.npm-cache.outputs.cache-hit != "true"
         with:
           path: ${{ steps.npm-cache-dir.outputs.dir }}
-          key: ${{ runner.os }}-node-${{ hashFiles("**/package-lock.json") }}
+          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
           restore-keys: |
             ${{ runner.os }}-node-
       - name: Add MSBuild to PATH
