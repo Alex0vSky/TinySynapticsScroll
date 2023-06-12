@@ -8,39 +8,23 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           node-version: 18
-      - uses: actions/setup-python@v4
-        with:
-          python-version: 3.10
-      - uses: actions/cache@v3
-        with:
-            path: ${{ env.pythonLocation }}
-            key: ${{ env.pythonLocation }}-${{ hashFiles('setup.py') }}-${{ hashFiles('dev-requirements.txt') }}
       - name: Get npm cache directory
         id: npm-cache-dir
         shell: pwsh
         run: echo "dir=$(npm config get cache)" >> ${env:GITHUB_OUTPUT}
       - name: Setup cache npm
         uses: actions/cache@v3
-        id: npm-cache
+        id: npm-cache-setup
         with:
           path: ${{ steps.npm-cache-dir.outputs.dir }}
           key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
           restore-keys: |
             ${{ runner.os }}-node-
-      - name: Add MSBuild to PATH
-        uses: microsoft/setup-msbuild@v1.1
-      - name: Build tests
-        run: MSBuild qa/UnitTest/GTestMem -m -p:Configuration=Debug -p:Platform=x86
-      - name: Run tests and collect reports
-        run: |
-          ."${env:GITHUB_WORKSPACE}\qa\UnitTest\GTestMem\bin\Debug\GTestMem.exe" --gtest_brief=1 --gtest_output="xml:${env:RUNNER_TEMP}/GTestMem_Debug_x64.xml"
-      - name: Install Dependencies
-        if: steps.npm-cache.outputs.cache-hit != 'true'
+      - name: Install dependencies npm if not hit cache 
+        if: steps.npm-cache-setup.outputs.cache-hit != 'true'
         run: npm install -g junit-report-merger
       - name: Merge reports
         run: |
+          echo ${{ steps.npm-cache-dir.outputs.dir }}
+          npm config get cache
           jrm combined_Debug_x64.xml "${env:RUNNER_TEMP}/*_Debug_x64.xml"
-      - uses: actions/upload-artifact@v3
-        with:
-          name: my-artifact
-          path: combined_Debug_x64.xml
