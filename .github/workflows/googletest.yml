@@ -19,23 +19,8 @@ jobs:
       - name: Build tests
         # only one for speedup
         run: MSBuild qa\UnitTest\GTestMem -m -p:Configuration=Debug
-      - name: Run tests and collect reports1
+      - name: Run tests and collect reports6
         if: always()
         run: |
-          $env:GITHUB_WORKSPACE/qa/UnitTest/bin/x64/Debug/GTestMem.exe --gtest_brief=1 --gtest_output="xml:${env:RUNNER_TEMP}/GTestMem_Debug_x64.xml"
-          type $env:RUNNER_TEMP/GTestMem_Debug_x64.xml
-      - name: Run tests and collect reports2
-        if: always()
-        run: |
-          "$env:GITHUB_WORKSPACE/qa/UnitTest/bin/x64/Debug/GTestMem.exe" --gtest_brief=1 --gtest_output="xml:${env:RUNNER_TEMP}/GTestMem_Debug_x64.xml"
-          type "$env:RUNNER_TEMP/GTestMem_Debug_x64.xml"
-      - name: Run tests and collect reports3
-        if: always()
-        run: |
-          "${env:GITHUB_WORKSPACE}/qa/UnitTest/bin/x64/Debug/GTestMem.exe" --gtest_brief=1 --gtest_output="xml:${env:RUNNER_TEMP}/GTestMem_Debug_x64.xml"
+          ."${env:GITHUB_WORKSPACE}/qa/UnitTest/bin/x64/Debug/GTestMem.exe" --gtest_brief=1 --gtest_output="xml:${env:RUNNER_TEMP}/GTestMem_Debug_x64.xml"
           type "${env:RUNNER_TEMP}/GTestMem_Debug_x64.xml"
-      - name: Run tests and collect reports5
-        if: always()
-        run: |
-          ${env:GITHUB_WORKSPACE}"/qa/UnitTest/bin/x64/Debug/GTestMem.exe" --gtest_brief=1 --gtest_output="xml:${env:RUNNER_TEMP}/GTestMem_Debug_x64.xml"
-          type ${env:RUNNER_TEMP}"/GTestMem_Debug_x64.xml"
