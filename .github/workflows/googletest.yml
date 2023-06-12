@@ -18,13 +18,13 @@ jobs:
         uses: microsoft/setup-msbuild@v1.1
       - name: Build tests0
         if: always()
-        run: MSBuild qa/UnitTest/GTestMem -m -p:Configuration=Debug;Platform=x86
+        run: MSBuild qa/UnitTest/GTestMem -m -p:Configuration=Debug -p:Platform=x86
       - name: Build tests1
         if: always()
-        run: MSBuild qa/UnitTest/GTestMem -m -p:Configuration=Debug;Platform=Win32
+        run: MSBuild qa/UnitTest/GTestMem -m -p:Configuration=Debug -p:Platform=Win32
       - name: Build tests2
         if: always()
-        run: MSBuild qa/UnitTest -m -p:Configuration=Debug;Platform=x86
+        run: MSBuild qa/UnitTest -m -p:Configuration=Debug -p:Platform=x86
       - name: Build tests3
         if: always()
-        run: MSBuild qa/UnitTest -m -p:Configuration=Debug;Platform=Win32
+        run: MSBuild qa/UnitTest -m -p:Configuration=Debug -p:Platform=Win32
