@@ -11,7 +11,6 @@ jobs:
       - name: Get npm cache directory
         id: npm-cache-dir
         shell: pwsh
-        run: 
         run: |
           echo "dircache=$(npm config get cache)" >> ${env:GITHUB_OUTPUT}
           dir "$(npm config get cache)"
@@ -31,6 +30,6 @@ jobs:
           echo ${{ steps.npm-cache-dir.outputs.dircache }}
           npm config get cache
           dir ${{ steps.npm-cache-dir.outputs.dir }}
-		  where.exe jrm
-		  npm install -g junit-report-merger
+          where.exe jrm
+          npm install -g junit-report-merger
           jrm combined_Debug_x64.xml "${env:RUNNER_TEMP}/*_Debug_x64.xml"
