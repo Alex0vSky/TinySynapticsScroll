@@ -14,6 +14,7 @@ jobs:
         run: |
           echo "dircache=$(npm config get cache)" >> ${env:GITHUB_OUTPUT}
           dir "$(npm config get cache)"
+          npm cache ls
       - name: Try restore cache npm
         uses: actions/cache@v3
         id: npm-cache-setup
@@ -22,14 +23,8 @@ jobs:
           key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
           restore-keys: |
             ${{ runner.os }}-node-
-      - name: Install dependencies npm if not hit cache 
-        if: steps.npm-cache-setup.outputs.cache-hit != 'true'
-        run: npm install -g junit-report-merger
       - name: Merge reports
         run: |
-          echo ${{ steps.npm-cache-dir.outputs.dircache }}
-          npm config get cache
-          dir ${{ steps.npm-cache-dir.outputs.dir }}
-          where.exe jrm
-          npm install -g junit-report-merger
+          npm cache ls
+          npm install --loglevel info --prefer-offline --only=production -g junit-report-merger
           jrm combined_Debug_x64.xml "${env:RUNNER_TEMP}/*_Debug_x64.xml"
