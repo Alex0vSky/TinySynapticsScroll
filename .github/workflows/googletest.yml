@@ -56,41 +56,9 @@ jobs:
       - name: Merge reports
         run: |
           npm install --prefer-offline --only=production -g junit-report-merger
-          echo "${env:RUNNER_TEMP}"
-          dir "${env:RUNNER_TEMP}"
-          jrm combined_Debug_x86.xml "${env:RUNNER_TEMP}/*_Debug_x86.xml"
-          jrm combined_Debug_x86.xml ${env:RUNNER_TEMP}/*_Debug_x86.xml
-          jrm combined_Debug_x86.xml ${env:RUNNER_TEMP}\*_Debug_x86.xml
-          jrm combined_Debug_x86.xml ${env:RUNNER_TEMP}\\*_Debug_x86.xml
-          jrm combined_Debug_x86.xml ${env:RUNNER_TEMP}//*_Debug_x86.xml
-
-          $mypath="${env:RUNNER_TEMP}/*_Debug_x86.xml"
-          echo $mypath
-          jrm combined_Debug_x86.xml $mypath
-
-          $mypath="${env:RUNNER_TEMP}\*_Debug_x86.xml"
-          echo $mypath
-          jrm combined_Debug_x86.xml $mypath
-
-          $mypath="${env:RUNNER_TEMP}\*_Debug_x86.xml"
-          echo $mypath
-          $mypath = "$($mypath.Split("\\") -join "/")";
-          echo $mypath
-          jrm combined_Debug_x86.xml $mypath
-
-          $mypath="${env:RUNNER_TEMP}\*_Debug_x86.xml"
-          echo $mypath
-          $mypath = "$($mypath.Split("\") -join "/")";
-          echo $mypath
-          jrm combined_Debug_x86.xml $mypath
-          
-          $mypath="${env:RUNNER_TEMP}\*_Debug_x86.xml"
-          echo $mypath
-          $mypath = "$($mypath.Split('\') -join '/')";
-          echo $mypath
-          jrm combined_Debug_x86.xml $mypath
-          
-          jrm combined_Debug_x86.xml D:/a/_temp/*_Debug_x86.xml
+          $back_slashes_to_forward_slashes="${env:RUNNER_TEMP}\*_Debug_x86.xml"
+          $back_slashes_to_forward_slashes = "$($back_slashes_to_forward_slashes.Split('\') -join '/')";
+          jrm combined_Debug_x86.xml $back_slashes_to_forward_slashes
       - uses: actions/upload-artifact@v3
         with:
           name: my-artifact
