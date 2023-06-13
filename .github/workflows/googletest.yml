@@ -72,6 +72,12 @@ jobs:
           echo $mypath
           jrm combined_Debug_x86.xml $mypath
 
+          $mypath="${env:RUNNER_TEMP}\*_Debug_x86.xml"
+          echo $mypath
+          $mypath = "$($mypath.Split("\\") -join "/")";
+          echo $mypath
+          jrm combined_Debug_x86.xml $mypath
+
           jrm combined_Debug_x86.xml D:/a/_temp/*_Debug_x86.xml
       - uses: actions/upload-artifact@v3
         with:
