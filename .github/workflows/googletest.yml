@@ -4,22 +4,19 @@ jobs:
   google-tests:
     runs-on: windows-latest
     permissions:
-      actions: read
-      contents: read
+      actions: read # for "dawidd6/action-download-artifact@v2"
+      contents: read # for "actions/checkout@v3" when GITHUB_TOKEN
     steps:
       - uses: actions/checkout@v3
-      - name: Download artifact
-        id: download-artifact
-        uses: dawidd6/action-download-artifact@v2
-        with:
-          github_token: ${{secrets.GITHUB_TOKEN}}
-          workflow: googletest.yml
-#          workflow_conclusion: success
-          #run_id: 1122334455
-          #run_number: 34
-          name: artifact-builded-tests
-          path: D:\a\turbo-octo-adventure\turbo-octo-adventure\qa\UnitTest
-          search_artifacts: true
+#      - name: Download artifact
+#        id: download-artifact
+#        uses: dawidd6/action-download-artifact@v2
+#        with:
+#          github_token: ${{secrets.GITHUB_TOKEN}}
+#          workflow: googletest.yml
+#          name: artifact-all-tests-builded
+#          path: D:\a\turbo-octo-adventure\turbo-octo-adventure\qa\UnitTest
+#          search_artifacts: true
       - uses: actions/setup-node@v3
         with:
           node-version: 18
@@ -35,42 +32,48 @@ jobs:
           key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
           restore-keys: |
             ${{ runner.os }}-node-
-#      - name: Add MSBuild to PATH
-#        uses: microsoft/setup-msbuild@v1.1
-#      - name: Build tests
-#        run: MSBuild qa/UnitTest/GTestMem -m -p:Configuration=Debug -p:Platform=x86
-#      - uses: actions/upload-artifact@v3
-#        with:
-#          name: artifact-builded-tests
-#          path: |
-#            D:\a\turbo-octo-adventure\turbo-octo-adventure\qa\UnitTest\StaticLibrary\bin\Debug\StaticLibrary.lib
-#            D:\a\turbo-octo-adventure\turbo-octo-adventure\qa\UnitTest\GTestMem\bin\Debug\GTestMem.exe
+
+      - name: Add MSBuild to PATH
+        uses: microsoft/setup-msbuild@v1.1
+      - name: Build tests
+        run: MSBuild qa/UnitTest -m -p:Configuration=Debug -p:Platform=x86
+      - uses: actions/upload-artifact@v3
+        with:
+          name: artifact-all-tests-builded
+          path: |
+            D:\a\turbo-octo-adventure\turbo-octo-adventure\qa\UnitTest\bin\Debug\StaticLibrary.lib
+            D:\a\turbo-octo-adventure\turbo-octo-adventure\qa\UnitTest\bin\Debug\GTest1.exe
+            D:\a\turbo-octo-adventure\turbo-octo-adventure\qa\UnitTest\bin\Debug\GTestDefWindowProc.exe
+            D:\a\turbo-octo-adventure\turbo-octo-adventure\qa\UnitTest\bin\Debug\GTestEmptyWorkingSet.exe
+            D:\a\turbo-octo-adventure\turbo-octo-adventure\qa\UnitTest\bin\Debug\GTestMem.exe
 
       - name: Run tests and collect reports
         run: |
-          ."${env:GITHUB_WORKSPACE}\qa\UnitTest\GTestMem\bin\Debug\GTestMem.exe" --gtest_brief=1 --gtest_output="xml:${env:RUNNER_TEMP}/GTestMem_Debug_x64.xml"
-          type "${env:RUNNER_TEMP}/GTestMem_Debug_x64.xml"
+          ."${env:GITHUB_WORKSPACE}\qa\UnitTest\bin\Debug\GTest1.exe" --gtest_brief=1 --gtest_output="xml:${env:RUNNER_TEMP}/GTest1_Debug_x86.xml"
+          ."${env:GITHUB_WORKSPACE}\qa\UnitTest\bin\Debug\GTestDefWindowProc.exe" --gtest_brief=1 --gtest_output="xml:${env:RUNNER_TEMP}/GTestDefWindowProc_Debug_x86.xml"
+          ."${env:GITHUB_WORKSPACE}\qa\UnitTest\bin\Debug\GTestEmptyWorkingSet.exe" --gtest_brief=1 --gtest_output="xml:${env:RUNNER_TEMP}/GTestEmptyWorkingSet_Debug_x86.xml"
+          ."${env:GITHUB_WORKSPACE}\qa\UnitTest\bin\Debug\GTestMem.exe" --gtest_brief=1 --gtest_output="xml:${env:RUNNER_TEMP}/GTestMem_Debug_x86.xml"
       - name: Merge reports
         run: |
           npm install --prefer-offline --only=production -g junit-report-merger
           echo "${env:RUNNER_TEMP}"
           dir "${env:RUNNER_TEMP}"
-          jrm combined_Debug_x64.xml "${env:RUNNER_TEMP}/*_Debug_x64.xml"
-          jrm combined_Debug_x64.xml ${env:RUNNER_TEMP}/*_Debug_x64.xml
-          jrm combined_Debug_x64.xml ${env:RUNNER_TEMP}\*_Debug_x64.xml
-          jrm combined_Debug_x64.xml ${env:RUNNER_TEMP}\\*_Debug_x64.xml
-          jrm combined_Debug_x64.xml ${env:RUNNER_TEMP}//*_Debug_x64.xml
+          jrm combined_Debug_x86.xml "${env:RUNNER_TEMP}/*_Debug_x86.xml"
+          jrm combined_Debug_x86.xml ${env:RUNNER_TEMP}/*_Debug_x86.xml
+          jrm combined_Debug_x86.xml ${env:RUNNER_TEMP}\*_Debug_x86.xml
+          jrm combined_Debug_x86.xml ${env:RUNNER_TEMP}\\*_Debug_x86.xml
+          jrm combined_Debug_x86.xml ${env:RUNNER_TEMP}//*_Debug_x86.xml
 
-          $mypath="${env:RUNNER_TEMP}/*_Debug_x64.xml"
+          $mypath="${env:RUNNER_TEMP}/*_Debug_x86.xml"
           echo $mypath
-          jrm combined_Debug_x64.xml $mypath
+          jrm combined_Debug_x86.xml $mypath
 
-          $mypath="${env:RUNNER_TEMP}\*_Debug_x64.xml"
+          $mypath="${env:RUNNER_TEMP}\*_Debug_x86.xml"
           echo $mypath
-          jrm combined_Debug_x64.xml $mypath
+          jrm combined_Debug_x86.xml $mypath
 
-          jrm combined_Debug_x64.xml D:/a/_temp/*_Debug_x64.xml
+          jrm combined_Debug_x86.xml D:/a/_temp/*_Debug_x86.xml
       - uses: actions/upload-artifact@v3
         with:
           name: my-artifact
-          path: combined_Debug_x64.xml
+          path: combined_Debug_x86.xml
