@@ -17,21 +17,18 @@ jobs:
           name: artifact-all-tests-builded
           path: D:\a\turbo-octo-adventure\turbo-octo-adventure\qa\UnitTest\bin\Debug # build from *.sln
           search_artifacts: true
-      - uses: actions/setup-node@v3
-        with:
-          node-version: 18
-      - name: Get npm cache directory
-        id: npm-cache-dir
-        shell: pwsh
-        run: echo "dircache=$(npm config get cache)" >> ${env:GITHUB_OUTPUT}
-      - name: Try restore cache npm
+      - name: Setup cache python
         uses: actions/cache@v3
-        id: npm-cache-setup
         with:
-          path: ${{ steps.npm-cache-dir.outputs.dircache }}
-          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
-          restore-keys: |
-            ${{ runner.os }}-node-
+            path: ${{ env.pythonLocation }}
+            key: ${{ env.pythonLocation }}-${{ hashFiles('setup.py') }}-${{ hashFiles('dev-requirements.txt') }}
+      - uses: actions/setup-python@v4
+        id: cp310
+        with:
+          python-version: 2.7
+#          cache: 'pip'
+      - name: Check cache hit
+        run: echo '${{ steps.cp310.outputs.cache-hit }}'
 
 #      - name: Add MSBuild to PATH
 #        uses: microsoft/setup-msbuild@v1.1
@@ -48,18 +45,27 @@ jobs:
 #            D:\a\turbo-octo-adventure\turbo-octo-adventure\qa\UnitTest\bin\Debug\GTestMem.exe
 
       - name: Run tests and collect reports
+        # double run GTest1
         run: |
+          ."${env:GITHUB_WORKSPACE}\qa\UnitTest\bin\Debug\GTest1.exe" --gtest_brief=1 --gtest_output="xml:${env:RUNNER_TEMP}/GTest1_Debug_x86.xml"
           ."${env:GITHUB_WORKSPACE}\qa\UnitTest\bin\Debug\GTest1.exe" --gtest_brief=1 --gtest_output="xml:${env:RUNNER_TEMP}/GTest1_Debug_x86.xml"
           ."${env:GITHUB_WORKSPACE}\qa\UnitTest\bin\Debug\GTestDefWindowProc.exe" --gtest_brief=1 --gtest_output="xml:${env:RUNNER_TEMP}/GTestDefWindowProc_Debug_x86.xml"
           ."${env:GITHUB_WORKSPACE}\qa\UnitTest\bin\Debug\GTestEmptyWorkingSet.exe" --gtest_brief=1 --gtest_output="xml:${env:RUNNER_TEMP}/GTestEmptyWorkingSet_Debug_x86.xml"
           ."${env:GITHUB_WORKSPACE}\qa\UnitTest\bin\Debug\GTestMem.exe" --gtest_brief=1 --gtest_output="xml:${env:RUNNER_TEMP}/GTestMem_Debug_x86.xml"
       - name: Merge reports
         run: |
-          npm install --prefer-offline --only=production -g junit-report-merger
-          $back_slashes_to_forward_slashes="${env:RUNNER_TEMP}\*_Debug_x86.xml"
-          $back_slashes_to_forward_slashes = "$($back_slashes_to_forward_slashes.Split('\') -join '/')";
-          jrm combined_Debug_x86.xml $back_slashes_to_forward_slashes
+          pip install junitparser
+          junitparser merge --suite-name AllTests --glob "${env:RUNNER_TEMP}\*_Debug_x86.xml" "combined_Debug_x86.xml"
+          jrm "combined_Debug_x86.xml" $back_slashes_to_forward_slashes
+      - name: Install converter to html and run convert
+        run: |
+          git clone https://github.com/burlachenkok/gtest_report
+          # directory html_resources must be in current dir
+          py --version
+          py "gtest_report\scripts\genHtmlReportFromGtest.py" "out/gtest_report.html" "combined_Debug_x86.xml"
       - uses: actions/upload-artifact@v3
         with:
           name: my-artifact
-          path: combined_Debug_x86.xml
+          path: |
+            combined_Debug_x86.xml
+            out/
