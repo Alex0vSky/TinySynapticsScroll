@@ -17,16 +17,16 @@ jobs:
           name: artifact-all-tests-builded
           path: D:\a\turbo-octo-adventure\turbo-octo-adventure\qa\UnitTest\bin\Debug # build from *.sln
           search_artifacts: true
-      - name: Setup cache python
-        uses: actions/cache@v3
-        with:
-            path: ${{ env.pythonLocation }}
-            key: ${{ env.pythonLocation }}-${{ hashFiles('setup.py') }}-${{ hashFiles('dev-requirements.txt') }}
       - uses: actions/setup-python@v4
         id: cp310
         with:
           python-version: 2.7
 #          cache: 'pip'
+      - name: Setup cache python
+        uses: actions/cache@v3
+        with:
+            path: ${{ env.pythonLocation }}
+            key: ${{ env.pythonLocation }}-${{ hashFiles('setup.py') }}-${{ hashFiles('dev-requirements.txt') }}
       - name: Check cache hit
         run: echo '${{ steps.cp310.outputs.cache-hit }}'
 
