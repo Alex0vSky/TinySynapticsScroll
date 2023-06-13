@@ -5,6 +5,18 @@ jobs:
     runs-on: windows-latest
     steps:
       - uses: actions/checkout@v3
+      - name: Download artifact
+        id: download-artifact
+        uses: dawidd6/action-download-artifact@v2
+        with:
+          github_token: ${{secrets.GITHUB_TOKEN}}
+          workflow_conclusion: success
+          #run_id: 1122334455
+          #run_number: 34
+          name: artifact-builded-tests
+          path: D:\a\turbo-octo-adventure\turbo-octo-adventure\qa\UnitTest
+          search_artifacts: true
+
       - uses: actions/setup-node@v3
         with:
           node-version: 18
@@ -30,11 +42,6 @@ jobs:
 #          path: |
 #            D:\a\turbo-octo-adventure\turbo-octo-adventure\qa\UnitTest\StaticLibrary\bin\Debug\StaticLibrary.lib
 #            D:\a\turbo-octo-adventure\turbo-octo-adventure\qa\UnitTest\GTestMem\bin\Debug\GTestMem.exe
-
-      - uses: actions/download-artifact@v3
-        with:
-          name: artifact-builded-tests
-          path: D:\a\turbo-octo-adventure\turbo-octo-adventure\qa\UnitTest
 
       - name: Run tests and collect reports
         run: |
