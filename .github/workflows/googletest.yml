@@ -59,7 +59,9 @@ jobs:
         if: always()
         run: |
           echo $(where.exe pip)
-          run: echo $(where pip)
+          echo $(where pip)
+          echo $(gcm notepad -TotalCount 1).Path
+          echo $(gcm pip -TotalCount 1).Path
       - name: Install merger1
         if: always()
         run: py -3.10 pip install junitparser
@@ -69,7 +71,7 @@ jobs:
       - name: Install merger2
         if: always()
         run: |
-          $cmd = "py -3.10 $(where.exe pip) install junitparser"
+          $cmd = "py -3.10 $(gcm pip -TotalCount 1).Path install junitparser"
           echo $cmd
           .$cmd
 
