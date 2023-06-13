@@ -57,14 +57,25 @@ jobs:
 
       - name: Install merger0
         if: always()
-        run: echo $(where.exe pip)
-      - name: Install merger2
+        run: |
+          echo $(where.exe pip)
+          run: echo $(where pip)
+      - name: Install merger1
         if: always()
         run: py -3.10 pip install junitparser
-      - name: Install merger3
+      - name: Install merger2
         if: always()
         run: py -3.10 $(where.exe pip) install junitparser
+      - name: Install merger2
+        if: always()
+        run: |
+          $cmd = "py -3.10 $(where.exe pip) install junitparser"
+          echo $cmd
+          .$cmd
 
+      - name: Install merger
+        if: always()
+        run: pip install junitparser
       - name: Merge reports
         if: always()
         run: junitparser merge --suite-name AllTests --glob "${env:RUNNER_TEMP}\*_Debug_x86.xml" "combined_Debug_x86.xml"
