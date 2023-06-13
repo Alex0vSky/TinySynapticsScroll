@@ -11,7 +11,7 @@ jobs:
       - name: Get npm cache directory
         id: npm-cache-dir
         shell: pwsh
-      - run: echo "dircache=$(npm config get cache)" >> ${env:GITHUB_OUTPUT}
+        run: echo "dircache=$(npm config get cache)" >> ${env:GITHUB_OUTPUT}
       - name: Try restore cache npm
         uses: actions/cache@v3
         id: npm-cache-setup
@@ -23,8 +23,7 @@ jobs:
       - name: Add MSBuild to PATH
         uses: microsoft/setup-msbuild@v1.1
       - name: Build tests
-        run: |
-          MSBuild qa/UnitTest/GTestMem -m -p:Configuration=Debug -p:Platform=x86
+        run: MSBuild qa/UnitTest/GTestMem -m -p:Configuration=Debug -p:Platform=x86
       - name: Run tests and collect reports
         run: |
           ."${env:GITHUB_WORKSPACE}\qa\UnitTest\GTestMem\bin\Debug\GTestMem.exe" --gtest_brief=1 --gtest_output="xml:${env:RUNNER_TEMP}/GTestMem_Debug_x64.xml"
