@@ -43,30 +43,24 @@ jobs:
 #            D:\a\turbo-octo-adventure\turbo-octo-adventure\qa\UnitTest\bin\Debug\*.exe
 
       - name: Run tests and collect reports
-        # double run GTest1
-        run: |
+        run: | # double run GTest1
           ."${env:GITHUB_WORKSPACE}\qa\UnitTest\bin\Debug\GTest1.exe" --gtest_brief=1 --gtest_output="xml:${env:RUNNER_TEMP}/GTest1_Debug_x86.xml"
           ."${env:GITHUB_WORKSPACE}\qa\UnitTest\bin\Debug\GTest1.exe" --gtest_brief=1 --gtest_output="xml:${env:RUNNER_TEMP}/GTest1_Debug_x86.xml"
           ."${env:GITHUB_WORKSPACE}\qa\UnitTest\bin\Debug\GTestDefWindowProc.exe" --gtest_brief=1 --gtest_output="xml:${env:RUNNER_TEMP}/GTestDefWindowProc_Debug_x86.xml"
           ."${env:GITHUB_WORKSPACE}\qa\UnitTest\bin\Debug\GTestEmptyWorkingSet.exe" --gtest_brief=1 --gtest_output="xml:${env:RUNNER_TEMP}/GTestEmptyWorkingSet_Debug_x86.xml"
           ."${env:GITHUB_WORKSPACE}\qa\UnitTest\bin\Debug\GTestMem.exe" --gtest_brief=1 --gtest_output="xml:${env:RUNNER_TEMP}/GTestMem_Debug_x86.xml"
       - name: Install merger
-        if: always()
         run: py -3.10 $(where.exe pip| select -first 1) install junitparser
       - name: Merge reports
-        if: always()
         run: junitparser merge --suite-name AllTests --glob "${env:RUNNER_TEMP}\*_Debug_x86.xml" "combined_Debug_x86.xml"
-      - name: Install converter to html and run convert
-        if: always()
-        run: |
-          git clone https://github.com/burlachenkok/gtest_report
-          py --version
-          py --list
-          # directory html_resources must be in current dir
-          py -2.7 "gtest_report\scripts\genHtmlReportFromGtest.py" "out/gtest_report.html" "combined_Debug_x86.xml"
+      - name: Install converter
+        run: git clone https://github.com/burlachenkok/gtest_report
+      - name: Convert xml to html
+        working-directory: ./gtest_report # directory html_resources must be in current dir
+        run: py -2.7 "scripts\genHtmlReportFromGtest.py" "out/gtest_report.html" "../combined_Debug_x86.xml"
       - uses: actions/upload-artifact@v3
         with:
           name: my-artifact
           path: |
             combined_Debug_x86.xml
-            out/
+            gtest_report/out/
