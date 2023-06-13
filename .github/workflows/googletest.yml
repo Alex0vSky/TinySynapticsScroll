@@ -8,15 +8,15 @@ jobs:
       contents: read # for "actions/checkout@v3" when GITHUB_TOKEN
     steps:
       - uses: actions/checkout@v3
-#      - name: Download artifact
-#        id: download-artifact
-#        uses: dawidd6/action-download-artifact@v2
-#        with:
-#          github_token: ${{secrets.GITHUB_TOKEN}}
-#          workflow: googletest.yml
-#          name: artifact-all-tests-builded
-#          path: D:\a\turbo-octo-adventure\turbo-octo-adventure\qa\UnitTest
-#          search_artifacts: true
+      - name: Download artifact
+        id: download-artifact
+        uses: dawidd6/action-download-artifact@v2
+        with:
+          github_token: ${{secrets.GITHUB_TOKEN}}
+          workflow: googletest.yml
+          name: artifact-all-tests-builded
+          path: D:\a\turbo-octo-adventure\turbo-octo-adventure\qa\UnitTest\bin\Debug # build from *.sln
+          search_artifacts: true
       - uses: actions/setup-node@v3
         with:
           node-version: 18
@@ -33,19 +33,19 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-node-
 
-      - name: Add MSBuild to PATH
-        uses: microsoft/setup-msbuild@v1.1
-      - name: Build tests
-        run: MSBuild qa/UnitTest -m -p:Configuration=Debug -p:Platform=x86
-      - uses: actions/upload-artifact@v3
-        with:
-          name: artifact-all-tests-builded
-          path: |
-            D:\a\turbo-octo-adventure\turbo-octo-adventure\qa\UnitTest\bin\Debug\StaticLibrary.lib
-            D:\a\turbo-octo-adventure\turbo-octo-adventure\qa\UnitTest\bin\Debug\GTest1.exe
-            D:\a\turbo-octo-adventure\turbo-octo-adventure\qa\UnitTest\bin\Debug\GTestDefWindowProc.exe
-            D:\a\turbo-octo-adventure\turbo-octo-adventure\qa\UnitTest\bin\Debug\GTestEmptyWorkingSet.exe
-            D:\a\turbo-octo-adventure\turbo-octo-adventure\qa\UnitTest\bin\Debug\GTestMem.exe
+#      - name: Add MSBuild to PATH
+#        uses: microsoft/setup-msbuild@v1.1
+#      - name: Build tests
+#        run: MSBuild qa/UnitTest -m -p:Configuration=Debug -p:Platform=x86
+#      - uses: actions/upload-artifact@v3
+#        with:
+#          name: artifact-all-tests-builded
+#          path: |
+#            D:\a\turbo-octo-adventure\turbo-octo-adventure\qa\UnitTest\bin\Debug\StaticLibrary.lib
+#            D:\a\turbo-octo-adventure\turbo-octo-adventure\qa\UnitTest\bin\Debug\GTest1.exe
+#            D:\a\turbo-octo-adventure\turbo-octo-adventure\qa\UnitTest\bin\Debug\GTestDefWindowProc.exe
+#            D:\a\turbo-octo-adventure\turbo-octo-adventure\qa\UnitTest\bin\Debug\GTestEmptyWorkingSet.exe
+#            D:\a\turbo-octo-adventure\turbo-octo-adventure\qa\UnitTest\bin\Debug\GTestMem.exe
 
       - name: Run tests and collect reports
         run: |
