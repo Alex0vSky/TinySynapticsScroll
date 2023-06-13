@@ -20,7 +20,9 @@ jobs:
       - uses: actions/setup-python@v4
         id: cp310
         with:
-          python-version: 3.10
+          python-version: |
+          2.7
+          3.10
 #          cache: 'pip'
       - name: Setup cache python
         uses: actions/cache@v3
@@ -52,17 +54,28 @@ jobs:
           ."${env:GITHUB_WORKSPACE}\qa\UnitTest\bin\Debug\GTestDefWindowProc.exe" --gtest_brief=1 --gtest_output="xml:${env:RUNNER_TEMP}/GTestDefWindowProc_Debug_x86.xml"
           ."${env:GITHUB_WORKSPACE}\qa\UnitTest\bin\Debug\GTestEmptyWorkingSet.exe" --gtest_brief=1 --gtest_output="xml:${env:RUNNER_TEMP}/GTestEmptyWorkingSet_Debug_x86.xml"
           ."${env:GITHUB_WORKSPACE}\qa\UnitTest\bin\Debug\GTestMem.exe" --gtest_brief=1 --gtest_output="xml:${env:RUNNER_TEMP}/GTestMem_Debug_x86.xml"
+
+      - name: Install merger0
+        if: always()
+        run: echo $(where.exe pip)
+      - name: Install merger2
+        if: always()
+        run: py -3.10 pip install junitparser
+      - name: Install merger3
+        if: always()
+        run: py -3.10 $(where.exe pip) install junitparser
+
       - name: Merge reports
-        run: |
-          pip install junitparser
-          junitparser merge --suite-name AllTests --glob "${env:RUNNER_TEMP}\*_Debug_x86.xml" "combined_Debug_x86.xml"
-          jrm "combined_Debug_x86.xml" $back_slashes_to_forward_slashes
+        if: always()
+        run: junitparser merge --suite-name AllTests --glob "${env:RUNNER_TEMP}\*_Debug_x86.xml" "combined_Debug_x86.xml"
       - name: Install converter to html and run convert
+        if: always()
         run: |
           git clone https://github.com/burlachenkok/gtest_report
-          # directory html_resources must be in current dir
           py --version
-          py "gtest_report\scripts\genHtmlReportFromGtest.py" "out/gtest_report.html" "combined_Debug_x86.xml"
+          py --list
+          # directory html_resources must be in current dir
+          py -2.7 "gtest_report\scripts\genHtmlReportFromGtest.py" "out/gtest_report.html" "combined_Debug_x86.xml"
       - uses: actions/upload-artifact@v3
         with:
           name: my-artifact
