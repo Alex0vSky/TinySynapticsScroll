@@ -11,10 +11,7 @@ jobs:
       - name: Get npm cache directory
         id: npm-cache-dir
         shell: pwsh
-        run: |
-          echo "dircache=$(npm config get cache)" >> ${env:GITHUB_OUTPUT}
-          dir "$(npm config get cache)"
-          npm cache ls
+      - run: echo "dircache=$(npm config get cache)" >> ${env:GITHUB_OUTPUT}
       - name: Try restore cache npm
         uses: actions/cache@v3
         id: npm-cache-setup
@@ -23,8 +20,19 @@ jobs:
           key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
           restore-keys: |
             ${{ runner.os }}-node-
+      - name: Add MSBuild to PATH
+        uses: microsoft/setup-msbuild@v1.1
+      - name: Build tests
+        run: MSBuild qa/UnitTest/GTestMem -m -p:Configuration=Debug -p:Platform=x86
+      - name: Run tests and collect reports
+        run: |
+          ."${env:GITHUB_WORKSPACE}\qa\UnitTest\GTestMem\bin\Debug\GTestMem.exe" --gtest_brief=1 --gtest_output="xml:${env:RUNNER_TEMP}/GTestMem_Debug_x64.xml"
+          type "xml:${env:RUNNER_TEMP}/GTestMem_Debug_x64.xml"
       - name: Merge reports
         run: |
-          npm cache ls
-          npm install --loglevel info --prefer-offline --only=production -g junit-report-merger
+          npm install --prefer-offline --only=production -g junit-report-merger
           jrm combined_Debug_x64.xml "${env:RUNNER_TEMP}/*_Debug_x64.xml"
+      - uses: actions/upload-artifact@v3
+        with:
+          name: my-artifact
+          path: combined_Debug_x64.xml
