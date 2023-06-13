@@ -3,6 +3,8 @@ on: [workflow_dispatch]
 jobs:
   google-tests:
     runs-on: windows-latest
+    permissions:
+      actions: read
     steps:
       - uses: actions/checkout@v3
       - name: Download artifact
@@ -10,13 +12,13 @@ jobs:
         uses: dawidd6/action-download-artifact@v2
         with:
           github_token: ${{secrets.GITHUB_TOKEN}}
-          workflow_conclusion: success
+          workflow: googletest.yml
+#          workflow_conclusion: success
           #run_id: 1122334455
           #run_number: 34
           name: artifact-builded-tests
           path: D:\a\turbo-octo-adventure\turbo-octo-adventure\qa\UnitTest
           search_artifacts: true
-
       - uses: actions/setup-node@v3
         with:
           node-version: 18
