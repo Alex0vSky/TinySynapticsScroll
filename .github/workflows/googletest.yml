@@ -30,7 +30,11 @@ jobs:
           type "${env:RUNNER_TEMP}/GTestMem_Debug_x64.xml"
       - name: Merge reports
         run: |
+          dir "${env:RUNNER_TEMP}"
           npm install --prefer-offline --only=production -g junit-report-merger
+          dir "${env:RUNNER_TEMP}"
+          dir "${env:RUNNER_TEMP}/*_Debug_x64.xml"
+          echo jrm combined_Debug_x64.xml "${env:RUNNER_TEMP}/*_Debug_x64.xml"
           jrm combined_Debug_x64.xml "${env:RUNNER_TEMP}/*_Debug_x64.xml"
       - uses: actions/upload-artifact@v3
         with:
