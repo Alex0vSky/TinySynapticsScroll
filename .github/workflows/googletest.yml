@@ -20,16 +20,21 @@ jobs:
           key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
           restore-keys: |
             ${{ runner.os }}-node-
-      - name: Add MSBuild to PATH
-        uses: microsoft/setup-msbuild@v1.1
-      - name: Build tests
-        run: MSBuild qa/UnitTest/GTestMem -m -p:Configuration=Debug -p:Platform=x86
-      - uses: actions/upload-artifact@v3
+#      - name: Add MSBuild to PATH
+#        uses: microsoft/setup-msbuild@v1.1
+#      - name: Build tests
+#        run: MSBuild qa/UnitTest/GTestMem -m -p:Configuration=Debug -p:Platform=x86
+#      - uses: actions/upload-artifact@v3
+#        with:
+#          name: artifact-builded-tests
+#          path: |
+#            D:\a\turbo-octo-adventure\turbo-octo-adventure\qa\UnitTest\StaticLibrary\bin\Debug\StaticLibrary.lib
+#            D:\a\turbo-octo-adventure\turbo-octo-adventure\qa\UnitTest\GTestMem\bin\Debug\GTestMem.exe
+
+      - uses: actions/download-artifact@v3
         with:
           name: artifact-builded-tests
-          path: |
-            D:\a\turbo-octo-adventure\turbo-octo-adventure\qa\UnitTest\StaticLibrary\bin\Debug\StaticLibrary.lib
-            D:\a\turbo-octo-adventure\turbo-octo-adventure\qa\UnitTest\GTestMem\bin\Debug\GTestMem.exe
+
       - name: Run tests and collect reports
         run: |
           ."${env:GITHUB_WORKSPACE}\qa\UnitTest\GTestMem\bin\Debug\GTestMem.exe" --gtest_brief=1 --gtest_output="xml:${env:RUNNER_TEMP}/GTestMem_Debug_x64.xml"
@@ -44,6 +49,15 @@ jobs:
           jrm combined_Debug_x64.xml ${env:RUNNER_TEMP}\*_Debug_x64.xml
           jrm combined_Debug_x64.xml ${env:RUNNER_TEMP}\\*_Debug_x64.xml
           jrm combined_Debug_x64.xml ${env:RUNNER_TEMP}//*_Debug_x64.xml
+
+          $mypath="${env:RUNNER_TEMP}/*_Debug_x64.xml"
+          echo $mypath
+          jrm combined_Debug_x64.xml $mypath
+
+          $mypath="${env:RUNNER_TEMP}\*_Debug_x64.xml"
+          echo $mypath
+          jrm combined_Debug_x64.xml $mypath
+
           jrm combined_Debug_x64.xml D:/a/_temp/*_Debug_x64.xml
       - uses: actions/upload-artifact@v3
         with:
