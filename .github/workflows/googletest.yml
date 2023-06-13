@@ -40,11 +40,7 @@ jobs:
 #        with:
 #          name: artifact-all-tests-builded
 #          path: |
-#            D:\a\turbo-octo-adventure\turbo-octo-adventure\qa\UnitTest\bin\Debug\StaticLibrary.lib
-#            D:\a\turbo-octo-adventure\turbo-octo-adventure\qa\UnitTest\bin\Debug\GTest1.exe
-#            D:\a\turbo-octo-adventure\turbo-octo-adventure\qa\UnitTest\bin\Debug\GTestDefWindowProc.exe
-#            D:\a\turbo-octo-adventure\turbo-octo-adventure\qa\UnitTest\bin\Debug\GTestEmptyWorkingSet.exe
-#            D:\a\turbo-octo-adventure\turbo-octo-adventure\qa\UnitTest\bin\Debug\GTestMem.exe
+#            D:\a\turbo-octo-adventure\turbo-octo-adventure\qa\UnitTest\bin\Debug\*.exe
 
       - name: Run tests and collect reports
         # double run GTest1
@@ -54,31 +50,9 @@ jobs:
           ."${env:GITHUB_WORKSPACE}\qa\UnitTest\bin\Debug\GTestDefWindowProc.exe" --gtest_brief=1 --gtest_output="xml:${env:RUNNER_TEMP}/GTestDefWindowProc_Debug_x86.xml"
           ."${env:GITHUB_WORKSPACE}\qa\UnitTest\bin\Debug\GTestEmptyWorkingSet.exe" --gtest_brief=1 --gtest_output="xml:${env:RUNNER_TEMP}/GTestEmptyWorkingSet_Debug_x86.xml"
           ."${env:GITHUB_WORKSPACE}\qa\UnitTest\bin\Debug\GTestMem.exe" --gtest_brief=1 --gtest_output="xml:${env:RUNNER_TEMP}/GTestMem_Debug_x86.xml"
-
-      - name: Install merger0
-        if: always()
-        run: |
-          echo $(where.exe pip| select -first 1)
-          echo $(gcm notepad -TotalCount 1).Path
-          echo $(gcm pip -TotalCount 1).Path
-      - name: Install merger1
-        if: always()
-        run: py -3.10 pip.exe install junitparser
-      - name: Install merger2
-        if: always()
-        run: py -3.10 $(where.exe pip| select -first 1) install junitparser
-      - name: Install merger2
-        if: always()
-        run: |
-          $cmd = "py -3.10 $(gcm pip -TotalCount 1).Path install junitparser"
-          echo $cmd
-          $cmd = "py -3.10 $(where.exe pip| select -first 1) install junitparser"
-          echo $cmd
-          .$cmd
-
       - name: Install merger
         if: always()
-        run: pip install junitparser
+        run: py -3.10 $(where.exe pip| select -first 1) install junitparser
       - name: Merge reports
         if: always()
         run: junitparser merge --suite-name AllTests --glob "${env:RUNNER_TEMP}\*_Debug_x86.xml" "combined_Debug_x86.xml"
