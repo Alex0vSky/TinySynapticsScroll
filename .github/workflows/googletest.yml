@@ -34,6 +34,7 @@ jobs:
       - uses: actions/download-artifact@v3
         with:
           name: artifact-builded-tests
+          path: D:\a\turbo-octo-adventure\turbo-octo-adventure\qa\UnitTest
 
       - name: Run tests and collect reports
         run: |
