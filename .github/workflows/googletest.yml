@@ -8,21 +8,10 @@ jobs:
       contents: read # for "actions/checkout@v3" when GITHUB_TOKEN
     steps:
       - uses: actions/checkout@v3
-#      - name: asd
- #       continue-on-error: true
-  #      run: echo "${{env:GITHUB_WORKSPACE}}"
-      - name: asd
-        continue-on-error: true
-        run: echo ${{env.GITHUB_WORKSPACE}}
+
       - name: asd
         continue-on-error: true
         run: echo ${env:GITHUB_WORKSPACE}
-      - name: asd
-        continue-on-error: true
-        run: echo ${env.GITHUB_WORKSPACE}
-      - name: asd
-        continue-on-error: true
-        run: echo ${GITHUB_WORKSPACE}
         
       - name: Download artifact
         id: download-artifact
@@ -31,7 +20,7 @@ jobs:
           github_token: ${{secrets.GITHUB_TOKEN}}
           workflow: googletest.yml
           name: artifact-all-tests-builded
-          path: ${{env.GITHUB_WORKSPACE}}\qa\UnitTest\bin\Debug # build from *.sln
+          path: ${env:GITHUB_WORKSPACE}\qa\UnitTest\bin\Debug # build from *.sln
           search_artifacts: true
       - name: Setup cache python
         uses: actions/cache@v3
