@@ -1,7 +1,6 @@
 name: Google Test
 on: [workflow_dispatch]
 jobs:
-#       continue-on-error: true
   google-tests:
     runs-on: windows-latest
     permissions:
@@ -9,33 +8,24 @@ jobs:
       contents: read # for "actions/checkout@v3" when GITHUB_TOKEN
     steps:
       - uses: actions/checkout@v3
-
-      - name: Download artifact1
-        uses: dawidd6/action-download-artifact@v2
-        env:
-          asd: ${{ env.GITHUB_WORKSPACE }}
-        continue-on-error: true
-        with:
-          github_token: ${{secrets.GITHUB_TOKEN}}
-          workflow: googletest.yml
-          name: artifact-all-tests-builded
-          path: ${{github.workspace}}\qa\UnitTest\bin\Debug # build from *.sln
-          search_artifacts: true
-
       - name: Download artifact
         uses: dawidd6/action-download-artifact@v2
         with:
           github_token: ${{secrets.GITHUB_TOKEN}}
           workflow: googletest.yml
           name: artifact-all-tests-builded
-#          path: ${env:GITHUB_WORKSPACE}\qa\UnitTest\bin\Debug # build from *.sln
-          path: D:\a\turbo-octo-adventure\turbo-octo-adventure\qa\UnitTest\bin\Debug # build from *.sln
+          path: ${{github.workspace}}\qa\UnitTest\bin\Debug # build from *.sln
           search_artifacts: true
-
-      - name: asd
+      - name: requirements.txt
         continue-on-error: true
-        run: echo ${env:GITHUB_WORKSPACE}
-
+        run: |
+          dir "${env:GITHUB_WORKSPACE}\qa\UnitTest"
+          echo "env:PATH: "${env:PATH}
+          echo "github.workspace: "${{github.workspace}}
+          echo "env:GITHUB_WORKSPACE: "${env:GITHUB_WORKSPACE}
+          echo "pip cache dir: "; pip cache dir
+          echo "pip cache list: "; pip cache list
+          echo "py --version: "; py --version
       - name: Run tests and collect reports
         run: | # double run GTest1
           ."${env:GITHUB_WORKSPACE}\qa\UnitTest\bin\Debug\GTest1.exe" --gtest_brief=1 --gtest_output="xml:${env:RUNNER_TEMP}/GTest1_Debug_x86.xml"
