@@ -12,12 +12,14 @@ jobs:
 
       - name: Download artifact1
         uses: dawidd6/action-download-artifact@v2
+        env:
+          asd: ${{ env.GITHUB_WORKSPACE }}
         continue-on-error: true
         with:
           github_token: ${{secrets.GITHUB_TOKEN}}
           workflow: googletest.yml
           name: artifact-all-tests-builded
-          path: ${{env.GITHUB_WORKSPACE}}\qa\UnitTest\bin\Debug # build from *.sln
+          path: $asd\qa\UnitTest\bin\Debug # build from *.sln
           search_artifacts: true
 
       - name: Download artifact
