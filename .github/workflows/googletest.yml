@@ -20,13 +20,14 @@ jobs:
           github_token: ${{secrets.GITHUB_TOKEN}}
           workflow: googletest.yml
           name: artifact-all-tests-builded
-          path: ${env:GITHUB_WORKSPACE}\qa\UnitTest\bin\Debug # build from *.sln
+#          path: ${env:GITHUB_WORKSPACE}\qa\UnitTest\bin\Debug # build from *.sln
+          path: D:\a\turbo-octo-adventure\turbo-octo-adventure\qa\UnitTest\bin\Debug # build from *.sln
           search_artifacts: true
-      - name: Setup cache python
-        uses: actions/cache@v3
+
+      - uses: actions/setup-python@v4
         with:
-            path: ${{ env.pythonLocation }}
-            key: ${{ env.pythonLocation }}-${{ hashFiles('setup.py') }}-${{ hashFiles('dev-requirements.txt') }}
+          python-version: 3.10
+          cache: 'pip'
 
 #      - name: Add MSBuild to PATH
 #        uses: microsoft/setup-msbuild@v1.1
