@@ -10,16 +10,6 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
-      - name: Download artifact1
-        uses: dawidd6/action-download-artifact@v2
-        continue-on-error: true
-        with:
-          github_token: ${{secrets.GITHUB_TOKEN}}
-          workflow: googletest.yml
-          name: artifact-all-tests-builded
-          path: ${{env:GITHUB_WORKSPACE}}\qa\UnitTest\bin\Debug # build from *.sln
-          search_artifacts: true
-
       - name: Download artifact
         uses: dawidd6/action-download-artifact@v2
         with:
