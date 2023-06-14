@@ -26,6 +26,10 @@ jobs:
           echo "pip cache dir: "; pip cache dir
           echo "pip cache list: "; pip cache list
           echo "py --version: "; py --version
+      - uses: actions/setup-python@v4
+        with:
+          python-version: 3.11.3
+          cache: 'pip'
       - name: Run tests and collect reports
         run: | # double run GTest1
           ."${env:GITHUB_WORKSPACE}\qa\UnitTest\bin\Debug\GTest1.exe" --gtest_brief=1 --gtest_output="xml:${env:RUNNER_TEMP}/GTest1_Debug_x86.xml"
