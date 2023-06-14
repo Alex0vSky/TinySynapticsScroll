@@ -1,6 +1,7 @@
 name: Google Test
 on: [workflow_dispatch]
 jobs:
+#       continue-on-error: true
   google-tests:
     runs-on: windows-latest
     permissions:
@@ -15,22 +16,16 @@ jobs:
           github_token: ${{secrets.GITHUB_TOKEN}}
           workflow: googletest.yml
           name: artifact-all-tests-builded
-          path: D:\a\turbo-octo-adventure\turbo-octo-adventure\qa\UnitTest\bin\Debug # build from *.sln
+          path: "${env:GITHUB_WORKSPACE}\qa\UnitTest\bin\Debug" # build from *.sln
           search_artifacts: true
       - uses: actions/setup-python@v4
-        id: cp310
         with:
-          python-version: |
-            2.7
-            3.10
-#          cache: 'pip'
+          python-version: 3.10
       - name: Setup cache python
         uses: actions/cache@v3
         with:
             path: ${{ env.pythonLocation }}
             key: ${{ env.pythonLocation }}-${{ hashFiles('setup.py') }}-${{ hashFiles('dev-requirements.txt') }}
-      - name: Check cache hit
-        run: echo '${{ steps.cp310.outputs.cache-hit }}'
 
 #      - name: Add MSBuild to PATH
 #        uses: microsoft/setup-msbuild@v1.1
@@ -40,8 +35,7 @@ jobs:
 #        with:
 #          name: artifact-all-tests-builded
 #          path: |
-#            D:\a\turbo-octo-adventure\turbo-octo-adventure\qa\UnitTest\bin\Debug\*.exe
-
+#            "${env:GITHUB_WORKSPACE}\qa\UnitTest\bin\Debug"\*.exe # build from *.sln
       - name: Run tests and collect reports
         run: | # double run GTest1
           ."${env:GITHUB_WORKSPACE}\qa\UnitTest\bin\Debug\GTest1.exe" --gtest_brief=1 --gtest_output="xml:${env:RUNNER_TEMP}/GTest1_Debug_x86.xml"
@@ -50,14 +44,14 @@ jobs:
           ."${env:GITHUB_WORKSPACE}\qa\UnitTest\bin\Debug\GTestEmptyWorkingSet.exe" --gtest_brief=1 --gtest_output="xml:${env:RUNNER_TEMP}/GTestEmptyWorkingSet_Debug_x86.xml"
           ."${env:GITHUB_WORKSPACE}\qa\UnitTest\bin\Debug\GTestMem.exe" --gtest_brief=1 --gtest_output="xml:${env:RUNNER_TEMP}/GTestMem_Debug_x86.xml"
       - name: Install merger
-        run: py -3.10 $(where.exe pip| select -first 1) install junitparser
+        run: pip install junitparser
       - name: Merge reports
         run: junitparser merge --suite-name AllTests --glob "${env:RUNNER_TEMP}\*_Debug_x86.xml" "combined_Debug_x86.xml"
       - name: Install converter
-        run: git clone https://github.com/burlachenkok/gtest_report
+        run: git clone https://github.com/Alexovsky5/gtest_report
       - name: Convert xml to html
         working-directory: ./gtest_report # directory html_resources must be in current dir
-        run: py -2.7 "scripts\genHtmlReportFromGtest.py" "out/gtest_report.html" "../combined_Debug_x86.xml"
+        run: scripts\genHtmlReportFromGtest.py "out/gtest_report.html" "../combined_Debug_x86.xml"
       - uses: actions/upload-artifact@v3
         with:
           name: my-artifact
