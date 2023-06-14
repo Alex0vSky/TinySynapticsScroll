@@ -17,7 +17,7 @@ jobs:
           github_token: ${{secrets.GITHUB_TOKEN}}
           workflow: googletest.yml
           name: artifact-all-tests-builded
-          path: ${GITHUB_WORKSPACE}\qa\UnitTest\bin\Debug # build from *.sln
+          path: ${env.GITHUB_WORKSPACE}\qa\UnitTest\bin\Debug # build from *.sln
           search_artifacts: true
 
       - name: Download artifact
@@ -33,17 +33,6 @@ jobs:
       - name: asd
         continue-on-error: true
         run: echo ${env:GITHUB_WORKSPACE}
-
-      - name: requirements.txt
-        continue-on-error: true
-        run: |
-          dir "${env:GITHUB_WORKSPACE}\qa\UnitTest"
-          set PATH
-          py --version
-
-      - uses: actions/setup-python@v4
-        with:
-          cache: 'pip'
 
       - name: Run tests and collect reports
         run: | # double run GTest1
