@@ -16,19 +16,9 @@ jobs:
           name: artifact-all-tests-builded
           path: ${{github.workspace}}\qa\UnitTest\bin\Debug # build from *.sln
           search_artifacts: true
-      - name: requirements.txt
-        continue-on-error: true
-        run: |
-          dir "${env:GITHUB_WORKSPACE}\qa\UnitTest"
-          echo "env:PATH: "${env:PATH}
-          echo "github.workspace: "${{github.workspace}}
-          echo "env:GITHUB_WORKSPACE: "${env:GITHUB_WORKSPACE}
-          echo "pip cache dir: "; pip cache dir
-          echo "pip cache list: "; pip cache list
-          echo "py --version: "; py --version
       - uses: actions/setup-python@v4
         with:
-          python-version: 3.11.3
+          python-version: '3.x'
           cache: 'pip'
       - name: Run tests and collect reports
         run: | # double run GTest1
