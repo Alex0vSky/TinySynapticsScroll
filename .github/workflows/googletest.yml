@@ -10,6 +10,16 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
+      - name: Download artifact1
+        uses: dawidd6/action-download-artifact@v2
+        continue-on-error: true
+        with:
+          github_token: ${{secrets.GITHUB_TOKEN}}
+          workflow: googletest.yml
+          name: artifact-all-tests-builded
+          path: ${GITHUB_WORKSPACE}\qa\UnitTest\bin\Debug # build from *.sln
+          search_artifacts: true
+
       - name: Download artifact
         uses: dawidd6/action-download-artifact@v2
         with:
@@ -26,7 +36,10 @@ jobs:
 
       - name: requirements.txt
         continue-on-error: true
-        run: dir "${env:GITHUB_WORKSPACE}\qa\UnitTest"
+        run: |
+          dir "${env:GITHUB_WORKSPACE}\qa\UnitTest"
+          set PATH
+          py --version
 
       - uses: actions/setup-python@v4
         with:
@@ -47,7 +60,7 @@ jobs:
         run: git clone https://github.com/Alexovsky5/gtest_report
       - name: Convert xml to html
         working-directory: ./gtest_report # directory html_resources must be in current dir
-        run: scripts\genHtmlReportFromGtest.py "out/gtest_report.html" "../combined_Debug_x86.xml"
+        run: py scripts\genHtmlReportFromGtest.py "out/gtest_report.html" "../combined_Debug_x86.xml"
       - uses: actions/upload-artifact@v3
         with:
           name: my-artifact
