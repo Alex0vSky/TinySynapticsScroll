@@ -1,7 +1,6 @@
 name: Google Test
 on: [workflow_dispatch]
 jobs:
-#       continue-on-error: true
   google-tests:
     runs-on: windows-latest
     permissions:
@@ -9,6 +8,14 @@ jobs:
       contents: read # for "actions/checkout@v3" when GITHUB_TOKEN
     steps:
       - uses: actions/checkout@v3
+      - name: asd
+        continue-on-error: true
+        run: |
+          echo ${{env:GITHUB_WORKSPACE}}
+          echo ${{env.GITHUB_WORKSPACE}}
+          echo ${env:GITHUB_WORKSPACE}
+          echo ${env.GITHUB_WORKSPACE}
+          echo ${GITHUB_WORKSPACE}
       - name: Download artifact
         id: download-artifact
         uses: dawidd6/action-download-artifact@v2
@@ -18,9 +25,6 @@ jobs:
           name: artifact-all-tests-builded
           path: ${{env.GITHUB_WORKSPACE}}\qa\UnitTest\bin\Debug # build from *.sln
           search_artifacts: true
-      - uses: actions/setup-python@v4
-        with:
-          python-version: 3.10
       - name: Setup cache python
         uses: actions/cache@v3
         with:
@@ -36,13 +40,6 @@ jobs:
 #          name: artifact-all-tests-builded
 #          path: |
 #            "${env:GITHUB_WORKSPACE}\qa\UnitTest\bin\Debug"\*.exe # build from *.sln
-      - name: Run tests and collect reports
-        run: | # double run GTest1
-          ."${env:GITHUB_WORKSPACE}\qa\UnitTest\bin\Debug\GTest1.exe" --gtest_brief=1 --gtest_output="xml:${env:RUNNER_TEMP}/GTest1_Debug_x86.xml"
-          ."${env:GITHUB_WORKSPACE}\qa\UnitTest\bin\Debug\GTest1.exe" --gtest_brief=1 --gtest_output="xml:${env:RUNNER_TEMP}/GTest1_Debug_x86.xml"
-          ."${env:GITHUB_WORKSPACE}\qa\UnitTest\bin\Debug\GTestDefWindowProc.exe" --gtest_brief=1 --gtest_output="xml:${env:RUNNER_TEMP}/GTestDefWindowProc_Debug_x86.xml"
-          ."${env:GITHUB_WORKSPACE}\qa\UnitTest\bin\Debug\GTestEmptyWorkingSet.exe" --gtest_brief=1 --gtest_output="xml:${env:RUNNER_TEMP}/GTestEmptyWorkingSet_Debug_x86.xml"
-          ."${env:GITHUB_WORKSPACE}\qa\UnitTest\bin\Debug\GTestMem.exe" --gtest_brief=1 --gtest_output="xml:${env:RUNNER_TEMP}/GTestMem_Debug_x86.xml"
       - name: Install merger
         run: pip install junitparser
       - name: Merge reports
