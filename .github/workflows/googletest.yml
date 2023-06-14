@@ -8,9 +8,9 @@ jobs:
       contents: read # for "actions/checkout@v3" when GITHUB_TOKEN
     steps:
       - uses: actions/checkout@v3
-      - name: asd
-        continue-on-error: true
-        run: echo "${{env:GITHUB_WORKSPACE}}"
+#      - name: asd
+ #       continue-on-error: true
+  #      run: echo "${{env:GITHUB_WORKSPACE}}"
       - name: asd
         continue-on-error: true
         run: echo ${{env.GITHUB_WORKSPACE}}
