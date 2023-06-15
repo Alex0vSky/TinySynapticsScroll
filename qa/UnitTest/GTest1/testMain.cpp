@@ -49,7 +49,7 @@ int main(int argc, char **argv) {
 	::testing::InitGoogleTest(&argc, argv);
 	// Wait loading dlls, for gmock-win32 patching
 	std::cout << "Running main() from testMain.cpp" << std::endl;
-	const unsigned int c_uTryCountMax = 5;
+	const unsigned int c_uTryCountMax = 10;
 	unsigned int uCountTry = 0;
 	std::string strPref = "[          ]";
 	//for ( ; uCountTry < c_uTryCountMax; ++uCountTry ) {
@@ -69,6 +69,7 @@ int main(int argc, char **argv) {
  			mockModule_restoreModuleFunc( funcAddr, newFunc, &oldFunc );
 			WaitLoadingDlls( );
 		} catch (std::runtime_error) {
+			::Sleep( 300 );
 			continue;
 		}
 		break;
