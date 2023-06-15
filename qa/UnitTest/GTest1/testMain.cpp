@@ -49,7 +49,7 @@ int main(int argc, char **argv) {
 	::testing::InitGoogleTest(&argc, argv);
 	// Wait loading dlls, for gmock-win32 patching
 	std::cout << "Running main() from testMain.cpp" << std::endl;
-	const unsigned int c_uTryCountMax = 10;
+	const unsigned int c_uTryCountMax = 20;
 	unsigned int uCountTry = 0;
 	std::string strPref = "[          ]";
 	//for ( ; uCountTry < c_uTryCountMax; ++uCountTry ) {
