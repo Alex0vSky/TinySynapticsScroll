@@ -52,10 +52,26 @@ int main(int argc, char **argv) {
 	const unsigned int c_uTryCountMax = 5;
 	unsigned int uCountTry = 0;
 	std::string strPref = "[          ]";
+	//for ( ; uCountTry < c_uTryCountMax; ++uCountTry ) {
+	//	std::cout << strPref << " waiting import patching for gmock-win32, count: " << (1 + uCountTry) << std::endl;
+	//	if ( WaitLoadingDlls( ) ) 
+	//		break;
+	//}
 	for ( ; uCountTry < c_uTryCountMax; ++uCountTry ) {
 		std::cout << strPref << " waiting import patching for gmock-win32, count: " << (1 + uCountTry) << std::endl;
-		if ( WaitLoadingDlls( ) ) 
-			break;
+		void* funcAddr = &::DestroyWindow;
+		void* newFunc = (void*)1; // any not zero value
+		void* oldFunc = 0;
+		try {
+			//throw std::runtime_error{ "failed to restore module function" };
+			WaitLoadingDlls( );
+			mockModule_patchModuleFunc( funcAddr, newFunc, &oldFunc );
+ 			mockModule_restoreModuleFunc( funcAddr, newFunc, &oldFunc );
+			WaitLoadingDlls( );
+		} catch (std::runtime_error) {
+			continue;
+		}
+		break;
 	}
 	if ( uCountTry >= c_uTryCountMax ) {
 		// From macro RUN_ALL_TESTS: Returns 0 if successful, or 1 otherwise.
