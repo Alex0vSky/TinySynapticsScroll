@@ -22,7 +22,7 @@ jobs:
         uses: microsoft/setup-msbuild@v1.1
       - name: Build tests
 #        run: MSBuild qa/UnitTest -m -p:Configuration=Debug -p:Platform=x86 # build from *.sln
-        run: MSBuild qa/UnitTest/GTestMem -m -p:Configuration=Debug -p:Platform=x86 # build from *.vcxproj
+        run: MSBuild qa/UnitTest/GTest1 -m -p:Configuration=Debug -p:Platform=x86 # build from *.vcxproj
 
 #      - name: Upload artifact
 #        uses: actions/upload-artifact@v3
@@ -33,7 +33,7 @@ jobs:
 
       - name: Run tests and collect reports
         run: |
-          ."${env:GITHUB_WORKSPACE}\qa\UnitTest\GTestMem\bin\Debug\GTestMem.exe" --gtest_output="xml:${env:RUNNER_TEMP}/GTestMem_Debug_x64.xml"
+          ."${env:GITHUB_WORKSPACE}\qa\UnitTest\GTest1\bin\Debug\GTest1.exe" --gtest_output="xml:${env:RUNNER_TEMP}/GTest1_Debug_x64.xml"
 #          ."${env:GITHUB_WORKSPACE}\qa\UnitTest\bin\Debug\GTest1.exe" --gtest_output="xml:${env:RUNNER_TEMP}/GTest1_Debug_x86.xml"
 #          ."${env:GITHUB_WORKSPACE}\qa\UnitTest\bin\Debug\GTest1.exe" --gtest_output="xml:${env:RUNNER_TEMP}/GTest1_Debug_x86.xml"
 #          ."${env:GITHUB_WORKSPACE}\qa\UnitTest\bin\Debug\GTestDefWindowProc.exe" --gtest_brief=1 --gtest_output="xml:${env:RUNNER_TEMP}/GTestDefWindowProc_Debug_x86.xml"
