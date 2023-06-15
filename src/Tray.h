@@ -36,7 +36,8 @@ public:
 		if ( !::InitCommonControlsEx( &stIccex ) ) 
 			return false;
 		WNDCLASSEXA stWc;
-		Tool::Zeroid( stWc ); stWc.cbSize = sizeof( stWc ); 
+		Tool::Zeroid( stWc );
+		stWc.cbSize = sizeof( stWc ); 
 		stWc.style = CS_HREDRAW | CS_VREDRAW; 
 		stWc.lpfnWndProc = lpfnWndProc;
 		stWc.hInstance = m_hInst;

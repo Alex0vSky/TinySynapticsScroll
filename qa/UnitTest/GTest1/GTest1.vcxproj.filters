@@ -8,7 +8,7 @@
     <ClCompile Include="testSettingsScroll.cpp" />
     <ClCompile Include="testSettingsDialog.cpp" />
     <ClCompile Include="testForwardToInstance.cpp" />
-    <ClCompile Include="testIncludeMain.cpp" />
+    <ClCompile Include="testMain.cpp" />
     <ClCompile Include="testWrapperTouchPad.cpp" />
     <ClCompile Include="testWndProc.cpp" />
     <ClCompile Include="testTray.cpp" />

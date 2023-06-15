@@ -50,7 +50,7 @@
   </PropertyGroup>
   <ItemGroup>
     <ClCompile Include="testForwardToInstance.cpp" />
-    <ClCompile Include="testIncludeMain.cpp" />
+    <ClCompile Include="testMain.cpp" />
     <ClCompile Include="testMenu.cpp" />
     <ClCompile Include="testRegistry.cpp" />
     <ClCompile Include="pch.cpp">
