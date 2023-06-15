@@ -48,13 +48,14 @@ static bool WaitLoadingDlls() {
 int main(int argc, char **argv) {
 	::testing::InitGoogleTest(&argc, argv);
 	// Wait loading dlls, for gmock-win32 patching
+	std::cout << "Running main() from testMain.cpp" << std::endl;
 	const unsigned int c_uTryCountMax = 5;
 	unsigned int uCountTry = 0;
 	std::string strPref = "[          ]";
 	for ( ; uCountTry < c_uTryCountMax; ++uCountTry ) {
+		std::cout << strPref << " waiting import patching for gmock-win32, count: " << (1 + uCountTry) << std::endl;
 		if ( WaitLoadingDlls( ) ) 
 			break;
-		std::cout << strPref << " waiting import patching for gmock-win32, count: " << (1 + uCountTry) << std::endl;
 	}
 	if ( uCountTry >= c_uTryCountMax ) {
 		// From macro RUN_ALL_TESTS: Returns 0 if successful, or 1 otherwise.
