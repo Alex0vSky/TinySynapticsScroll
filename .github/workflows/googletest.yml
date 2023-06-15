@@ -23,7 +23,7 @@ jobs:
       - name: Build tests
         run: MSBuild qa/UnitTest -m -p:Configuration=Debug -p:Platform=x86
       - name: Upload artifact
-      - uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v3
         with:
           name: artifact-build-tests-debug-x86
           path: |
