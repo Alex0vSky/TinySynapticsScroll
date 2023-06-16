@@ -46,13 +46,15 @@ jobs:
         continue-on-error: true
         run: |
           dir "${{github.workspace}}\${env:strNameOccSetupFile}"
-          echo ${env:RUNNER_TEMP}\${env:relSetupOcc}
           echo "${{github.workspace}}\${env:strNameOccSetupFile}" /VERYSILENT /DIR=${env:RUNNER_TEMP}\${env:relSetupOcc}
-          ."${{github.workspace}}\${env:strNameOccSetupFile}" /VERYSILENT /DIR=${env:RUNNER_TEMP}\${env:relSetupOcc}
-          ."${{github.workspace}}\${env:strNameOccSetupFile}" /VERYSILENT /DIR=${env:relSetupOcc}
-          ."${{github.workspace}}\${env:strNameOccSetupFile}" /VERYSILENT /DIR=AsdAsd
+          ."${{github.workspace}}\${env:strNameOccSetupFile}" /VERYSILENT /LOG /DIR=${env:RUNNER_TEMP}\${env:relSetupOcc}
+          ."${{github.workspace}}\${env:strNameOccSetupFile}" /VERYSILENT /LOG /DIR=${env:relSetupOcc}
+          ."${{github.workspace}}\${env:strNameOccSetupFile}" /VERYSILENT /LOG /DIR=AsdAsd
           dir .
           dir ${env:RUNNER_TEMP}
+      - name: Show tool
+        continue-on-error: true
+        run: |
           dir ${env:RUNNER_TEMP}\${env:relSetupOcc}
 
 #      - name: Show debug
