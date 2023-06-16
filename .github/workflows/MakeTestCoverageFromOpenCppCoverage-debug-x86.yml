@@ -1,9 +1,9 @@
 name: Make test coverage from OpenCppCoverage (debug-x86)
 on: [workflow_dispatch]
 env: # build from *.sln, debug-x86
-  dirTestsExe0: '${env:GITHUB_WORKSPACE}\qa\UnitTest\bin\Debug\'
-  dirTestsExe1: "${env:GITHUB_WORKSPACE}"
-  dirTestsExe2: ${env:GITHUB_WORKSPACE}\qa\UnitTest\bin\Debug\
+  dirTestsExe0: '${{github.workspace}}\qa\UnitTest\bin\Debug\'
+  dirTestsExe1: "${{github.workspace}}"
+  dirTestsExe2: ${{github.workspace}}\qa\UnitTest\bin\Debug\
 jobs:
   test-coverage:
     runs-on: windows-latest
@@ -39,6 +39,7 @@ jobs:
           repo: "OpenCppCoverage/OpenCppCoverage"
           cache: enable
           arch: x86
+          # tag: 'release-0.9.9.0'
 
       - name: Run OpenCppCoverage
         run: |
