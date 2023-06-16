@@ -42,7 +42,8 @@ jobs:
 #          tag: 'release-0.9.9.0'
 #          tag: 'OpenCppCoverageSetup-x86-0.9.9.0.exe'
           arch: x86
-          tag: '0.9.9.0'
+#          tag: '0.9.9.0'
+          extension-matching: false
 
       - name: Run OpenCppCoverage
         run: |
