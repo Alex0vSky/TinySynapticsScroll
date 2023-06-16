@@ -42,13 +42,17 @@ jobs:
           tag: ${{env.strGhTagOccSetupFile}}
 
       # +-TODO: use ${env:RUNNER_TEMP} for output data
+#          ."${{github.workspace}}\${env:strNameOccSetupFile}" /VERYSILENT /SUPPRESSMSGBOXES /NORESTART /LOG="${env:RUNNER_TEMP}\${env:strNameOccSetupFile}".log /DIR="${env:RUNNER_TEMP}\${env:relSetupOcc}"
+#          ."${{github.workspace}}\${env:strNameOccSetupFile}" /VERYSILENT /SUPPRESSMSGBOXES /NORESTART /LOG="${env:RUNNER_TEMP}\${env:strNameOccSetupFile}".log /DIR="${env:relSetupOcc}"
+#          ."${{github.workspace}}\${env:strNameOccSetupFile}" /VERYSILENT /SUPPRESSMSGBOXES /NORESTART /LOG="${env:RUNNER_TEMP}\${env:strNameOccSetupFile}".log /DIR=AsdAsd
       - name: Install tool
         continue-on-error: true
         run: |
-          dir "${{github.workspace}}\${env:strNameOccSetupFile}"
-          ."${{github.workspace}}\${env:strNameOccSetupFile}" /VERYSILENT /LOG="${env:RUNNER_TEMP}\${env:strNameOccSetupFile}".log /DIR="${env:RUNNER_TEMP}\${env:relSetupOcc}"
-          ."${{github.workspace}}\${env:strNameOccSetupFile}" /VERYSILENT /LOG="${env:RUNNER_TEMP}\${env:strNameOccSetupFile}".log /DIR="${env:relSetupOcc}"
-          ."${{github.workspace}}\${env:strNameOccSetupFile}" /VERYSILENT /LOG="${env:RUNNER_TEMP}\${env:strNameOccSetupFile}".log /DIR=AsdAsd
+          dir "${env:strNameOccSetupFile}"
+          $args="/VERYSILENT /SUPPRESSMSGBOXES /DIR=${env:RUNNER_TEMP}\${env:relSetupOcc} /LOG=${env:RUNNER_TEMP}\${env:strNameOccSetupFile}.log"
+          echo $env:strNameOccSetupFile
+          echo $args
+          Start-Process "${env:strNameOccSetupFile}" -ArgumentList $args -Wait 
           dir .
           dir ${env:RUNNER_TEMP}
       - name: Show tool0
@@ -110,8 +114,9 @@ jobs:
           $program_to_run="${env:dirTestExecutables}\${env:module0} --gtest_brief=1"
           cd src
           echo 3
-          ."${env:RUNNER_TEMP}\${env:relSetupOcc}\${env:strOccExecutable}" -q --modules ${env:dirTestExecutables} --excluded_sources "src\Main.h" --excluded_sources "src\Legacy" --excluded_sources "qa\UnitTest" --excluded_sources "D:\a\_work" --excluded_sources "C:\Program Files" --excluded_line_regex .*@NOCOVERAGE.* --export_type html:${{github.workspace}}\Coverage -- ${env:dirPathResult}\${env:module0} --gtest_brief=1
-
+          $args="-q $modules $excluded_sources $excluded_line_regex $export_type -- $running"
+          Start-Process "${env:RUNNER_TEMP}\${env:relSetupOcc}\${env:strOccExecutable}" -ArgumentList $args
+# ."${env:RUNNER_TEMP}\${env:relSetupOcc}\${env:strOccExecutable}" -q --modules ${env:dirTestExecutables} --excluded_sources "src\Main.h" --excluded_sources "src\Legacy" --excluded_sources "qa\UnitTest" --excluded_sources "D:\a\_work" --excluded_sources "C:\Program Files" --excluded_line_regex .*@NOCOVERAGE.* --export_type html:${{github.workspace}}\Coverage -- ${env:dirPathResult}\${env:module0} --gtest_brief=1
       - uses: actions/upload-artifact@v3
         with:
           name: artifact-tests-coverage-open-cpp-coverage
