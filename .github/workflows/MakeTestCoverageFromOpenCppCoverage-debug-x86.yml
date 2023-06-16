@@ -40,7 +40,9 @@ jobs:
           cache: enable
 #          arch: x86
 #          tag: 'release-0.9.9.0'
-          tag: 'OpenCppCoverageSetup-x86-0.9.9.0.exe'
+#          tag: 'OpenCppCoverageSetup-x86-0.9.9.0.exe'
+          arch: x86
+          tag: '0.9.9.0'
 
       - name: Run OpenCppCoverage
         run: |
