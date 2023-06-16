@@ -2,8 +2,6 @@ name: Make test coverage from OpenCppCoverage (debug-x86)
 on: [workflow_dispatch]
 env: # build from *.sln, debug-x86
   dirTestsExe0: '${{github.workspace}}\qa\UnitTest\bin\Debug\'
-  dirTestsExe1: "${{github.workspace}}"
-  dirTestsExe2: ${{github.workspace}}\qa\UnitTest\bin\Debug\
 jobs:
   test-coverage:
     runs-on: windows-latest
@@ -24,31 +22,30 @@ jobs:
       - name: Show env
         run: |
             echo 'dirTestsExe0 :'${env:dirTestsExe0}
-            echo 'dirTestsExe1 :'${env:dirTestsExe1}
-            echo 'dirTestsExe2 :'${env:dirTestsExe2}
-
-#      - name: Install OpenCppCoverage
-#        - uses: robinraju/release-downloader@v1.8
-#          with:
-#            repository: "OpenCppCoverage/OpenCppCoverage"
-#            latest: true
 
       - name: Install OpenCppCoverage
-        uses: jaxxstorm/action-install-gh-release@v1.10.0
+        uses: robinraju/release-downloader@v1.8
         with:
-          repo: "OpenCppCoverage/OpenCppCoverage"
-          cache: enable
-#          arch: x86
-#          tag: 'release-0.9.9.0'
-#          tag: 'OpenCppCoverageSetup-x86-0.9.9.0.exe'
-#          arch: x86
-#          tag: '0.9.9.0'
-          extension-matching: false
-          arch: OpenCppCoverageSetup-x86
+          repository: "OpenCppCoverage/OpenCppCoverage"
+          latest: true
+          fileName: "OpenCppCoverageSetup-x86-0.9.9.0.exe"
+
+#      - name: Install OpenCppCoverage
+#        uses: jaxxstorm/action-install-gh-release@v1.10.0
+#        with:
+#          repo: "OpenCppCoverage/OpenCppCoverage"
+#          cache: enable
+##          arch: x86
+##          tag: 'release-0.9.9.0'
+##          tag: 'OpenCppCoverageSetup-x86-0.9.9.0.exe'
+##          arch: x86
+##          tag: '0.9.9.0'
+#          extension-matching: false
+#          arch: OpenCppCoverageSetup-x86
 
       - name: Run OpenCppCoverage
         run: |
-          # build from *.sln # double because windows system hooks from AppCompat conflicts with gmock-win32 hooks
+          OpenCppCoverageSetup-x86-0.9.9.0.exe
           OpenCppCoverage.exe
 
 #      - uses: actions/upload-artifact@v3
