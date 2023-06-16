@@ -45,8 +45,8 @@ jobs:
 
       - name: Run OpenCppCoverage
         run: |
-          OpenCppCoverageSetup-x86-0.9.9.0.exe
-          OpenCppCoverage.exe
+          .OpenCppCoverageSetup-x86-0.9.9.0.exe
+          .OpenCppCoverage.exe
 
 #      - uses: actions/upload-artifact@v3
 #        with:
