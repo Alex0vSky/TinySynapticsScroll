@@ -42,12 +42,12 @@ jobs:
       # TODO: use ${env:RUNNER_TEMP} for output data
       - name: Install Open_Cpp_Coverage
         run: |
-          ."${{github.workspace}}\${env:strNameOpenCppCoverageSetup}" /VERYSILENT /DIR="${env:strDirSetupOpenCppCoverage}"
+          ."${{github.workspace}}\${env:strNameOpenCppCoverageSetup} /VERYSILENT /DIR=${env:strDirSetupOpenCppCoverage}"
 
       - name: Show Open_Cpp_Coverage
         continue-on-error: true
+#          dir ${{github.workspace}}\Occ\OpenCppCoverage.exe
         run: |
-          dir ${{github.workspace}}\Occ\OpenCppCoverage.exe
           echo 'env:module0: '"${env:module0}"
           echo 'env:module0: '${env:module0}
           echo "env:module0: ${env:module0}"
