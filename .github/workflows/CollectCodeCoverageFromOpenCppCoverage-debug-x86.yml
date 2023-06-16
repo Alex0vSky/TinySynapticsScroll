@@ -44,7 +44,9 @@ jobs:
       # +-TODO: use ${env:RUNNER_TEMP} for output data
       - name: Install tool
         run: |
+          echo "${{github.workspace}}\${env:strNameOccSetupFile}" /VERYSILENT /DIR=${env:RUNNER_TEMP}\${env:relSetupOcc}
           ."${{github.workspace}}\${env:strNameOccSetupFile}" /VERYSILENT /DIR=${env:RUNNER_TEMP}\${env:relSetupOcc}
+          dir ${env:RUNNER_TEMP}\${env:relSetupOcc}
 
 #      - name: Show debug
 #        continue-on-error: true
@@ -61,6 +63,20 @@ jobs:
 #          echo "env:ffnOcc 2: ${env:ffnOcc}"
 
           # ."${env:ffnOcc}" -q $modules $excluded_sources $excluded_line_regex $export_type -- $program_to_run
+
+      - name: show debug3
+        continue-on-error: true
+        run: |
+          dir ${env:RUNNER_TEMP}\${env:relSetupOcc}
+      - name: show debug33
+        continue-on-error: true
+        run: |
+          dir ${env:RUNNER_TEMP}\${env:relSetupOcc}\${env:strOccExecutable}
+      - name: show debug33
+        continue-on-error: true
+        run: |
+          $env:ffnOcc="${env:RUNNER_TEMP}\${env:relSetupOcc}\${env:strOccExecutable}"
+          dir ${env:ffnOcc}
 
       - name: Run tool
         continue-on-error: true # when fail test
