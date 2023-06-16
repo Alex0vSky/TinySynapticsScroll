@@ -38,7 +38,7 @@ jobs:
         run: |
           cd src
           echo --modules ${env:module0} --excluded_sources "src\Main.h" --excluded_line_regex .*@NOCOVERAGE.* --export_type html:Coverage -- ${env:dirTestsExe}${env:module0}
-          .${{github.workspace}}\Occ\OpenCppCoverage.exe --modules ${env:module0} --excluded_sources "src\Main.h" --excluded_line_regex .*@NOCOVERAGE.* --export_type html:Coverage -- ${env:dirTestsExe}${env:module0}
+          .\${{github.workspace}}\Occ\OpenCppCoverage.exe --modules ${env:module0} --excluded_sources "src\Main.h" --excluded_line_regex .*@NOCOVERAGE.* --export_type html:Coverage -- ${env:dirTestsExe}${env:module0}
 
       - uses: actions/upload-artifact@v3
         with:
