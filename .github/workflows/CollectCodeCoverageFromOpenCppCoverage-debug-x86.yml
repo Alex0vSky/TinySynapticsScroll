@@ -78,6 +78,10 @@ jobs:
           echo "modules: $modules"
           echo "excluded_sources: $excluded_sources"
           ."${env:ffnOcc}" $modules $excluded_sources $excluded_line_regex $export_type -- $program_to_run
+          ."${env:ffnOcc}" -q --modules ${env:dirTestExecutables} $excluded_sources $excluded_line_regex $export_type -- $program_to_run
+          echo "${env:ffnOcc} -q --modules ${env:dirTestExecutables} $excluded_sources $excluded_line_regex $export_type -- $program_to_run"
+          echo "${env:ffnOcc} -q $modules $excluded_sources $excluded_line_regex $export_type -- $program_to_run"
+          echo "end"
 
       - uses: actions/upload-artifact@v3
         with:
