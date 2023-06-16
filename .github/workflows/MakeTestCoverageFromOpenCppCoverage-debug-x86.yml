@@ -22,7 +22,7 @@ jobs:
         with:
           github_token: ${{secrets.GITHUB_TOKEN}}
           workflow: googletest.yml
-          name: artifact-build-tests-gtest-${{env.strConfiguration}}-${{env.strPlatform}}
+          name: artifact-build-tests-gtest-debug-x86
           path: ${{env.dirPathResult}}
           search_artifacts: true
 
