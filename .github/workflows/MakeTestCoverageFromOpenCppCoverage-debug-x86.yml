@@ -1,12 +1,15 @@
-name: Make test coverage from OpenCppCoverage (debug-x86)
+name: Collect tests code coverage using OpenCppCoverage (debug-x86)
 on: [push,workflow_dispatch]
+# Configuration
 env:
-  dirTestsExe: '${{github.workspace}}\qa\UnitTest\bin\Debug' # build from *.sln, debug-x86
+  strConfiguration: Debug # or Release
+  strPlatform: x86 # or x64
+  dirPathResult: ${{github.workspace}}\qa\UnitTest\bin\Debug # build from *.sln, all tests
   module0: GTest1.exe
   strNameOpenCppCoverageSetup: OpenCppCoverageSetup-x86-0.9.9.0.exe
-  strTagOpenCppCoverageSetup: "release-0.9.9.0" # from https://github.com/OpenCppCoverage/OpenCppCoverage/tags
+  strTagOpenCppCoverageSetup: release-0.9.9.0 # from https://github.com/OpenCppCoverage/OpenCppCoverage/tags
 jobs:
-  test-coverage:
+  collect-tests-code-coverage:
     runs-on: windows-latest
     permissions:
       actions: read # for "dawidd6/action-download-artifact@v2"
@@ -19,8 +22,8 @@ jobs:
         with:
           github_token: ${{secrets.GITHUB_TOKEN}}
           workflow: googletest.yml
-          name: artifact-build-tests-debug-x86
-          path: ${{github.workspace}}\qa\UnitTest\bin\Debug # build from *.sln
+          name: artifact-build-tests-gtest-${{env.strConfiguration}}-${{env.strPlatform}}
+          path: ${{env.dirPathResult}}
           search_artifacts: true
 
       - name: Download Open_Cpp_Coverage
@@ -46,24 +49,27 @@ jobs:
         continue-on-error: true
         run: |
           ."${env:strNameOpenCppCoverageSetup}" /VERYSILENT /DIR="Occ"
+      - name: Install Open Cpp Coverage33
+        continue-on-error: true
+        run: |
+          .\"${env:strNameOpenCppCoverageSetup}" /VERYSILENT /DIR="Occ"
 
       - name: Show Open_Cpp_Coverage
         continue-on-error: true
         run: |
           dir ${{github.workspace}}\Occ\OpenCppCoverage.exe
-          echo "--modules "$dirTestsExe" --excluded_sources "src\Main.h" --excluded_line_regex .*@NOCOVERAGE.* --export_type html:${{github.workspace}}\Coverage -- ${env:dirTestsExe}\${env:module0} --gtest_brief=1"
-          echo "--modules ${env:dirTestsExe} --excluded_sources "src\Main.h" --excluded_line_regex .*@NOCOVERAGE.* --export_type html:${{github.workspace}}\Coverage -- ${env:dirTestsExe}\${env:module0} --gtest_brief=1"
+          echo "--modules ${env:dirPathResult} --excluded_sources "src\Main.h" --excluded_line_regex .*@NOCOVERAGE.* --export_type html:${{github.workspace}}\Coverage -- ${env:dirPathResult}\${env:module0} --gtest_brief=1"
           echo 'env:module0: '"${env:module0}"
           echo 'env:module0: '${env:module0}
+          echo "env:module0: ${env:module0}"
           echo 'module0: '"$module0"
-          echo 'dirTestsExe: '$dirTestsExe
-          echo 'strNameOpenCppCoverageSetup: '$strNameOpenCppCoverageSetup
 
-      - name: Run Open_Cpp_Coverage0
+      - name: Run Open_Cpp_Coverage
         continue-on-error: true # when fail test
         run: |
           cd src
-          ."${{github.workspace}}\Occ\OpenCppCoverage.exe" --modules GTest1.exe --excluded_sources "src\Main.h" --excluded_line_regex .*@NOCOVERAGE.* --export_type html:${{github.workspace}}\Coverage -- ${env:dirTestsExe}\${env:module0} --gtest_brief=1
+          ."${{github.workspace}}\Occ\OpenCppCoverage.exe" --modules ${env:dirPathResult} --excluded_sources "src\Main.h" --excluded_line_regex .*@NOCOVERAGE.* --export_type html:${{github.workspace}}\Coverage -- ${env:dirPathResult}\${env:module0} --gtest_brief=1
+          echo 1
 
       - uses: actions/upload-artifact@v3
         with:
