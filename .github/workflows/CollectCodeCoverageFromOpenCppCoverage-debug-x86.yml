@@ -13,7 +13,7 @@ env:
   strGhTagOccSetupFile: release-0.9.9.0 # from https://github.com/OpenCppCoverage/OpenCppCoverage/tags
   relSetupOcc: Occ
   strOccExecutable: OpenCppCoverage.exe
-  dirHtmlReport: ${{runner.temp}}\HtmlReportOcc
+  relHtmlReport: HtmlReportOcc
 jobs:
   collect-tests-code-coverage:
     runs-on: windows-latest
@@ -39,7 +39,6 @@ jobs:
           fileName: ${{env.strNameOccSetupFile}}
           tag: ${{env.strGhTagOccSetupFile}}
 
-      # +-TODO: use ${env:RUNNER_TEMP} for output data
       - name: Install tool
         run: |
           dir "${env:strNameOccSetupFile}"
@@ -68,7 +67,7 @@ jobs:
           $modules="--modules ${env:dirTestExecutables}"
           $excluded_sources="--excluded_sources 'src\Main.h' --excluded_sources 'src\Legacy' --excluded_sources 'qa\UnitTest' --excluded_sources 'D:\a\_work' --excluded_sources 'C:\Program Files'"
           $excluded_line_regex="--excluded_line_regex .*@NOCOVERAGE.*"
-          $export_type="--export_type html:${env:dirHtmlReport}"
+          $export_type="--export_type html:${env:RUNNER_TEMP}\${env:relHtmlReport}"
           $program_to_run="${env:dirTestExecutables}\${env:module0} --gtest_brief=1"
           echo 3
           $args="$modules $excluded_sources $excluded_line_regex $export_type -- $program_to_run"
@@ -79,4 +78,4 @@ jobs:
       - uses: actions/upload-artifact@v3
         with:
           name: artifact-tests-coverage-open-cpp-coverage
-          path: ${{env.dirHtmlReport}}
+          path: ${{env.RUNNER_TEMP}}\${{env.relHtmlReport}}
