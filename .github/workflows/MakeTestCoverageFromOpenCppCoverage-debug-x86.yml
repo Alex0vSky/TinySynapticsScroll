@@ -23,9 +23,9 @@ jobs:
 
       - name: Show env
         run: |
-            echo 'dirTestsExe0 :'$dirTestsExe0
-            echo 'dirTestsExe0 :'$dirTestsExe1
-            echo 'dirTestsExe0 :'$dirTestsExe2
+            echo 'dirTestsExe0 :'${env:dirTestsExe0}
+            echo 'dirTestsExe1 :'${env:dirTestsExe1}
+            echo 'dirTestsExe2 :'${env:dirTestsExe2}
 
 #      - name: Install OpenCppCoverage
 #        - uses: robinraju/release-downloader@v1.8
@@ -38,8 +38,9 @@ jobs:
         with:
           repo: "OpenCppCoverage/OpenCppCoverage"
           cache: enable
-          arch: x86
-          tag: 'release-0.9.9.0'
+#          arch: x86
+#          tag: 'release-0.9.9.0'
+          tag: 'OpenCppCoverageSetup-x86-0.9.9.0.exe'
 
       - name: Run OpenCppCoverage
         run: |
