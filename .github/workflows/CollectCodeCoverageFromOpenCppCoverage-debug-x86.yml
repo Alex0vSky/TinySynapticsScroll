@@ -46,14 +46,20 @@ jobs:
         continue-on-error: true
         run: |
           dir "${{github.workspace}}\${env:strNameOccSetupFile}"
-          ."${{github.workspace}}\${env:strNameOccSetupFile}" /VERYSILENT /LOG=${env:RUNNER_TEMP}\${env:strNameOccSetupFile}.log /DIR=${env:RUNNER_TEMP}\${env:relSetupOcc}
-          ."${{github.workspace}}\${env:strNameOccSetupFile}" /VERYSILENT /LOG=${env:RUNNER_TEMP}\${env:strNameOccSetupFile}.log /DIR=${env:relSetupOcc}
-          ."${{github.workspace}}\${env:strNameOccSetupFile}" /VERYSILENT /LOG=${env:RUNNER_TEMP}\${env:strNameOccSetupFile}.log /DIR=AsdAsd
+          ."${{github.workspace}}\${env:strNameOccSetupFile}" /VERYSILENT /LOG="${env:RUNNER_TEMP}\${env:strNameOccSetupFile}".log /DIR="${env:RUNNER_TEMP}\${env:relSetupOcc}"
+          ."${{github.workspace}}\${env:strNameOccSetupFile}" /VERYSILENT /LOG="${env:RUNNER_TEMP}\${env:strNameOccSetupFile}".log /DIR="${env:relSetupOcc}"
+          ."${{github.workspace}}\${env:strNameOccSetupFile}" /VERYSILENT /LOG="${env:RUNNER_TEMP}\${env:strNameOccSetupFile}".log /DIR=AsdAsd
           dir .
           dir ${env:RUNNER_TEMP}
-      - name: Show tool
+      - name: Show tool0
         continue-on-error: true
         run: |
+          dir .
+          dir ${env:RUNNER_TEMP}
+      - name: Show tool1
+        continue-on-error: true
+        run: |
+          dir .
           dir ${env:RUNNER_TEMP}\${env:relSetupOcc}
 
 #      - name: Show debug
@@ -90,10 +96,12 @@ jobs:
         continue-on-error: true # when fail test
         # TODO: multiline excluded_sources
         run: | # double launching because windows system hooks from AppCompat conflicts with gmock-win32 hooks
+          echo 1
           .${env:dirTestExecutables}\${env:module0} --help > nul 2>&1
           .${env:dirTestExecutables}\${env:module1} --help > nul 2>&1
           .${env:dirTestExecutables}\${env:module2} --help > nul 2>&1
           .${env:dirTestExecutables}\${env:module3} --help > nul 2>&1
+          echo 2
           $env:ffnOcc="${env:RUNNER_TEMP}\${env:relSetupOcc}\${env:strOccExecutable}"
           $modules="--modules ${env:dirTestExecutables}"
           $excluded_sources="--excluded_sources 'src\Main.h' --excluded_sources 'src\Legacy' --excluded_sources 'qa\UnitTest' --excluded_sources 'D:\a\_work' --excluded_sources 'C:\Program Files'"
@@ -101,6 +109,7 @@ jobs:
           $export_type="--export_type html:${env:dirHtmlReport}"
           $program_to_run="${env:dirTestExecutables}\${env:module0} --gtest_brief=1"
           cd src
+          echo 3
           ."${env:RUNNER_TEMP}\${env:relSetupOcc}\${env:strOccExecutable}" -q --modules ${env:dirTestExecutables} --excluded_sources "src\Main.h" --excluded_sources "src\Legacy" --excluded_sources "qa\UnitTest" --excluded_sources "D:\a\_work" --excluded_sources "C:\Program Files" --excluded_line_regex .*@NOCOVERAGE.* --export_type html:${{github.workspace}}\Coverage -- ${env:dirPathResult}\${env:module0} --gtest_brief=1
 
       - uses: actions/upload-artifact@v3
