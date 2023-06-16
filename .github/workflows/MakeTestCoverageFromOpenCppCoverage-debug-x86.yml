@@ -1,8 +1,9 @@
 name: Make test coverage from OpenCppCoverage (debug-x86)
 on: [push,workflow_dispatch]
 env: # build from *.sln, debug-x86
-  dirTestsExe: '${{github.workspace}}\qa\UnitTest\bin\Debug\'
+  dirTestsExe: '${{github.workspace}}\qa\UnitTest\bin\Debug'
   module0: GTest1.exe
+  strNameOpenCppCoverageSetup: OpenCppCoverageSetup-x86-0.9.9.0.exe
 jobs:
   test-coverage:
     runs-on: windows-latest
@@ -25,33 +26,29 @@ jobs:
         uses: robinraju/release-downloader@v1.8
         with:
           repository: "OpenCppCoverage/OpenCppCoverage"
-          latest: true
-          fileName: "OpenCppCoverageSetup-x86*.exe"
+          fileName: "OpenCppCoverageSetup-x86-0.9.9.0.exe"
 
       - name: Install Open Cpp Coverage
         shell: cmd
         run: |
           .\OpenCppCoverageSetup-x86-0.9.9.0.exe /VERYSILENT /DIR="Occ"
+      - name: Install Open Cpp Coverage2
+        continue-on-error: true
+        run: |
+          .\OpenCppCoverageSetup-x86-0.9.9.0.exe /VERYSILENT /DIR="Occ"
       - name: Show Open_Cpp_Coverage
+        continue-on-error: true
         run: |
           dir ${{github.workspace}}\Occ
-          echo --modules ${env:module0} --excluded_sources "src\Main.h" --excluded_line_regex .*@NOCOVERAGE.* --export_type html:Coverage -- ${env:dirTestsExe}${env:module0}
+          echo --modules ${env:module0} --excluded_sources "src\Main.h" --excluded_line_regex .*@NOCOVERAGE.* --export_type html:${{github.workspace}}\Coverage -- ${env:dirTestsExe}\${env:module0}
+          echo "--modules ${env:module0} --excluded_sources "src\Main.h" --excluded_line_regex .*@NOCOVERAGE.* --export_type html:${{github.workspace}}\Coverage -- ${env:dirTestsExe}\${env:module0}"
+          echo $strNameOpenCppCoverageSetup
+          echo ${env:strNameOpenCppCoverageSetup}
 
       - name: Run Open_Cpp_Coverage0
-        continue-on-error: true
         run: |
           cd src
-          ."${{github.workspace}}\Occ\OpenCppCoverage.exe" --modules ${env:module0} --excluded_sources "src\Main.h" --excluded_line_regex .*@NOCOVERAGE.* --export_type html:Coverage -- ${env:dirTestsExe}${env:module0}
-      - name: Run Open_Cpp_Coverage1
-        continue-on-error: true
-        run: |
-          cd src
-          .\"${{github.workspace}}\Occ\OpenCppCoverage.exe" --modules ${env:module0} --excluded_sources "src\Main.h" --excluded_line_regex .*@NOCOVERAGE.* --export_type html:Coverage -- ${env:dirTestsExe}${env:module0}
-      - name: Run Open_Cpp_Coverage1
-        continue-on-error: true
-        run: |
-          cd src
-          "${{github.workspace}}\Occ\OpenCppCoverage.exe" --modules ${env:module0} --excluded_sources "src\Main.h" --excluded_line_regex .*@NOCOVERAGE.* --export_type html:Coverage -- ${env:dirTestsExe}${env:module0}
+          ."${{github.workspace}}\Occ\OpenCppCoverage.exe" --modules ${env:module0} --excluded_sources "src\Main.h" --excluded_line_regex .*@NOCOVERAGE.* --export_type html:${{github.workspace}}\Coverage -- ${env:dirTestsExe}\${env:module0}
 
       - uses: actions/upload-artifact@v3
         with:
