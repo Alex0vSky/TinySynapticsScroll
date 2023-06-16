@@ -46,7 +46,11 @@ jobs:
       - name: Install OpenCppCoverage
         shell: cmd
         run: |
-          .\OpenCppCoverageSetup-x86-0.9.9.0.exe /VERYSILENT
+          .\OpenCppCoverageSetup-x86-0.9.9.0.exe /VERYSILENT /DIR="OpenCppCoverage"
+          dir
+          dir OpenCppCoverage
+          .\OpenCppCoverageSetup-x86-0.9.9.0.exe /VERYSILENT /DIR="${{github.workspace}}\OpenCppCoverage"
+          dir ${{github.workspace}}\OpenCppCoverage
       - name: Run OpenCppCoverage
         shell: cmd
         run: |
