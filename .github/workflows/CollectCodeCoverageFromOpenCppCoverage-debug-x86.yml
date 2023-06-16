@@ -13,9 +13,7 @@ env:
   strGhTagOccSetupFile: release-0.9.9.0 # from https://github.com/OpenCppCoverage/OpenCppCoverage/tags
   relSetupOcc: Occ
   strOccExecutable: OpenCppCoverage.exe
-  dirHtmlReport: ${{github.workspace}}\HtmlReport
-#  Linting Error: context "env" is not allowed here. available contexts are "github", "inputs", "secrets", "vars"
-#  ffnOcc: ${{github.workspace}}\${{env.relSetupOcc}}\OpenCppCoverage.exe
+  dirHtmlReport: ${{runner.temp}}\HtmlReportOcc
 jobs:
   collect-tests-code-coverage:
     runs-on: windows-latest
@@ -42,18 +40,11 @@ jobs:
           tag: ${{env.strGhTagOccSetupFile}}
 
       # +-TODO: use ${env:RUNNER_TEMP} for output data
-#          ."${{github.workspace}}\${env:strNameOccSetupFile}" /VERYSILENT /SUPPRESSMSGBOXES /NORESTART /LOG="${env:RUNNER_TEMP}\${env:strNameOccSetupFile}".log /DIR="${env:RUNNER_TEMP}\${env:relSetupOcc}"
-#          ."${{github.workspace}}\${env:strNameOccSetupFile}" /VERYSILENT /SUPPRESSMSGBOXES /NORESTART /LOG="${env:RUNNER_TEMP}\${env:strNameOccSetupFile}".log /DIR="${env:relSetupOcc}"
-#          ."${{github.workspace}}\${env:strNameOccSetupFile}" /VERYSILENT /SUPPRESSMSGBOXES /NORESTART /LOG="${env:RUNNER_TEMP}\${env:strNameOccSetupFile}".log /DIR=AsdAsd
       - name: Install tool
-        continue-on-error: true
         run: |
           dir "${env:strNameOccSetupFile}"
           $args="/VERYSILENT /SUPPRESSMSGBOXES /DIR=${env:RUNNER_TEMP}\${env:relSetupOcc} /LOG=${env:RUNNER_TEMP}\${env:strNameOccSetupFile}.log"
-          echo $env:strNameOccSetupFile
-          echo $args
           Start-Process "${env:strNameOccSetupFile}" -ArgumentList $args -Wait 
-          dir .
           dir ${env:RUNNER_TEMP}
       - name: Show tool0
         continue-on-error: true
@@ -63,41 +54,9 @@ jobs:
       - name: Show tool1
         continue-on-error: true
         run: |
-          dir .
           dir ${env:RUNNER_TEMP}\${env:relSetupOcc}
-
-#      - name: Show debug
-#        continue-on-error: true
-#        run: |
-#          echo "env:module0: ${env:module0}"
-#          echo "module0: $module0"
-#          $excluded_sources="--excluded_sources 'src\Main.h' --excluded_sources 'src\Legacy' --excluded_sources 'qa\UnitTest' --excluded_sources 'D:\a\_work' --excluded_sources 'C:\Program Files'"
-#          echo "excluded_sources: $excluded_sources"
-#          $env:ffnOcc="${env:RUNNER_TEMP}\${env:relSetupOcc}\${env:strOccExecutable}"
-#          echo "env:ffnOcc 1: ${env:ffnOcc}"
-#      - name: Show debug2
-#        continue-on-error: true
-#        run: |
-#          echo "env:ffnOcc 2: ${env:ffnOcc}"
-
-          # ."${env:ffnOcc}" -q $modules $excluded_sources $excluded_line_regex $export_type -- $program_to_run
-
-      - name: show debug3
-        continue-on-error: true
-        run: |
-          dir ${env:RUNNER_TEMP}\${env:relSetupOcc}
-      - name: show debug33
-        continue-on-error: true
-        run: |
-          dir ${env:RUNNER_TEMP}\${env:relSetupOcc}\${env:strOccExecutable}
-      - name: show debug333
-        continue-on-error: true
-        run: |
-          $env:ffnOcc="${env:RUNNER_TEMP}\${env:relSetupOcc}\${env:strOccExecutable}"
-          dir ${env:ffnOcc}
 
       - name: Run tool
-        continue-on-error: true # when fail test
         # TODO: multiline excluded_sources
         run: | # double launching because windows system hooks from AppCompat conflicts with gmock-win32 hooks
           echo 1
@@ -106,15 +65,15 @@ jobs:
           .${env:dirTestExecutables}\${env:module2} --help > nul 2>&1
           .${env:dirTestExecutables}\${env:module3} --help > nul 2>&1
           echo 2
-          $env:ffnOcc="${env:RUNNER_TEMP}\${env:relSetupOcc}\${env:strOccExecutable}"
           $modules="--modules ${env:dirTestExecutables}"
           $excluded_sources="--excluded_sources 'src\Main.h' --excluded_sources 'src\Legacy' --excluded_sources 'qa\UnitTest' --excluded_sources 'D:\a\_work' --excluded_sources 'C:\Program Files'"
           $excluded_line_regex="--excluded_line_regex .*@NOCOVERAGE.*"
           $export_type="--export_type html:${env:dirHtmlReport}"
           $program_to_run="${env:dirTestExecutables}\${env:module0} --gtest_brief=1"
-          cd src
           echo 3
-          $args="-q $modules $excluded_sources $excluded_line_regex $export_type -- $running"
+          $args="$modules $excluded_sources $excluded_line_regex $export_type -- $program_to_run"
+          echo $args
+          cd src
           Start-Process "${env:RUNNER_TEMP}\${env:relSetupOcc}\${env:strOccExecutable}" -ArgumentList $args
 # ."${env:RUNNER_TEMP}\${env:relSetupOcc}\${env:strOccExecutable}" -q --modules ${env:dirTestExecutables} --excluded_sources "src\Main.h" --excluded_sources "src\Legacy" --excluded_sources "qa\UnitTest" --excluded_sources "D:\a\_work" --excluded_sources "C:\Program Files" --excluded_line_regex .*@NOCOVERAGE.* --export_type html:${{github.workspace}}\Coverage -- ${env:dirPathResult}\${env:module0} --gtest_brief=1
       - uses: actions/upload-artifact@v3
