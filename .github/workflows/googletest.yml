@@ -31,14 +31,41 @@ jobs:
 #          path: |
 #            ${{github.workspace}}\qa\UnitTest\bin\Debug\*.exe
 
+      - name: Disable AppCompat for WinApi hooks
+        continue-on-error: true
+        run: |
+          # Disable AIT
+          Write-Host "Disabling AIT..."
+          If (!(Test-Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\AppCompat")) {
+          	New-Item -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\AppCompat" | Out-Null
+          }
+          Set-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\AppCompat" -Name "AITEnable" -Type DWord -Value 0
+          # Disable ACPI
+          Write-Host "Disabling ACPI..."
+          If (!(Test-Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\AppCompat")) {
+          	New-Item -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\AppCompat" | Out-Null
+          }
+          If (!(Test-Path "HKLM:\SOFTWARE\WOW6432Node\Policies\Microsoft\Windows\AppCompat")) {
+          	New-Item -Path "HKLM:\SOFTWARE\WOW6432Node\Policies\Microsoft\Windows\AppCompat" | Out-Null
+          }
+          Set-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\AppCompat" -Name "DisableInventory" -Type DWord -Value 1
+          Set-ItemProperty -Path "HKLM:\SOFTWARE\WOW6432Node\Policies\Microsoft\Windows\AppCompat" -Name "DisableInventory" -Type DWord -Value 1
+          Set-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\AppCompat" -Name "DisableEngine" -Type DWord -Value 1
+          Set-ItemProperty -Path "HKLM:\SOFTWARE\WOW6432Node\Policies\Microsoft\Windows\AppCompat" -Name "DisableEngine" -Type DWord -Value 1
       - name: Run tests and collect reports
         run: |
+          # build from *.vcxproj
+          #."${env:GITHUB_WORKSPACE}\qa\UnitTest\GTest1\bin\Debug\GTest1.exe" --help
           ."${env:GITHUB_WORKSPACE}\qa\UnitTest\GTest1\bin\Debug\GTest1.exe" --gtest_brief=1 --gtest_output="xml:${env:RUNNER_TEMP}/GTest1_Debug_x64.xml"
-          ."${env:GITHUB_WORKSPACE}\qa\UnitTest\GTest1\bin\Debug\GTest1.exe" --gtest_brief=1 --gtest_output="xml:${env:RUNNER_TEMP}/GTest1_Debug_x64.xml"
+#          # build from *.sln
+#          # double because windows system hooks from AppCompat conflicts with gmock-win32 hooks
+#          ."${env:GITHUB_WORKSPACE}\qa\UnitTest\bin\Debug\GTest1.exe" --help
 #          ."${env:GITHUB_WORKSPACE}\qa\UnitTest\bin\Debug\GTest1.exe" --gtest_brief=1 --gtest_output="xml:${env:RUNNER_TEMP}/GTest1_Debug_x86.xml"
-#          ."${env:GITHUB_WORKSPACE}\qa\UnitTest\bin\Debug\GTest1.exe" --gtest_brief=1 --gtest_output="xml:${env:RUNNER_TEMP}/GTest1_Debug_x86.xml"
+#          ."${env:GITHUB_WORKSPACE}\qa\UnitTest\bin\Debug\GTestDefWindowProc.exe" --help
 #          ."${env:GITHUB_WORKSPACE}\qa\UnitTest\bin\Debug\GTestDefWindowProc.exe" --gtest_brief=1 --gtest_output="xml:${env:RUNNER_TEMP}/GTestDefWindowProc_Debug_x86.xml"
+#          ."${env:GITHUB_WORKSPACE}\qa\UnitTest\bin\Debug\GTestEmptyWorkingSet.exe" --help
 #          ."${env:GITHUB_WORKSPACE}\qa\UnitTest\bin\Debug\GTestEmptyWorkingSet.exe" --gtest_brief=1 --gtest_output="xml:${env:RUNNER_TEMP}/GTestEmptyWorkingSet_Debug_x86.xml"
+#          ."${env:GITHUB_WORKSPACE}\qa\UnitTest\bin\Debug\GTestMem.exe" --help
 #          ."${env:GITHUB_WORKSPACE}\qa\UnitTest\bin\Debug\GTestMem.exe" --gtest_brief=1 --gtest_output="xml:${env:RUNNER_TEMP}/GTestMem_Debug_x86.xml"
 
 #      - uses: actions/setup-python@v4
