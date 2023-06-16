@@ -41,27 +41,30 @@ jobs:
           fileName: ${{env.strNameOccSetupFile}}
           tag: ${{env.strGhTagOccSetupFile}}
 
-      # TODO: use ${env:RUNNER_TEMP} for output data
+      # +-TODO: use ${env:RUNNER_TEMP} for output data
       - name: Install tool
         run: |
           ."${{github.workspace}}\${env:strNameOccSetupFile}" /VERYSILENT /DIR=${env:RUNNER_TEMP}\${env:relSetupOcc}
 
-      - name: Show debug
-        continue-on-error: true
-        # TODO: multiline excluded_sources
-        run: |
-          echo "env:module0: ${env:module0}"
-          echo "module0: $module0"
-          $excluded_sources="--excluded_sources 'src\Main.h' --excluded_sources 'src\Legacy' --excluded_sources 'qa\UnitTest' --excluded_sources 'D:\a\_work' --excluded_sources 'C:\Program Files'"
-          echo "excluded_sources: $excluded_sources"
-          $env:ffnOcc="${env:RUNNER_TEMP}\${env:relSetupOcc}\${env:strOccExecutable}"
-          echo "env:ffnOcc 1: ${env:ffnOcc}"
-      - name: Show debug2
-        continue-on-error: true
-        run: |
-          echo "env:ffnOcc 2: ${env:ffnOcc}"
+#      - name: Show debug
+#        continue-on-error: true
+#        run: |
+#          echo "env:module0: ${env:module0}"
+#          echo "module0: $module0"
+#          $excluded_sources="--excluded_sources 'src\Main.h' --excluded_sources 'src\Legacy' --excluded_sources 'qa\UnitTest' --excluded_sources 'D:\a\_work' --excluded_sources 'C:\Program Files'"
+#          echo "excluded_sources: $excluded_sources"
+#          $env:ffnOcc="${env:RUNNER_TEMP}\${env:relSetupOcc}\${env:strOccExecutable}"
+#          echo "env:ffnOcc 1: ${env:ffnOcc}"
+#      - name: Show debug2
+#        continue-on-error: true
+#        run: |
+#          echo "env:ffnOcc 2: ${env:ffnOcc}"
+
+          # ."${env:ffnOcc}" -q $modules $excluded_sources $excluded_line_regex $export_type -- $program_to_run
+
       - name: Run tool
         continue-on-error: true # when fail test
+        # TODO: multiline excluded_sources
         run: | # double launching because windows system hooks from AppCompat conflicts with gmock-win32 hooks
           .${env:dirTestExecutables}\${env:module0} --help > nul 2>&1
           .${env:dirTestExecutables}\${env:module1} --help > nul 2>&1
@@ -72,18 +75,11 @@ jobs:
           $excluded_sources="--excluded_sources 'src\Main.h' --excluded_sources 'src\Legacy' --excluded_sources 'qa\UnitTest' --excluded_sources 'D:\a\_work' --excluded_sources 'C:\Program Files'"
           $excluded_line_regex="--excluded_line_regex .*@NOCOVERAGE.*"
           $export_type="--export_type html:${env:dirHtmlReport}"
-          cd src
           $program_to_run="${env:dirTestExecutables}\${env:module0} --gtest_brief=1"
-          echo "env:ffnOcc: ${env:ffnOcc}"
-          echo "modules: $modules"
-          echo "excluded_sources: $excluded_sources"
-          ."${env:ffnOcc}" $modules $excluded_sources $excluded_line_regex $export_type -- $program_to_run
-          ."${env:ffnOcc}" -q --modules ${env:dirTestExecutables} $excluded_sources $excluded_line_regex $export_type -- $program_to_run
-          echo "${env:ffnOcc} -q --modules ${env:dirTestExecutables} $excluded_sources $excluded_line_regex $export_type -- $program_to_run"
-          echo "${env:ffnOcc} -q $modules $excluded_sources $excluded_line_regex $export_type -- $program_to_run"
-          echo "end"
+          cd src
+          ."${env:RUNNER_TEMP}\${env:relSetupOcc}\${env:strOccExecutable}" -q --modules ${env:dirTestExecutables} --excluded_sources "src\Main.h" --excluded_sources "src\Legacy" --excluded_sources "qa\UnitTest" --excluded_sources "D:\a\_work" --excluded_sources "C:\Program Files" --excluded_line_regex .*@NOCOVERAGE.* --export_type html:${{github.workspace}}\Coverage -- ${env:dirPathResult}\${env:module0} --gtest_brief=1
 
       - uses: actions/upload-artifact@v3
         with:
           name: artifact-tests-coverage-open-cpp-coverage
-          path: ${{env.dirHtmlReport}}/
+          path: ${{env.dirHtmlReport}}
