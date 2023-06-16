@@ -74,7 +74,10 @@ jobs:
           $export_type="--export_type html:${env:dirHtmlReport}"
           cd src
           $program_to_run="${env:dirTestExecutables}\${env:module0} --gtest_brief=1"
-          ."${env:ffnOcc}" -q $modules $excluded_sources $excluded_line_regex $export_type -- $program_to_run
+          echo "env:ffnOcc: ${env:ffnOcc}"
+          echo "modules: $modules"
+          echo "excluded_sources: $excluded_sources"
+          ."${env:ffnOcc}" $modules $excluded_sources $excluded_line_regex $export_type -- $program_to_run
 
       - uses: actions/upload-artifact@v3
         with:
