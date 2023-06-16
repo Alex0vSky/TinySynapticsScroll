@@ -52,7 +52,7 @@ jobs:
           echo 'env:module0: '${env:module0}
           echo "env:module0: ${env:module0}"
           echo "module0: $module0"
-          $excluded_sources = --excluded_sources "src\Main.h" --excluded_sources "src\Legacy" --excluded_sources "qa\UnitTest" --excluded_sources "D:\a\_work" --excluded_sources "C:\Program Files"
+          $excluded_sources="--excluded_sources 'src\Main.h' --excluded_sources 'src\Legacy' --excluded_sources 'qa\UnitTest' --excluded_sources 'D:\a\_work' --excluded_sources 'C:\Program Files'"
           echo "excluded_sources: $excluded_sources"
           $env:ffnOcc="${{github.workspace}}\${env:strDirSetupOpenCppCoverage}\OpenCppCoverage.exe"
           echo "env:ffnOcc: ${env:ffnOcc}"
