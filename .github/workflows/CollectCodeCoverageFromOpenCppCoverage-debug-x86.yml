@@ -5,9 +5,15 @@ env:
   strConfiguration: Debug # or Release
   strPlatform: x86 # or x64
   dirPathResult: ${{github.workspace}}\qa\UnitTest\bin\Debug # build from *.sln, all tests
-  module0: GTest1.exe
   strNameOpenCppCoverageSetup: OpenCppCoverageSetup-x86-0.9.9.0.exe
   strTagOpenCppCoverageSetup: release-0.9.9.0 # from https://github.com/OpenCppCoverage/OpenCppCoverage/tags
+  module0: GTest1.exe
+  module1: GTestDefWindowProc.exe
+  module2: GTestEmptyWorkingSet.exe
+  module3: GTestMem.exe
+  strDirSetupOpenCppCoverage: Occ
+#  Linting Error: context "env" is not allowed here. available contexts are "github", "inputs", "secrets", "vars"
+#  ffnOcc: ${{github.workspace}}\${{env.strDirSetupOpenCppCoverage}}\OpenCppCoverage.exe
 jobs:
   collect-tests-code-coverage:
     runs-on: windows-latest
@@ -33,34 +39,10 @@ jobs:
           fileName: ${{env.strNameOpenCppCoverageSetup}}
           tag: ${{env.strTagOpenCppCoverageSetup}}
 
-      - name: Install Open Cpp Coverage
-        shell: cmd
+      # TODO: use ${env:RUNNER_TEMP} for output data
+      - name: Install Open_Cpp_Coverage
         run: |
-          .\OpenCppCoverageSetup-x86-0.9.9.0.exe /VERYSILENT /DIR="Occ"
-      - name: Install Open Cpp Coverage1
-        continue-on-error: true
-        run: |
-          .\OpenCppCoverageSetup-x86-0.9.9.0.exe /VERYSILENT /DIR="Occ"
-      - name: Install Open Cpp Coverage2
-        continue-on-error: true
-        run: |
-          .\$strNameOpenCppCoverageSetup /VERYSILENT /DIR="Occ"
-      - name: Install Open Cpp Coverage3
-        continue-on-error: true
-        run: |
-          ."${env:strNameOpenCppCoverageSetup}" /VERYSILENT /DIR="Occ"
-      - name: Install Open Cpp Coverage33
-        continue-on-error: true
-        run: |
-          .\"${env:strNameOpenCppCoverageSetup}" /VERYSILENT /DIR="Occ"
-      - name: Install Open Cpp Coverage333
-        continue-on-error: true
-        run: |
-          ."${{github.workspace}}\${env:strNameOpenCppCoverageSetup}" /VERYSILENT /DIR="Occ"
-      - name: Install Open Cpp Coverage1111
-        continue-on-error: true
-        run: |
-          .${env:strNameOpenCppCoverageSetup} /VERYSILENT /DIR="Occ"
+          ."${{github.workspace}}\${env:strNameOpenCppCoverageSetup}" /VERYSILENT /DIR="${env:strDirSetupOpenCppCoverage}"
 
       - name: Show Open_Cpp_Coverage
         continue-on-error: true
@@ -69,13 +51,20 @@ jobs:
           echo 'env:module0: '"${env:module0}"
           echo 'env:module0: '${env:module0}
           echo "env:module0: ${env:module0}"
-          echo 'module0: '"$module0"
+          echo "module0: $module0"
+          $excluded_sources = --excluded_sources "src\Main.h" --excluded_sources "src\Legacy" --excluded_sources "qa\UnitTest" --excluded_sources "D:\a\_work" --excluded_sources "C:\Program Files"
+          echo "excluded_sources: $excluded_sources"
+          $env:ffnOcc="${{github.workspace}}\${env:strDirSetupOpenCppCoverage}\OpenCppCoverage.exe"
+          echo "env:ffnOcc: ${env:ffnOcc}"
       - name: Run Open_Cpp_Coverage
         continue-on-error: true # when fail test
-        run: |
+        run: | # double launching because windows system hooks from AppCompat conflicts with gmock-win32 hooks
           .${env:dirPathResult}\${env:module0} --version > nul 2>&1
+          .${env:dirPathResult}\${env:module1} --version > nul 2>&1
+          .${env:dirPathResult}\${env:module2} --version > nul 2>&1
+          .${env:dirPathResult}\${env:module3} --version > nul 2>&1
           cd src
-          ."${{github.workspace}}\Occ\OpenCppCoverage.exe" --modules ${env:dirPathResult} --excluded_sources "src\Main.h" --excluded_sources "qa\UnitTest" --excluded_sources "D:\a\_work" --excluded_sources "C:\Program Files" --excluded_line_regex .*@NOCOVERAGE.* --export_type html:${{github.workspace}}\Coverage -- ${env:dirPathResult}\${env:module0} --gtest_brief=1
+          ."${{github.workspace}}\Occ\OpenCppCoverage.exe" --modules ${env:dirPathResult} --excluded_sources "src\Main.h" --excluded_sources "src\Legacy" --excluded_sources "qa\UnitTest" --excluded_sources "D:\a\_work" --excluded_sources "C:\Program Files" --excluded_line_regex .*@NOCOVERAGE.* --export_type html:${{github.workspace}}\Coverage -- ${env:dirPathResult}\${env:module0} --gtest_brief=1
           echo 1
 
       - uses: actions/upload-artifact@v3
