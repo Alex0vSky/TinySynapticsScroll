@@ -23,14 +23,14 @@ jobs:
         run: |
             echo 'dirTestsExe0 :'${env:dirTestsExe0}
 
-      - name: Install OpenCppCoverage
+      - name: Download OpenCppCoverage
         uses: robinraju/release-downloader@v1.8
         with:
           repository: "OpenCppCoverage/OpenCppCoverage"
           latest: true
           fileName: "OpenCppCoverageSetup-x86-0.9.9.0.exe"
 
-#      - name: Install OpenCppCoverage
+#      - name: Download OpenCppCoverage
 #        uses: jaxxstorm/action-install-gh-release@v1.10.0
 #        with:
 #          repo: "OpenCppCoverage/OpenCppCoverage"
@@ -43,10 +43,13 @@ jobs:
 #          extension-matching: false
 #          arch: OpenCppCoverageSetup-x86
 
+      - name: Install OpenCppCoverage
+        shell: cmd
+        run: |
+          .\OpenCppCoverageSetup-x86-0.9.9.0.exe /VERYSILENT
       - name: Run OpenCppCoverage
         shell: cmd
         run: |
-          .\OpenCppCoverageSetup-x86-0.9.9.0.exe
           .\OpenCppCoverage.exe
 
 #      - uses: actions/upload-artifact@v3
