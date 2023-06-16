@@ -21,15 +21,14 @@ jobs:
       - name: Add MSBuild to PATH
         uses: microsoft/setup-msbuild@v1.1
       - name: Build tests
-#        run: MSBuild qa/UnitTest -m -p:Configuration=Debug -p:Platform=x86 # build from *.sln
-        run: MSBuild qa/UnitTest/GTest1 -m -p:Configuration=Debug -p:Platform=x86 # build from *.vcxproj
+        run: MSBuild qa/UnitTest -m -p:Configuration=Debug -p:Platform=x86 # build from *.sln
+#        run: MSBuild qa/UnitTest/GTest1 -m -p:Configuration=Debug -p:Platform=x86 # build from *.vcxproj
 
-#      - name: Upload artifact
-#        uses: actions/upload-artifact@v3
-#        with:
-#          name: artifact-build-tests-debug-x86
-#          path: |
-#            ${{github.workspace}}\qa\UnitTest\bin\Debug\*.exe
+      - name: Upload artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: artifact-build-tests-debug-x86
+          path: ${{github.workspace}}\qa\UnitTest\bin\Debug\*.exe # build from *.sln
 
       - name: Disable AppCompat for WinApi hooks
         continue-on-error: true
@@ -57,16 +56,15 @@ jobs:
           # build from *.vcxproj
           #."${env:GITHUB_WORKSPACE}\qa\UnitTest\GTest1\bin\Debug\GTest1.exe" --help
           ."${env:GITHUB_WORKSPACE}\qa\UnitTest\GTest1\bin\Debug\GTest1.exe" --gtest_brief=1 --gtest_output="xml:${env:RUNNER_TEMP}/GTest1_Debug_x64.xml"
-#          # build from *.sln
-#          # double because windows system hooks from AppCompat conflicts with gmock-win32 hooks
-#          ."${env:GITHUB_WORKSPACE}\qa\UnitTest\bin\Debug\GTest1.exe" --help
-#          ."${env:GITHUB_WORKSPACE}\qa\UnitTest\bin\Debug\GTest1.exe" --gtest_brief=1 --gtest_output="xml:${env:RUNNER_TEMP}/GTest1_Debug_x86.xml"
-#          ."${env:GITHUB_WORKSPACE}\qa\UnitTest\bin\Debug\GTestDefWindowProc.exe" --help
-#          ."${env:GITHUB_WORKSPACE}\qa\UnitTest\bin\Debug\GTestDefWindowProc.exe" --gtest_brief=1 --gtest_output="xml:${env:RUNNER_TEMP}/GTestDefWindowProc_Debug_x86.xml"
-#          ."${env:GITHUB_WORKSPACE}\qa\UnitTest\bin\Debug\GTestEmptyWorkingSet.exe" --help
-#          ."${env:GITHUB_WORKSPACE}\qa\UnitTest\bin\Debug\GTestEmptyWorkingSet.exe" --gtest_brief=1 --gtest_output="xml:${env:RUNNER_TEMP}/GTestEmptyWorkingSet_Debug_x86.xml"
-#          ."${env:GITHUB_WORKSPACE}\qa\UnitTest\bin\Debug\GTestMem.exe" --help
-#          ."${env:GITHUB_WORKSPACE}\qa\UnitTest\bin\Debug\GTestMem.exe" --gtest_brief=1 --gtest_output="xml:${env:RUNNER_TEMP}/GTestMem_Debug_x86.xml"
+          # build from *.sln # double because windows system hooks from AppCompat conflicts with gmock-win32 hooks
+          ."${env:GITHUB_WORKSPACE}\qa\UnitTest\bin\Debug\GTest1.exe" --help
+          ."${env:GITHUB_WORKSPACE}\qa\UnitTest\bin\Debug\GTest1.exe" --gtest_brief=1 --gtest_output="xml:${env:RUNNER_TEMP}/GTest1_Debug_x86.xml"
+          ."${env:GITHUB_WORKSPACE}\qa\UnitTest\bin\Debug\GTestDefWindowProc.exe" --help
+          ."${env:GITHUB_WORKSPACE}\qa\UnitTest\bin\Debug\GTestDefWindowProc.exe" --gtest_brief=1 --gtest_output="xml:${env:RUNNER_TEMP}/GTestDefWindowProc_Debug_x86.xml"
+          ."${env:GITHUB_WORKSPACE}\qa\UnitTest\bin\Debug\GTestEmptyWorkingSet.exe" --help
+          ."${env:GITHUB_WORKSPACE}\qa\UnitTest\bin\Debug\GTestEmptyWorkingSet.exe" --gtest_brief=1 --gtest_output="xml:${env:RUNNER_TEMP}/GTestEmptyWorkingSet_Debug_x86.xml"
+          ."${env:GITHUB_WORKSPACE}\qa\UnitTest\bin\Debug\GTestMem.exe" --help
+          ."${env:GITHUB_WORKSPACE}\qa\UnitTest\bin\Debug\GTestMem.exe" --gtest_brief=1 --gtest_output="xml:${env:RUNNER_TEMP}/GTestMem_Debug_x86.xml"
 
 #      - uses: actions/setup-python@v4
 #        with:
