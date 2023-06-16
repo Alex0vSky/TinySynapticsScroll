@@ -27,8 +27,8 @@ jobs:
         uses: robinraju/release-downloader@v1.8
         with:
           repository: "OpenCppCoverage/OpenCppCoverage"
-          fileName: $strNameOpenCppCoverageSetup
-          tag: $strTagOpenCppCoverageSetup
+          fileName: ${strNameOpenCppCoverageSetup}
+          tag: ${strTagOpenCppCoverageSetup}
 
       - name: Install Open Cpp Coverage
         shell: cmd
