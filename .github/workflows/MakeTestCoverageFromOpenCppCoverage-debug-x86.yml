@@ -39,7 +39,7 @@ jobs:
           repo: "OpenCppCoverage/OpenCppCoverage"
           cache: enable
           arch: x86
-          # tag: 'release-0.9.9.0'
+          tag: 'release-0.9.9.0'
 
       - name: Run OpenCppCoverage
         run: |
