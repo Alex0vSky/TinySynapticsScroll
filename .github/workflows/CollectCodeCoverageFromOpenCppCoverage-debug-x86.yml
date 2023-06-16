@@ -1,20 +1,21 @@
-name: Collect tests code coverage using OpenCppCoverage (debug-x86)
+name: Collect source code tests coverage using OpenCppCoverage (debug-x86)
 on: [push,workflow_dispatch]
 # Configuration
 env:
   strConfiguration: Debug # or Release
   strPlatform: x86 # or x64
-  dirPathResult: ${{github.workspace}}\qa\UnitTest\bin\Debug # build from *.sln, all tests
-  strNameOpenCppCoverageSetup: OpenCppCoverageSetup-x86-0.9.9.0.exe
-  strTagOpenCppCoverageSetup: release-0.9.9.0 # from https://github.com/OpenCppCoverage/OpenCppCoverage/tags
+  dirTestExecutables: ${{github.workspace}}\qa\UnitTest\bin\Debug # build from *.sln, all tests
   module0: GTest1.exe
   module1: GTestDefWindowProc.exe
   module2: GTestEmptyWorkingSet.exe
   module3: GTestMem.exe
-  relSetupOpenCppCoverage: Occ
-  strOcc: OpenCppCoverage.exe
+  strNameOccSetupFile: OpenCppCoverageSetup-x86-0.9.9.0.exe
+  strGhTagOccSetupFile: release-0.9.9.0 # from https://github.com/OpenCppCoverage/OpenCppCoverage/tags
+  relSetupOcc: Occ
+  strOccExecutable: OpenCppCoverage.exe
+  dirHtmlReport: ${{github.workspace}}\HtmlReport
 #  Linting Error: context "env" is not allowed here. available contexts are "github", "inputs", "secrets", "vars"
-#  ffnOcc: ${{github.workspace}}\${{env.relSetupOpenCppCoverage}}\OpenCppCoverage.exe
+#  ffnOcc: ${{github.workspace}}\${{env.relSetupOcc}}\OpenCppCoverage.exe
 jobs:
   collect-tests-code-coverage:
     runs-on: windows-latest
@@ -30,47 +31,52 @@ jobs:
           github_token: ${{secrets.GITHUB_TOKEN}}
           workflow: build-tests-gtest-debug-x86.yml
           name: artifact-build-tests-gtest-${{env.strConfiguration}}-${{env.strPlatform}}
-          path: ${{env.dirPathResult}}
+          path: ${{env.dirTestExecutables}}
           search_artifacts: true
 
-      - name: Download Open_Cpp_Coverage
+      - name: Download tool
         uses: robinraju/release-downloader@v1.8
         with:
           repository: "OpenCppCoverage/OpenCppCoverage"
-          fileName: ${{env.strNameOpenCppCoverageSetup}}
-          tag: ${{env.strTagOpenCppCoverageSetup}}
+          fileName: ${{env.strNameOccSetupFile}}
+          tag: ${{env.strGhTagOccSetupFile}}
 
       # TODO: use ${env:RUNNER_TEMP} for output data
-      - name: Install Open_Cpp_Coverage
+      - name: Install tool
         run: |
-          ."${{github.workspace}}\${env:strNameOpenCppCoverageSetup}" /VERYSILENT /DIR=${env:RUNNER_TEMP}\${env:relSetupOpenCppCoverage}
+          ."${{github.workspace}}\${env:strNameOccSetupFile}" /VERYSILENT /DIR=${env:RUNNER_TEMP}\${env:relSetupOcc}
 
-      - name: Show Open_Cpp_Coverage
+      - name: Show debug
         continue-on-error: true
-#          dir ${{github.workspace}}\Occ\OpenCppCoverage.exe
         # TODO: multiline excluded_sources
         run: |
           echo "env:module0: ${env:module0}"
           echo "module0: $module0"
           $excluded_sources="--excluded_sources 'src\Main.h' --excluded_sources 'src\Legacy' --excluded_sources 'qa\UnitTest' --excluded_sources 'D:\a\_work' --excluded_sources 'C:\Program Files'"
           echo "excluded_sources: $excluded_sources"
-          $env:ffnOcc="${env:RUNNER_TEMP}\${env:relSetupOpenCppCoverage}\${env:strOcc}"
+          $env:ffnOcc="${env:RUNNER_TEMP}\${env:relSetupOcc}\${env:strOccExecutable}"
           echo "env:ffnOcc 1: ${env:ffnOcc}"
-      - name: Show Open_Cpp_Coverage2
+      - name: Show debug2
         continue-on-error: true
         run: |
           echo "env:ffnOcc 2: ${env:ffnOcc}"
-      - name: Run Open_Cpp_Coverage
+      - name: Run tool
         continue-on-error: true # when fail test
         run: | # double launching because windows system hooks from AppCompat conflicts with gmock-win32 hooks
-          .${env:dirPathResult}\${env:module0} --help > nul 2>&1
-          .${env:dirPathResult}\${env:module1} --help > nul 2>&1
-          .${env:dirPathResult}\${env:module2} --help > nul 2>&1
-          .${env:dirPathResult}\${env:module3} --help > nul 2>&1
+          .${env:dirTestExecutables}\${env:module0} --help > nul 2>&1
+          .${env:dirTestExecutables}\${env:module1} --help > nul 2>&1
+          .${env:dirTestExecutables}\${env:module2} --help > nul 2>&1
+          .${env:dirTestExecutables}\${env:module3} --help > nul 2>&1
+          $env:ffnOcc="${env:RUNNER_TEMP}\${env:relSetupOcc}\${env:strOccExecutable}"
+          $modules="--modules ${env:dirTestExecutables}"
+          $excluded_sources="--excluded_sources 'src\Main.h' --excluded_sources 'src\Legacy' --excluded_sources 'qa\UnitTest' --excluded_sources 'D:\a\_work' --excluded_sources 'C:\Program Files'"
+          $excluded_line_regex="--excluded_line_regex .*@NOCOVERAGE.*"
+          $export_type="--export_type html:${env:dirHtmlReport}"
           cd src
-          ."${{github.workspace}}\Occ\OpenCppCoverage.exe" -q --modules ${env:dirPathResult} --excluded_sources "src\Main.h" --excluded_sources "src\Legacy" --excluded_sources "qa\UnitTest" --excluded_sources "D:\a\_work" --excluded_sources "C:\Program Files" --excluded_line_regex .*@NOCOVERAGE.* --export_type html:${{github.workspace}}\Coverage -- ${env:dirPathResult}\${env:module0} --gtest_brief=1
+          $program_to_run="${env:dirTestExecutables}\${env:module0} --gtest_brief=1"
+          ."${env:ffnOcc}" -q $modules $excluded_sources $excluded_line_regex $export_type -- $program_to_run
 
-#      - uses: actions/upload-artifact@v3
-#        with:
-#          name: artifact-tests-coverage-open-cpp-coverage
-#          path: Coverage/
+      - uses: actions/upload-artifact@v3
+        with:
+          name: artifact-tests-coverage-open-cpp-coverage
+          path: ${{env.dirHtmlReport}}/
