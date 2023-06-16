@@ -44,8 +44,11 @@ jobs:
       # +-TODO: use ${env:RUNNER_TEMP} for output data
       - name: Install tool
         run: |
+          echo ${env:RUNNER_TEMP}\${env:relSetupOcc}
           echo "${{github.workspace}}\${env:strNameOccSetupFile}" /VERYSILENT /DIR=${env:RUNNER_TEMP}\${env:relSetupOcc}
           ."${{github.workspace}}\${env:strNameOccSetupFile}" /VERYSILENT /DIR=${env:RUNNER_TEMP}\${env:relSetupOcc}
+          dir .
+          dir ${env:RUNNER_TEMP}
           dir ${env:RUNNER_TEMP}\${env:relSetupOcc}
 
 #      - name: Show debug
