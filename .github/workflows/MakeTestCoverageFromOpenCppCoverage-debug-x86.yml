@@ -42,22 +42,28 @@ jobs:
         continue-on-error: true
         run: |
           .\$strNameOpenCppCoverageSetup /VERYSILENT /DIR="Occ"
+      - name: Install Open Cpp Coverage3
+        continue-on-error: true
+        run: |
+          ."${env:strNameOpenCppCoverageSetup}" /VERYSILENT /DIR="Occ"
 
       - name: Show Open_Cpp_Coverage
         continue-on-error: true
         run: |
           dir ${{github.workspace}}\Occ\OpenCppCoverage.exe
-          echo "--modules "$dirTestsExe" --excluded_sources "src\Main.h" --excluded_line_regex .*@NOCOVERAGE.* --export_type html:${{github.workspace}}\Coverage -- ${env:dirTestsExe}\${env:module0}"
+          echo "--modules "$dirTestsExe" --excluded_sources "src\Main.h" --excluded_line_regex .*@NOCOVERAGE.* --export_type html:${{github.workspace}}\Coverage -- ${env:dirTestsExe}\${env:module0} --gtest_brief=1"
+          echo "--modules ${env:dirTestsExe} --excluded_sources "src\Main.h" --excluded_line_regex .*@NOCOVERAGE.* --export_type html:${{github.workspace}}\Coverage -- ${env:dirTestsExe}\${env:module0} --gtest_brief=1"
           echo 'env:module0: '"${env:module0}"
+          echo 'env:module0: '${env:module0}
           echo 'module0: '"$module0"
-          echo $dirTestsExe
+          echo 'dirTestsExe: '$dirTestsExe
           echo 'strNameOpenCppCoverageSetup: '$strNameOpenCppCoverageSetup
 
       - name: Run Open_Cpp_Coverage0
         continue-on-error: true # when fail test
         run: |
           cd src
-          ."${{github.workspace}}\Occ\OpenCppCoverage.exe" --modules ${env:module0} --excluded_sources "src\Main.h" --excluded_line_regex .*@NOCOVERAGE.* --export_type html:${{github.workspace}}\Coverage -- ${env:dirTestsExe}\${env:module0}
+          ."${{github.workspace}}\Occ\OpenCppCoverage.exe" --modules GTest1.exe --excluded_sources "src\Main.h" --excluded_line_regex .*@NOCOVERAGE.* --export_type html:${{github.workspace}}\Coverage -- ${env:dirTestsExe}\${env:module0} --gtest_brief=1
 
       - uses: actions/upload-artifact@v3
         with:
