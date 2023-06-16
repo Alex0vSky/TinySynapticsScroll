@@ -1,5 +1,5 @@
 name: Make test coverage from OpenCppCoverage (debug-x86)
-on: [workflow_dispatch]
+on: [push,workflow_dispatch]
 env: # build from *.sln, debug-x86
   dirTestsExe0: '${{github.workspace}}\qa\UnitTest\bin\Debug\'
 jobs:
@@ -44,9 +44,10 @@ jobs:
 #          arch: OpenCppCoverageSetup-x86
 
       - name: Run OpenCppCoverage
+        shell: cmd
         run: |
-          .OpenCppCoverageSetup-x86-0.9.9.0.exe
-          .OpenCppCoverage.exe
+          .\OpenCppCoverageSetup-x86-0.9.9.0.exe
+          .\OpenCppCoverage.exe
 
 #      - uses: actions/upload-artifact@v3
 #        with:
