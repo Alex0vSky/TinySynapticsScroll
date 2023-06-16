@@ -1,62 +1,46 @@
 name: Make test coverage from OpenCppCoverage (debug-x86)
 on: [push,workflow_dispatch]
 env: # build from *.sln, debug-x86
-  dirTestsExe0: '${{github.workspace}}\qa\UnitTest\bin\Debug\'
+  dirTestsExe: '${{github.workspace}}\qa\UnitTest\bin\Debug\'
 jobs:
   test-coverage:
     runs-on: windows-latest
     permissions:
       actions: read # for "dawidd6/action-download-artifact@v2"
+#      contents: read # for "actions/checkout@v3" when GITHUB_TOKEN
     steps:
-#      - uses: actions/checkout@v3 #?
+      - uses: actions/checkout@v3
 
-#      - name: Download artifact
-#        uses: dawidd6/action-download-artifact@v2
-#        with:
-#          github_token: ${{secrets.GITHUB_TOKEN}}
-#          workflow: googletest.yml
-#          name: artifact-build-tests-debug-x86
-#          path: ${{github.workspace}}\qa\UnitTest\bin\Debug # build from *.sln
-#          search_artifacts: true
+      - name: Download artifact
+        uses: dawidd6/action-download-artifact@v2
+        with:
+          github_token: ${{secrets.GITHUB_TOKEN}}
+          workflow: googletest.yml
+          name: artifact-build-tests-debug-x86
+          path: ${{github.workspace}}\qa\UnitTest\bin\Debug # build from *.sln
+          search_artifacts: true
 
-      - name: Show env
-        run: |
-            echo 'dirTestsExe0 :'${env:dirTestsExe0}
-
-      - name: Download OpenCppCoverage
+      - name: Download Open_Cpp_Coverage
         uses: robinraju/release-downloader@v1.8
         with:
           repository: "OpenCppCoverage/OpenCppCoverage"
           latest: true
-          fileName: "OpenCppCoverageSetup-x86-0.9.9.0.exe"
+          fileName: "OpenCppCoverageSetup-x86*.exe"
 
-#      - name: Download OpenCppCoverage
-#        uses: jaxxstorm/action-install-gh-release@v1.10.0
-#        with:
-#          repo: "OpenCppCoverage/OpenCppCoverage"
-#          cache: enable
-##          arch: x86
-##          tag: 'release-0.9.9.0'
-##          tag: 'OpenCppCoverageSetup-x86-0.9.9.0.exe'
-##          arch: x86
-##          tag: '0.9.9.0'
-#          extension-matching: false
-#          arch: OpenCppCoverageSetup-x86
-
-      - name: Install OpenCppCoverage
+      - name: Install Open Cpp Coverage
         shell: cmd
         run: |
-          .\OpenCppCoverageSetup-x86-0.9.9.0.exe /VERYSILENT /DIR="OpenCppCoverage"
-          dir
-          dir OpenCppCoverage
-          .\OpenCppCoverageSetup-x86-0.9.9.0.exe /VERYSILENT /DIR="${{github.workspace}}\OpenCppCoverage"
-          dir ${{github.workspace}}\OpenCppCoverage
-      - name: Run OpenCppCoverage
-        shell: cmd
+          .\OpenCppCoverageSetup-x86-0.9.9.0.exe /VERYSILENT /DIR="Occ"
+          dir ${{github.workspace}}\Occ
+      - name: Run Open_Cpp_Coverage
+        env:
+            module0: GTest1.exe
         run: |
-          .\OpenCppCoverage.exe
+          cd src
+          echo --modules ${env:module0} --excluded_sources "src\Main.h" --excluded_line_regex .*@NOCOVERAGE.* --export_type html:Coverage -- ${env:dirTestsExe}${env:module0}
+          .${{github.workspace}}\Occ\OpenCppCoverage.exe --modules ${env:module0} --excluded_sources "src\Main.h" --excluded_line_regex .*@NOCOVERAGE.* --export_type html:Coverage -- ${env:dirTestsExe}${env:module0}
 
-#      - uses: actions/upload-artifact@v3
-#        with:
-#          name: artifact-tests-coverage-open-cpp-coverage
-#          path: gtest_report/out/
+      - uses: actions/upload-artifact@v3
+        with:
+          name: artifact-tests-coverage-open-cpp-coverage
+          path: Coverage/
