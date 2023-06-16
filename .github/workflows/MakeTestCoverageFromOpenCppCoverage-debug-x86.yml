@@ -4,6 +4,7 @@ env: # build from *.sln, debug-x86
   dirTestsExe: '${{github.workspace}}\qa\UnitTest\bin\Debug'
   module0: GTest1.exe
   strNameOpenCppCoverageSetup: OpenCppCoverageSetup-x86-0.9.9.0.exe
+  strTagOpenCppCoverageSetup: "v0.9.9.0"
 jobs:
   test-coverage:
     runs-on: windows-latest
@@ -27,6 +28,7 @@ jobs:
         with:
           repository: "OpenCppCoverage/OpenCppCoverage"
           fileName: "OpenCppCoverageSetup-x86-0.9.9.0.exe"
+          tag: "release-0.9.9.0"
 
       - name: Install Open Cpp Coverage
         shell: cmd
