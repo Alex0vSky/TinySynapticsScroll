@@ -117,11 +117,13 @@ jobs:
         run: git clone https://github.com/Alexovsky5/gtest_report
       - name: Convert xml to html
         working-directory: ./gtest_report # directory html_resources must be in current dir
-        run: py scripts\genHtmlReportFromGtest.py "out/GoogleTestCombinedOutput.html" "../combined.xml"
+        run: py scripts\genHtmlReportFromGtest.py "${env:RUNNER_TEMP}\GoogleTestCombinedOutput.html" "../combined.xml"
+#          py scripts\genHtmlReportFromGtest.py "out/GoogleTestCombinedOutput.html" "../combined.xml"
+#          mv -v "out\GoogleTestCombinedOutput.html" ${env:RUNNER_TEMP}\GoogleTestCombinedOutput.html
 
       - uses: actions/upload-artifact@v3
         with:
           name: artifact-coverage-tests-OpenCppCoverage-${{env.strPlatform}}-${{env.strConfiguration}}
           path: |
             ${{runner.temp}}\${{env.relHtmlReport}}
-            gtest_report/out/
+            ${{runner.temp}}\GoogleTestCombinedOutput.html
