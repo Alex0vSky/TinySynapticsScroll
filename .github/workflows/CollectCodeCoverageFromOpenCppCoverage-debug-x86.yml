@@ -55,26 +55,23 @@ jobs:
       - name: Run tool
         # TODO: multiline excluded_sources
         run: | # double launching because windows system hooks from AppCompat conflicts with gmock-win32 hooks
-          echo 1
           .${env:dirTestExecutables}\${env:module0} --help > nul 2>&1
           .${env:dirTestExecutables}\${env:module1} --help > nul 2>&1
           .${env:dirTestExecutables}\${env:module2} --help > nul 2>&1
           .${env:dirTestExecutables}\${env:module3} --help > nul 2>&1
-          echo 2
           $modules="--modules ${env:dirTestExecutables}"
-          $excluded_sources="--excluded_sources 'src\Main.h' --excluded_sources 'src\Legacy' --excluded_sources 'qa\UnitTest' --excluded_sources 'D:\a\_work' --excluded_sources 'C:\Program Files'"
-          $excluded_line_regex="--excluded_line_regex .*@NOCOVERAGE.*"
+          $excluded_sources='--excluded_sources "src\Main.h" --excluded_sources "src\Legacy" --excluded_sources "qa\UnitTest" --excluded_sources "D:\a\_work" --excluded_sources "C:\Program Files"'
+          $excluded_line_regex='--excluded_line_regex .*@NOCOVERAGE.*'
           $export_type="--export_type html:${env:RUNNER_TEMP}\${env:relHtmlReport}"
           $program_to_run="${env:dirTestExecutables}\${env:module0} --gtest_brief=1"
-          echo 3
           $args="$modules $excluded_sources $excluded_line_regex $export_type -- $program_to_run"
           echo $args
-          cd src
           $occ_exe="${env:RUNNER_TEMP}\${env:relSetupOcc}\${env:strOccExecutable}"
           echo $occ_exe
+          cd src
           $ps = new-object System.Diagnostics.Process
           $ps.StartInfo.Filename = $occ_exe
-          $ps.StartInfo.Arguments = " $args"
+          $ps.StartInfo.Arguments = $args
           $ps.StartInfo.UseShellExecute = $false; $ps.start(); $ps.WaitForExit()
 #          D:\a\_temp\Occ\OpenCppCoverage.exe --modules D:\a\turbo-octo-adventure\turbo-octo-adventure\qa\UnitTest\bin\Debug --excluded_sources 'src\Main.h' --excluded_sources 'src\Legacy' --excluded_sources 'qa\UnitTest' --excluded_sources 'D:\a\_work' --excluded_sources 'C:\Program Files' --excluded_line_regex .*@NOCOVERAGE.* --export_type html:D:\a\_temp\HtmlReportOcc -- D:\a\turbo-octo-adventure\turbo-octo-adventure\qa\UnitTest\bin\Debug\GTest1.exe --gtest_brief=1
 #          & $occ_exe $args
