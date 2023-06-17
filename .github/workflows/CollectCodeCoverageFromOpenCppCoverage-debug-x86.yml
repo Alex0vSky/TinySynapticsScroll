@@ -45,15 +45,12 @@ jobs:
           $args="/VERYSILENT /SUPPRESSMSGBOXES /DIR=${env:RUNNER_TEMP}\${env:relSetupOcc} /LOG=${env:RUNNER_TEMP}\${env:strNameOccSetupFile}.log"
           Start-Process "${env:strNameOccSetupFile}" -ArgumentList $args -Wait 
           dir ${env:RUNNER_TEMP}
-      - name: Show tool0
-        continue-on-error: true
-        run: |
-          dir .
-          dir ${env:RUNNER_TEMP}
-      - name: Show tool1
-        continue-on-error: true
-        run: |
-          dir ${env:RUNNER_TEMP}\${env:relSetupOcc}
+#      - name: Show tool0
+#        continue-on-error: true
+#        run: |
+#          dir .
+#          dir ${env:RUNNER_TEMP}
+#          dir ${env:RUNNER_TEMP}\${env:relSetupOcc}
 
       - name: Run tool
         # TODO: multiline excluded_sources
@@ -73,9 +70,9 @@ jobs:
           $args="$modules $excluded_sources $excluded_line_regex $export_type -- $program_to_run"
           echo $args
           cd src
-          Start-Process "${env:RUNNER_TEMP}\${env:relSetupOcc}\${env:strOccExecutable}" -ArgumentList $args
+          . "${env:RUNNER_TEMP}\${env:relSetupOcc}\${env:strOccExecutable}" $args
 # ."${env:RUNNER_TEMP}\${env:relSetupOcc}\${env:strOccExecutable}" -q --modules ${env:dirTestExecutables} --excluded_sources "src\Main.h" --excluded_sources "src\Legacy" --excluded_sources "qa\UnitTest" --excluded_sources "D:\a\_work" --excluded_sources "C:\Program Files" --excluded_line_regex .*@NOCOVERAGE.* --export_type html:${{github.workspace}}\Coverage -- ${env:dirPathResult}\${env:module0} --gtest_brief=1
       - uses: actions/upload-artifact@v3
         with:
           name: artifact-tests-coverage-open-cpp-coverage
-          path: ${{env.RUNNER_TEMP}}\${{env.relHtmlReport}}
+          path: ${{runner.temp}}\${{env.relHtmlReport}}
