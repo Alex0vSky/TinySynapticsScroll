@@ -13,6 +13,7 @@ env:
   relSetupOcc: Occ
   strOccExecutable: OpenCppCoverage.exe
   relHtmlReport: HtmlReportOcc
+  strCoberturaReport: CoberturaReportOcc.xml
 jobs:
   collect-tests-code-coverage:
     runs-on: windows-latest
@@ -42,35 +43,70 @@ jobs:
 
       - name: Install tool
         run: |
-          dir "${env:strNameOccSetupFile}"
           $args="/VERYSILENT /SUPPRESSMSGBOXES /DIR=${env:RUNNER_TEMP}\${env:relSetupOcc} /LOG=${env:RUNNER_TEMP}\${env:strNameOccSetupFile}.log"
           Start-Process "${env:strNameOccSetupFile}" -ArgumentList $args -Wait 
-          dir ${env:RUNNER_TEMP}
 
       - name: Run tool
         env: # build from *.sln, all tests
            dirTestExecutables: ${{github.workspace}}\qa\UnitTest\bin\${{env.strPlatform}}\${{env.strConfiguration}}
         # TODO: multiline excluded_sources
+        # TODO: array call for env:module0
         run: | # double launching because windows system hooks from AppCompat conflicts with gmock-win32 hooks
           .${env:dirTestExecutables}\${env:module0} --help > nul 2>&1
           .${env:dirTestExecutables}\${env:module1} --help > nul 2>&1
           .${env:dirTestExecutables}\${env:module2} --help > nul 2>&1
           .${env:dirTestExecutables}\${env:module3} --help > nul 2>&1
+          
+          $common_args="-q --working_dir src"
           $modules="--modules ${env:dirTestExecutables}"
           $excluded_sources='--excluded_sources "src\Main.h" --excluded_sources "src\Legacy" --excluded_sources "qa\UnitTest" --excluded_sources "D:\a\_work" --excluded_sources "C:\Program Files"'
           $excluded_line_regex='--excluded_line_regex .*@NOCOVERAGE.*'
-          $export_type="--export_type html:${env:RUNNER_TEMP}\${env:relHtmlReport}"
-          $program_to_run="${env:dirTestExecutables}\${env:module0} --gtest_brief=1"
-          $args="-q $modules $excluded_sources $excluded_line_regex $export_type -- $program_to_run"
-          echo $args
           $occ_exe="${env:RUNNER_TEMP}\${env:relSetupOcc}\${env:strOccExecutable}"
-          echo $occ_exe
-          cd src
+          
+          $program_to_run="${env:dirTestExecutables}\${env:module1} --gtest_brief=1"
+          $export_type="--export_type binary:${env:RUNNER_TEMP}\${env:module1}.cov"
+          $args="$common_args $modules $excluded_sources $excluded_line_regex $export_type -- $program_to_run"
           $ps = new-object System.Diagnostics.Process
           $ps.StartInfo.Filename = $occ_exe
           $ps.StartInfo.Arguments = $args
           $ps.StartInfo.UseShellExecute = $false; $ps.start(); $ps.WaitForExit()
+          
+          $program_to_run="${env:dirTestExecutables}\${env:module2} --gtest_brief=1"
+          $export_type="--export_type binary:${env:RUNNER_TEMP}\${env:module2}.cov"
+          $args="$common_args $modules $excluded_sources $excluded_line_regex $export_type -- $program_to_run"
+          $ps = new-object System.Diagnostics.Process
+          $ps.StartInfo.Filename = $occ_exe
+          $ps.StartInfo.Arguments = $args
+          $ps.StartInfo.UseShellExecute = $false; $ps.start(); $ps.WaitForExit()
+          
+          $program_to_run="${env:dirTestExecutables}\${env:module3} --gtest_brief=1"
+          $export_type="--export_type binary:${env:RUNNER_TEMP}\${env:module3}.cov"
+          $args="$common_args $modules $excluded_sources $excluded_line_regex $export_type -- $program_to_run"
+          $ps = new-object System.Diagnostics.Process
+          $ps.StartInfo.Filename = $occ_exe
+          $ps.StartInfo.Arguments = $args
+          $ps.StartInfo.UseShellExecute = $false; $ps.start(); $ps.WaitForExit()
+          
+          $program_to_run="${env:dirTestExecutables}\${env:module0} --gtest_brief=1"
+          $export_type="--export_type html:${env:RUNNER_TEMP}\${env:relHtmlReport} --export_type cobertura:${env:RUNNER_TEMP}\${env:strCoberturaReport}"
+          $input_coverage="--input_coverage ${env:RUNNER_TEMP}\${env:module1}.cov --input_coverage ${env:RUNNER_TEMP}\${env:module2}.cov --input_coverage ${env:RUNNER_TEMP}\${env:module3}.cov"
+          $args="$common_args $modules $excluded_sources $excluded_line_regex $input_coverage $export_type -- $program_to_run"
+          $ps = new-object System.Diagnostics.Process
+          $ps.StartInfo.Filename = $occ_exe
+          $ps.StartInfo.Arguments = $args
+          $ps.StartInfo.UseShellExecute = $false; $ps.start(); $ps.WaitForExit()
+          
+          [xml]$oSystem_Xml_XmlDocument = Get-Content ${env:RUNNER_TEMP}\${env:strCoberturaReport};
+          $oSystem_Xml_XmlElement = $oSystem_Xml_XmlDocument.GetElementsByTagName( 'coverage' ).Item( 0 );
+          $uLinesCovered = $oSystem_Xml_XmlElement.GetAttribute( 'lines-covered' );
+          $uLinesValid = $oSystem_Xml_XmlElement.GetAttribute( 'lines-valid' );
+          $dCoveredPercent = ( 100 * ( $uLinesCovered / $uLinesValid ) );
+          $strCoveredPercent = [math]::Round( $dCoveredPercent, 2 );
+          $strCoveredPercent
+
       - uses: actions/upload-artifact@v3
         with:
           name: artifact-coverage-tests-OpenCppCoverage-${{env.strPlatform}}-${{env.strConfiguration}}
-          path: ${{runner.temp}}\${{env.relHtmlReport}}
+          path: |
+            ${{runner.temp}}\${{env.relHtmlReport}}
+            ${{runner.temp}}\${{env.strCoberturaReport}}
