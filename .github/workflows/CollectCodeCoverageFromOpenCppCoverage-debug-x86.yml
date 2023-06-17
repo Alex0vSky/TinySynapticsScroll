@@ -72,7 +72,8 @@ jobs:
           cd src
           $occ_exe="${env:RUNNER_TEMP}\${env:relSetupOcc}\${env:strOccExecutable}"
           echo $occ_exe
-          & $occ_exe $args
+          D:\a\_temp\Occ\OpenCppCoverage.exe --modules D:\a\turbo-octo-adventure\turbo-octo-adventure\qa\UnitTest\bin\Debug --excluded_sources 'src\Main.h' --excluded_sources 'src\Legacy' --excluded_sources 'qa\UnitTest' --excluded_sources 'D:\a\_work' --excluded_sources 'C:\Program Files' --excluded_line_regex .*@NOCOVERAGE.* --export_type html:D:\a\_temp\HtmlReportOcc -- D:\a\turbo-octo-adventure\turbo-octo-adventure\qa\UnitTest\bin\Debug\GTest1.exe --gtest_brief=1
+      # & $occ_exe $args
       - uses: actions/upload-artifact@v3
         with:
           name: artifact-tests-coverage-open-cpp-coverage
