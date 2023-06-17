@@ -1,10 +1,9 @@
-name: Build tests GoogleTest (debug-x86) 
+name: Build tests GoogleTest (Debug-x86) 
 on: [workflow_dispatch]
 # Configuration
 env:
-  strConfiguration: Debug # or Release
   strPlatform: x86 # or x64
-  dirPathResult: ${{github.workspace}}\qa\UnitTest\bin\Debug # build from *.sln, all tests
+  strConfiguration: Debug # or Release
 jobs:
   build-tests-gtest:
     runs-on: windows-latest
@@ -13,12 +12,14 @@ jobs:
       - name: Add MSBuild to PATH
         uses: microsoft/setup-msbuild@v1.1
       - name: Build tests
-        run: MSBuild qa/UnitTest/UnitTest.sln -m -p:Configuration=${env:strConfiguration} -p:Platform=${env:strPlatform}
+        run: MSBuild qa/UnitTest/UnitTest.sln -noLogo -verbosity:quiet -m -p:Platform=${env:strPlatform} -p:Configuration=${env:strConfiguration} 
       - name: Upload artifact
         uses: actions/upload-artifact@v3
+        env: # build from *.sln, all tests
+           dirTestExecutables: ${{github.workspace}}\qa\UnitTest\bin\${{env.strPlatform}}\${{env.strConfiguration}}
         with:
-          name: artifact-build-tests-gtest-${{env.strConfiguration}}-${{env.strPlatform}}
+          name: artifact-build-tests-gtest-${{env.strPlatform}}-${{env.strConfiguration}}
           path: | # *.pdb for code coverage
-            ${{env.dirPathResult}}\*.exe
-            ${{env.dirPathResult}}\*.pdb
-            !${{env.dirPathResult}}\StaticLibrary.pdb
+            ${{env.dirTestExecutables}}\*.exe
+            ${{env.dirTestExecutables}}\*.pdb
+            !${{env.dirTestExecutables}}\StaticLibrary.pdb
