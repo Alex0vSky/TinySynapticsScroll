@@ -60,6 +60,7 @@ jobs:
           echo "'bCacheHit: ${env:bCacheHit}'"
           echo "'asd: ${env:asd}'"
           echo "'module0: ${env:module0}'"
+          echo "'Programfiles: ${env:Programfiles}'"
 
       - name: Download artifact
         uses: dawidd6/action-download-artifact@v2
