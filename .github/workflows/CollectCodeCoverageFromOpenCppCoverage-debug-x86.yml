@@ -24,8 +24,8 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
-      - name: Set the values
-        run: |
+      - name: Set values (windows-latest)
+        run: | # build from *.sln, all tests
           echo "dirTestExecutables=${{github.workspace}}\qa\UnitTest\bin\${{env.strPlatform}}\${{env.strConfiguration}}" >> $env:GITHUB_ENV
           echo "dirSetupOcc=${env:Programfiles}\${env:relSetupOcc}" >> $env:GITHUB_ENV
       - name: Show the values
@@ -33,13 +33,11 @@ jobs:
         run: |
           echo "dirTestExecutables: '${env:dirTestExecutables}'"
           echo "dirSetupOcc: '${env:dirSetupOcc}'"
-          echo "env:Programfiles: '${env:Programfiles}'"
-          echo "env.Programfiles: '${{env.Programfiles}}'"
 
       - name: Cache tool
         uses: actions/cache@v3
         with:
-          path: ${{env.dirSetupOcc}}\${{env.relSetupOcc}}
+          path: ${{env.dirSetupOcc}}
           key: cache-key-tool-occ-${{env.strNameOccSetupFile}}
         id: cache-tool-occ
 
@@ -54,14 +52,12 @@ jobs:
       - name: Install tool
         if: steps.cache-tool-occ.outputs.cache-hit != 'true'
         run: |
-          $arglist="/VERYSILENT /SUPPRESSMSGBOXES /DIR=""${env:Programfiles}\${env:relSetupOcc}"" /LOG=""${env:RUNNER_TEMP}\${env:strNameOccSetupFile}.log"""
+          $arglist="/VERYSILENT /SUPPRESSMSGBOXES /DIR=""${env:dirSetupOcc}"" /LOG=""${env:RUNNER_TEMP}\${env:strNameOccSetupFile}.log"""
           Start-Process "${env:strNameOccSetupFile}" -ArgumentList $arglist -Wait 
           #type "${env:RUNNER_TEMP}\${env:strNameOccSetupFile}.log"
 
       - name: Download artifact
         uses: dawidd6/action-download-artifact@v2
-        env: # build from *.sln, all tests
-           dirTestExecutables: ${{github.workspace}}\qa\UnitTest\bin\${{env.strPlatform}}\${{env.strConfiguration}}
         with:
           github_token: ${{secrets.GITHUB_TOKEN}}
           workflow: build-tests-gtest-debug-x86.yml
@@ -70,8 +66,6 @@ jobs:
           search_artifacts: true
 
       - name: Run tool
-        env: # build from *.sln, all tests
-           dirTestExecutables: ${{github.workspace}}\qa\UnitTest\bin\${{env.strPlatform}}\${{env.strConfiguration}}
         # TODO: is need using 'continue-on-error: true'
         run: | # double launching because windows system hooks from AppCompat conflicts with gmock-win32 hooks
           @( 
@@ -98,7 +92,7 @@ jobs:
           )
             $program_to_run="${env:dirTestExecutables}\$arg_program --gtest_brief=1 --gtest_output=xml:${env:RUNNER_TEMP}/${env:relGtestOutput}/$arg_program.xml"
             $ps = new-object System.Diagnostics.Process; $ps.StartInfo.UseShellExecute = $false; $ps.StartInfo.WorkingDirectory = Get-Location;
-            $ps.StartInfo.Filename = "${env:Programfiles}\${env:relSetupOcc}\${env:strOccExecutable}"
+            $ps.StartInfo.Filename = "${env:dirSetupOcc}\${env:strOccExecutable}"
             $ps.StartInfo.Arguments = "$common_args $modules $excluded_sources $excluded_line_regex $arg_input_coverage $arg_export_type -- $program_to_run"
             $ps.start( ); $ps.WaitForExit( )
             "ps.StartInfo.Arguments: '$($ps.StartInfo.Arguments)'";
@@ -148,4 +142,3 @@ jobs:
           path: |
             ${{runner.temp}}\${{env.relHtmlReport}}
             ${{runner.temp}}\GoogleTestCombinedOutput
-
