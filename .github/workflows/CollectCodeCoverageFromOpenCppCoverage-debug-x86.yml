@@ -27,19 +27,19 @@ jobs:
       - name: Cache tool
         uses: actions/cache@v3
         with:
-          path: ${{env.Programfiles}}\${{env.relSetupOcc}}
-          key: cache-key-tool-occ-${{env.strNameOccSetupFile}}
-        id: cache-tool-occ
+          path: C:\Program Files\"${{env.relSetupOcc}}"
+          key: "cache-key-tool-occ-${{env.strNameOccSetupFile}}"
+        id: 'cache-tool-occ'
 
       - name: Set the values
         run: |
-          echo "dirTestExecutables=${{github.workspace}}\qa\UnitTest\bin\${{env.strPlatform}}\${{env.strConfiguration}}" >> "$GITHUB_ENV"
-          echo "dirSetupOcc=${Env:Programfiles}\${env:relSetupOcc}" >> "$GITHUB_ENV"
+          echo "dirTestExecutables=${{github.workspace}}\qa\UnitTest\bin\${{env.strPlatform}}\${{env.strConfiguration}}" >> $env:GITHUB_ENV
+          echo "dirSetupOcc=${env:Programfiles}\${env:relSetupOcc}" >> $env:GITHUB_ENV
       - name: Set the value2
         continue-on-error: true
         run: |
-          echo "bCacheHit=${{ steps.cache-tool-occ.outputs.cache-hit != 'true' }}" >> "$GITHUB_ENV"
-          echo '$env:qwe="qwe"' >> "$GITHUB_ENV"
+          echo "bCacheHit=${{ steps.cache-tool-occ.outputs.cache-hit != 'true' }}" >> $env:GITHUB_ENV
+          echo '$env:qwe="qwe"' >> $env:GITHUB_ENV
           
       - name: Show the values
         continue-on-error: true
@@ -51,7 +51,8 @@ jobs:
           echo "'bCacheHit: ${env:bCacheHit}'"
           echo "'asd: ${env:asd}'"
           echo "'module0: ${env:module0}'"
-          echo "'Programfiles: ${env:Programfiles}'"
+          echo "'env:Programfiles: ${env:Programfiles}'"
+          echo "'env.Programfiles: ${{env.Programfiles}}'"
           echo "'qwe: ${env:qwe}'"
       - run: |
           echo ("BRANCH_NAME=" + $env:GITHUB_REF.replace('refs/heads/', '')) >> $env:GITHUB_ENV
@@ -69,7 +70,7 @@ jobs:
       - name: Install tool
         if: steps.cache-tool-occ.outputs.cache-hit != 'true'
         run: |
-          $arglist="/VERYSILENT /SUPPRESSMSGBOXES /DIR=""${Env:Programfiles}\${env:relSetupOcc}"" /LOG=""${env:RUNNER_TEMP}\${env:strNameOccSetupFile}.log"""
+          $arglist="/VERYSILENT /SUPPRESSMSGBOXES /DIR=""${env:Programfiles}\${env:relSetupOcc}"" /LOG=""${env:RUNNER_TEMP}\${env:strNameOccSetupFile}.log"""
           Start-Process "${env:strNameOccSetupFile}" -ArgumentList $arglist -Wait 
           type "${env:RUNNER_TEMP}\${env:strNameOccSetupFile}.log"
 
@@ -113,7 +114,7 @@ jobs:
           )
             $program_to_run="${env:dirTestExecutables}\$arg_program --gtest_brief=1 --gtest_output=xml:${env:RUNNER_TEMP}/${env:relGtestOutput}/$arg_program.xml"
             $ps = new-object System.Diagnostics.Process; $ps.StartInfo.UseShellExecute = $false; $ps.StartInfo.WorkingDirectory = Get-Location;
-            $ps.StartInfo.Filename = "${Env:Programfiles}\${env:relSetupOcc}\${env:strOccExecutable}"
+            $ps.StartInfo.Filename = "${env:Programfiles}\${env:relSetupOcc}\${env:strOccExecutable}"
             $ps.StartInfo.Arguments = "$common_args $modules $excluded_sources $excluded_line_regex $arg_input_coverage $arg_export_type -- $program_to_run"
             $ps.start( ); $ps.WaitForExit( )
             "ps.StartInfo.Arguments: '$($ps.StartInfo.Arguments)'";
