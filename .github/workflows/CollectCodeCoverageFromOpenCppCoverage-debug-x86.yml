@@ -24,6 +24,39 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
+      - name: Cache tool
+        uses: actions/cache@v3
+        with:
+          path: ${{env.RUNNER_TEMP}}\${{env.relSetupOcc}}
+          key: cache-key-tool-occ-${{env.strNameOccSetupFile}}
+        id: cache-tool-occ
+
+      - name: Set the values
+        run: |
+          echo "dirTestExecutables=${{github.workspace}}\qa\UnitTest\bin\${{env.strPlatform}}\${{env.strConfiguration}}" >> "$GITHUB_ENV"
+          echo "dirSetupOcc=${env:RUNNER_TEMP}\${env:relSetupOcc}" >> "$GITHUB_ENV"
+      - name: Set the value2
+        continue-on-error: true
+        run: |
+          echo "bCacheHit=${{ steps.cache-tool-occ.outputs.cache-hit != 'true' }}" >> "$GITHUB_ENV"
+
+      - name: Download tool
+        if: steps.cache-tool-occ.outputs.cache-hit != 'true'
+        uses: robinraju/release-downloader@v1.8
+        with:
+          repository: 'OpenCppCoverage/OpenCppCoverage'
+          fileName: ${{env.strNameOccSetupFile}}
+          tag: ${{env.strGhTagOccSetupFile}}
+
+      - name: Install tool
+        if: steps.cache-tool-occ.outputs.cache-hit != 'true'
+        run: |
+          $arglist="/VERYSILENT /SUPPRESSMSGBOXES /DIR=${env:RUNNER_TEMP}\${env:relSetupOcc} /LOG=${env:RUNNER_TEMP}\${env:strNameOccSetupFile}.log"
+          Start-Process "${env:strNameOccSetupFile}" -ArgumentList $arglist -Wait 
+          echo "'dirTestExecutables: ${env:dirTestExecutables}'"
+          echo "'dirSetupOcc: ${env:dirSetupOcc}'"
+          echo "'bCacheHit: ${env:bCacheHit}'"
+
       - name: Download artifact
         uses: dawidd6/action-download-artifact@v2
         env: # build from *.sln, all tests
@@ -34,18 +67,6 @@ jobs:
           name: artifact-build-tests-gtest-${{env.strPlatform}}-${{env.strConfiguration}}
           path: ${{env.dirTestExecutables}}
           search_artifacts: true
-
-      - name: Download tool
-        uses: robinraju/release-downloader@v1.8
-        with:
-          repository: "OpenCppCoverage/OpenCppCoverage"
-          fileName: ${{env.strNameOccSetupFile}}
-          tag: ${{env.strGhTagOccSetupFile}}
-
-      - name: Install tool
-        run: |
-          $arglist="/VERYSILENT /SUPPRESSMSGBOXES /DIR=${env:RUNNER_TEMP}\${env:relSetupOcc} /LOG=${env:RUNNER_TEMP}\${env:strNameOccSetupFile}.log"
-          Start-Process "${env:strNameOccSetupFile}" -ArgumentList $arglist -Wait 
 
       - name: Run tool
         env: # build from *.sln, all tests
