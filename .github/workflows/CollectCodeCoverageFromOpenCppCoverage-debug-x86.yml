@@ -34,7 +34,7 @@ jobs:
       - name: Set the values
         run: |
           echo "dirTestExecutables=${{github.workspace}}\qa\UnitTest\bin\${{env.strPlatform}}\${{env.strConfiguration}}" >> "$GITHUB_ENV"
-          echo "dirSetupOcc=${env:RUNNER_TEMP}\${env:relSetupOcc}" >> "$GITHUB_ENV"
+          echo "dirSetupOcc=${Env:Programfiles}\${env:relSetupOcc}" >> "$GITHUB_ENV"
       - name: Set the value2
         continue-on-error: true
         run: |
@@ -50,12 +50,16 @@ jobs:
 
       - name: Install tool
         if: steps.cache-tool-occ.outputs.cache-hit != 'true'
+        env:
+           asd: 'asd'
         run: |
-          $arglist="/VERYSILENT /SUPPRESSMSGBOXES /DIR=${env:RUNNER_TEMP}\${env:relSetupOcc} /LOG=${env:RUNNER_TEMP}\${env:strNameOccSetupFile}.log"
+          $arglist="/VERYSILENT /SUPPRESSMSGBOXES /DIR=${Env:Programfiles}\${env:relSetupOcc} /LOG=${env:RUNNER_TEMP}\${env:strNameOccSetupFile}.log"
           Start-Process "${env:strNameOccSetupFile}" -ArgumentList $arglist -Wait 
           echo "'dirTestExecutables: ${env:dirTestExecutables}'"
           echo "'dirSetupOcc: ${env:dirSetupOcc}'"
           echo "'bCacheHit: ${env:bCacheHit}'"
+          echo "'asd: ${env:asd}'"
+          echo "'module0: ${env:module0}'"
 
       - name: Download artifact
         uses: dawidd6/action-download-artifact@v2
@@ -80,7 +84,7 @@ jobs:
             , "${env:module3}"
           ).ForEach{ Start-Process "${env:dirTestExecutables}\$_" -ArgumentList '--gtest_repeat=0' -NoNewWindow; } 
           
-          $common_args='--working_dir "src"' # -q
+          $common_args='-q --working_dir "src"'
           $modules="--modules ${env:dirTestExecutables}"
           $sep = ' --excluded_sources '; $excluded_sources = $sep + ( '"{0}"' -f ( @( 
           'src\Main.h'
@@ -97,7 +101,7 @@ jobs:
           )
             $program_to_run="${env:dirTestExecutables}\$arg_program --gtest_brief=1 --gtest_output=xml:${env:RUNNER_TEMP}/${env:relGtestOutput}/$arg_program.xml"
             $ps = new-object System.Diagnostics.Process; $ps.StartInfo.UseShellExecute = $false; $ps.StartInfo.WorkingDirectory = Get-Location;
-            $ps.StartInfo.Filename = "${env:RUNNER_TEMP}\${env:relSetupOcc}\${env:strOccExecutable}"
+            $ps.StartInfo.Filename = "${Env:Programfiles}\${env:relSetupOcc}\${env:strOccExecutable}"
             $ps.StartInfo.Arguments = "$common_args $modules $excluded_sources $excluded_line_regex $arg_input_coverage $arg_export_type -- $program_to_run"
             $ps.start( ); $ps.WaitForExit( )
             "ps.StartInfo.Arguments: '$($ps.StartInfo.Arguments)'";
