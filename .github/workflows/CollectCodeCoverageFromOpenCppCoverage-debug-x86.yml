@@ -24,46 +24,30 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
-      - name: Cache tool
-        uses: actions/cache@v3
-        with:
-          path: C:\Program Files\"${{env.relSetupOcc}}"
-          key: "cache-key-tool-occ-${{env.strNameOccSetupFile}}"
-        id: 'cache-tool-occ'
-
       - name: Set the values
         run: |
           echo "dirTestExecutables=${{github.workspace}}\qa\UnitTest\bin\${{env.strPlatform}}\${{env.strConfiguration}}" >> $env:GITHUB_ENV
           echo "dirSetupOcc=${env:Programfiles}\${env:relSetupOcc}" >> $env:GITHUB_ENV
-      - name: Set the value2
-        continue-on-error: true
-        run: |
-          echo "bCacheHit=${{ steps.cache-tool-occ.outputs.cache-hit != 'true' }}" >> $env:GITHUB_ENV
-          echo '$env:qwe="qwe"' >> $env:GITHUB_ENV
-          
       - name: Show the values
         continue-on-error: true
-        env:
-           asd: 'asd'
         run: |
-          echo "'dirTestExecutables: ${env:dirTestExecutables}'"
-          echo "'dirSetupOcc: ${env:dirSetupOcc}'"
-          echo "'bCacheHit: ${env:bCacheHit}'"
-          echo "'asd: ${env:asd}'"
-          echo "'module0: ${env:module0}'"
-          echo "'env:Programfiles: ${env:Programfiles}'"
-          echo "'env.Programfiles: ${{env.Programfiles}}'"
-          echo "'qwe: ${env:qwe}'"
-      - run: |
-          echo ("BRANCH_NAME=" + $env:GITHUB_REF.replace('refs/heads/', '')) >> $env:GITHUB_ENV
-      - run: echo "${{ env.BRANCH_NAME }}"
-      - run: echo $env:BRANCH_NAME
+          echo "dirTestExecutables: '${env:dirTestExecutables}'"
+          echo "dirSetupOcc: '${env:dirSetupOcc}'"
+          echo "env:Programfiles: '${env:Programfiles}'"
+          echo "env.Programfiles: '${{env.Programfiles}}'"
+
+      - name: Cache tool
+        uses: actions/cache@v3
+        with:
+          path: ${{env.dirSetupOcc}}\${{env.relSetupOcc}}
+          key: cache-key-tool-occ-${{env.strNameOccSetupFile}}
+        id: cache-tool-occ
 
       - name: Download tool
         if: steps.cache-tool-occ.outputs.cache-hit != 'true'
         uses: robinraju/release-downloader@v1.8
         with:
-          repository: 'OpenCppCoverage/OpenCppCoverage'
+          repository: OpenCppCoverage/OpenCppCoverage
           fileName: ${{env.strNameOccSetupFile}}
           tag: ${{env.strGhTagOccSetupFile}}
 
@@ -72,7 +56,7 @@ jobs:
         run: |
           $arglist="/VERYSILENT /SUPPRESSMSGBOXES /DIR=""${env:Programfiles}\${env:relSetupOcc}"" /LOG=""${env:RUNNER_TEMP}\${env:strNameOccSetupFile}.log"""
           Start-Process "${env:strNameOccSetupFile}" -ArgumentList $arglist -Wait 
-          type "${env:RUNNER_TEMP}\${env:strNameOccSetupFile}.log"
+          #type "${env:RUNNER_TEMP}\${env:strNameOccSetupFile}.log"
 
       - name: Download artifact
         uses: dawidd6/action-download-artifact@v2
@@ -144,8 +128,8 @@ jobs:
 
       - uses: actions/setup-python@v4
         with:
-          python-version: '3.x'
-          cache: 'pip'
+          python-version: 3.x
+          cache: pip
       - name: Install merger
         run: pip install junitparser
       - name: Merge reports
@@ -164,3 +148,4 @@ jobs:
           path: |
             ${{runner.temp}}\${{env.relHtmlReport}}
             ${{runner.temp}}\GoogleTestCombinedOutput
+
