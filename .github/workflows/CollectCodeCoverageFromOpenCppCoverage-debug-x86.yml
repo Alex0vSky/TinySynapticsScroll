@@ -39,6 +39,20 @@ jobs:
         continue-on-error: true
         run: |
           echo "bCacheHit=${{ steps.cache-tool-occ.outputs.cache-hit != 'true' }}" >> "$GITHUB_ENV"
+          echo '$env:qwe="qwe"' >> "$GITHUB_ENV"
+          
+      - name: Show the values
+        continue-on-error: true
+        env:
+           asd: 'asd'
+        run: |
+          echo "'dirTestExecutables: ${env:dirTestExecutables}'"
+          echo "'dirSetupOcc: ${env:dirSetupOcc}'"
+          echo "'bCacheHit: ${env:bCacheHit}'"
+          echo "'asd: ${env:asd}'"
+          echo "'module0: ${env:module0}'"
+          echo "'Programfiles: ${env:Programfiles}'"
+          echo "'qwe: ${env:qwe}'"
 
       - name: Download tool
         if: steps.cache-tool-occ.outputs.cache-hit != 'true'
@@ -50,17 +64,10 @@ jobs:
 
       - name: Install tool
         if: steps.cache-tool-occ.outputs.cache-hit != 'true'
-        env:
-           asd: 'asd'
         run: |
           $arglist="/VERYSILENT /SUPPRESSMSGBOXES /DIR=${Env:Programfiles}\${env:relSetupOcc} /LOG=${env:RUNNER_TEMP}\${env:strNameOccSetupFile}.log"
           Start-Process "${env:strNameOccSetupFile}" -ArgumentList $arglist -Wait 
-          echo "'dirTestExecutables: ${env:dirTestExecutables}'"
-          echo "'dirSetupOcc: ${env:dirSetupOcc}'"
-          echo "'bCacheHit: ${env:bCacheHit}'"
-          echo "'asd: ${env:asd}'"
-          echo "'module0: ${env:module0}'"
-          echo "'Programfiles: ${env:Programfiles}'"
+          type "${env:RUNNER_TEMP}\${env:strNameOccSetupFile}.log"
 
       - name: Download artifact
         uses: dawidd6/action-download-artifact@v2
