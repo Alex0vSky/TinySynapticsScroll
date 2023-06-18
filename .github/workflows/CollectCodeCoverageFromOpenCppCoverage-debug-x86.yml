@@ -27,7 +27,7 @@ jobs:
       - name: Cache tool
         uses: actions/cache@v3
         with:
-          path: ${{env.RUNNER_TEMP}}\${{env.relSetupOcc}}
+          path: ${{env.Programfiles}}\${{env.relSetupOcc}}
           key: cache-key-tool-occ-${{env.strNameOccSetupFile}}
         id: cache-tool-occ
 
@@ -53,6 +53,10 @@ jobs:
           echo "'module0: ${env:module0}'"
           echo "'Programfiles: ${env:Programfiles}'"
           echo "'qwe: ${env:qwe}'"
+      - run: |
+          echo ("BRANCH_NAME=" + $env:GITHUB_REF.replace('refs/heads/', '')) >> $env:GITHUB_ENV
+      - run: echo "${{ env.BRANCH_NAME }}"
+      - run: echo $env:BRANCH_NAME
 
       - name: Download tool
         if: steps.cache-tool-occ.outputs.cache-hit != 'true'
