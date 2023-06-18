@@ -65,7 +65,7 @@ jobs:
       - name: Install tool
         if: steps.cache-tool-occ.outputs.cache-hit != 'true'
         run: |
-          $arglist="/VERYSILENT /SUPPRESSMSGBOXES /DIR=${Env:Programfiles}\${env:relSetupOcc} /LOG=${env:RUNNER_TEMP}\${env:strNameOccSetupFile}.log"
+          $arglist="/VERYSILENT /SUPPRESSMSGBOXES /DIR=""${Env:Programfiles}\${env:relSetupOcc}"" /LOG=""${env:RUNNER_TEMP}\${env:strNameOccSetupFile}.log"""
           Start-Process "${env:strNameOccSetupFile}" -ArgumentList $arglist -Wait 
           type "${env:RUNNER_TEMP}\${env:strNameOccSetupFile}.log"
 
