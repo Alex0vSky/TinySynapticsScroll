@@ -10,7 +10,6 @@ env:
   module3: GTestMem.exe
   strNameOccSetupFile: OpenCppCoverageSetup-x86-0.9.9.0.exe
   strGhTagOccSetupFile: release-0.9.9.0 # from https://github.com/OpenCppCoverage/OpenCppCoverage/tags
-  relSetupOcc: Occ
   strOccExecutable: OpenCppCoverage.exe
   relHtmlReport: HtmlReportOcc
   strCoberturaReport: CoberturaReportOcc.xml
@@ -27,12 +26,7 @@ jobs:
       - name: Set values (windows-latest)
         run: | # build from *.sln, all tests
           echo "dirTestExecutables=${{github.workspace}}\qa\UnitTest\bin\${{env.strPlatform}}\${{env.strConfiguration}}" >> $env:GITHUB_ENV
-          echo "dirSetupOcc=${env:Programfiles}\${env:relSetupOcc}" >> $env:GITHUB_ENV
-      - name: Show the values
-        continue-on-error: true
-        run: |
-          echo "dirTestExecutables: '${env:dirTestExecutables}'"
-          echo "dirSetupOcc: '${env:dirSetupOcc}'"
+          echo "dirSetupOcc=${env:Programfiles}\Occ" >> $env:GITHUB_ENV
 
       - name: Cache tool
         uses: actions/cache@v3
@@ -48,7 +42,6 @@ jobs:
           repository: OpenCppCoverage/OpenCppCoverage
           fileName: ${{env.strNameOccSetupFile}}
           tag: ${{env.strGhTagOccSetupFile}}
-
       - name: Install tool
         if: steps.cache-tool-occ.outputs.cache-hit != 'true'
         run: |
@@ -66,7 +59,7 @@ jobs:
           search_artifacts: true
 
       - name: Run tool
-        # TODO: is need using 'continue-on-error: true'
+        continue-on-error: true
         run: | # double launching because windows system hooks from AppCompat conflicts with gmock-win32 hooks
           @( 
           	  "${env:module0}"
@@ -95,7 +88,7 @@ jobs:
             $ps.StartInfo.Filename = "${env:dirSetupOcc}\${env:strOccExecutable}"
             $ps.StartInfo.Arguments = "$common_args $modules $excluded_sources $excluded_line_regex $arg_input_coverage $arg_export_type -- $program_to_run"
             $ps.start( ); $ps.WaitForExit( )
-            "ps.StartInfo.Arguments: '$($ps.StartInfo.Arguments)'";
+            #"ps.StartInfo.Arguments: '$($ps.StartInfo.Arguments)'";
           }
           
           $export_type="--export_type binary:${env:RUNNER_TEMP}\${env:module1}.cov"
@@ -118,17 +111,17 @@ jobs:
           $uLinesValid = $oSystem_Xml_XmlElement.GetAttribute( 'lines-valid' );
           $dCoveredPercent = ( 100 * ( $uLinesCovered / $uLinesValid ) );
           $strCoveredPercent = [math]::Round( $dCoveredPercent, 2 );
-          $strCoveredPercent
+          "CoveredPercent: $strCoveredPercent%"
 
       - uses: actions/setup-python@v4
         with:
           python-version: 3.x
           cache: pip
-      - name: Install merger
+      - name: Install xml merger
         run: pip install junitparser
-      - name: Merge reports
+      - name: Merge xml reports
         run: junitparser merge --suite-name AllTests --glob "${env:RUNNER_TEMP}/${env:relGtestOutput}/*.xml" "${env:strPlatform}-${env:strConfiguration}.xml"
-      - name: Install gtest converter
+      - name: Install gtest xml to html converter
         run: git clone https://github.com/Alexovsky5/gtest_report
       - name: Convert xml to html
         working-directory: ./gtest_report # directory html_resources must be in current dir
