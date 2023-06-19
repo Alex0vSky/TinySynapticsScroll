@@ -9,12 +9,11 @@ jobs:
           label: Test coverage
           status: 53.4%
           color: blue,555,daf
-          path: coverage.svg
+          path: windows_Debug_x86.svg
       - name: Deploy
         uses: exuanbo/actions-deploy-gist@v1
         with:
           token: ${{ secrets.ACCESS_TO_GIST }}
           gist_id: 2af621bdd237231125e907ea81b1f8a8
-          file_path: coverage.svg
+          file_path: windows_Debug_x86.svg
           file_type: binary
-          gist_file_name: prj_xxx_yyy.svg
