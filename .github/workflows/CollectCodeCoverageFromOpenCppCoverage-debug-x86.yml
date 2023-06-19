@@ -120,8 +120,8 @@ jobs:
           label: Tests coverage
           status: ${{env.strCoverageValue}}%
           color: ${{ false
-            || env.strCoverageValue > 80 && 'yellow,green'
             || env.strCoverageValue > 90 && 'green'
+            || env.strCoverageValue > 80 && 'yellow,green'
             || env.strCoverageValue > 70 && 'yellow'
             || env.strCoverageValue > 60 && 'orange,yellow'
             || env.strCoverageValue > 50 && 'orange'
