@@ -1,24 +1,13 @@
 name: Try put json of badge
-on: [ workflow_dispatch, push ]
+on: [ workflow_dispatch ]
 jobs:
-  setup:
-    runs-on: ubuntu-latest
-    outputs:
-      matrix: ${{ steps.matrix.outputs.matrix }}
-    steps:
-      - id: matrix
-        run: echo "matrix=${{ toJSON( '[ 0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100 ]' ) }}" >> $GITHUB_OUTPUT
   generate-deploy:
-    needs: [ setup ]
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        value: ${{ fromJson( needs.setup.outputs.matrix ) }}
     steps:
-      - name: Generate *.svg file
+      - name: Generate *.svg file for badge
         uses: emibcn/badge-action@v2.0.2
         env:
-          coverage_value: ${{ matrix.value }}
+          coverage_value: 99%
         with:
           label: Tests coverage
           status: ${{env.coverage_value}}%
@@ -33,10 +22,10 @@ jobs:
             || env.coverage_value > 30 && 'red,red,orange'
             || env.coverage_value > 20 && 'red,red,red,orange'
             || 'red' }}
-          path: windows_Debug_x86_${{ matrix.value }}.svg
-      - name: Put *.svg file to Gists
+          path: windows_Debug_x86.svg
+      - name: Put *.svg file to Gists for badge
         uses: exuanbo/actions-deploy-gist@v1
         with:
           token: ${{ secrets.ACCESS_TO_GIST }}
           gist_id: 2af621bdd237231125e907ea81b1f8a8
-          file_path: windows_Debug_x86_${{ matrix.value }}.svg
+          file_path: windows_Debug_x86.svg
