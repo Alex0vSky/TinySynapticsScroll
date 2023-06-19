@@ -1,15 +1,27 @@
 name: Try put json of badge
-on: [ workflow_dispatch ]
+on: [ workflow_dispatch, push ]
 jobs:
   deploy:
     runs-on: windows-latest
     steps:
       - name: Generate *.svg file
         uses: emibcn/badge-action@v2.0.2
+        env:
+          coverage_value: 56
         with:
           label: Tests coverage
           status: 55.4%
-          color: blue,555,daf
+		  # right part color only #color: blue,555,daf
+          color: ${{ false
+            || env.coverage_value > 90 && 'green'
+            || env.coverage_value > 80 && 'yellow,green'
+            || env.coverage_value > 70 && 'yellow'
+            || env.coverage_value > 60 && 'orange,yellow'
+            || env.coverage_value > 50 && 'orange'
+            || env.coverage_value > 40 && 'red,orange'
+            || env.coverage_value > 30 && 'red,red,orange'
+            || env.coverage_value > 20 && 'red,red,red,orange'
+            || 'red' }}
           path: windows_Debug_x86.svg
       - name: Put *.svg file to Gists
         uses: exuanbo/actions-deploy-gist@v1
