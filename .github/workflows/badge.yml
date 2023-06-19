@@ -7,18 +7,36 @@ jobs:
       matrix: ${{ steps.matrix.outputs.matrix }}
     steps:
       - id: matrix
-        run: |
-          echo "${{ toJSON( '[ 0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100 ]' ) }}"
-          echo "${{ toJSON( '0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100' ) }}"
-          echo "matrix=${{ toJSON( '[ 0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100 ]' ) }}" >> $GITHUB_OUTPUT
-      - run: |
-          echo ${{ steps.matrix.outputs }}
-  build:
+        run: echo "matrix=${{ toJSON( '[ 0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100 ]' ) }}" >> $GITHUB_OUTPUT
+  generate-deploy:
     needs: [ setup ]
     runs-on: ubuntu-latest
     strategy:
       matrix:
         value: ${{ fromJson( needs.setup.outputs.matrix ) }}
     steps:
-      - run: |
-          echo "${{ matrix.value }}"
+      - name: Generate *.svg file
+        uses: emibcn/badge-action@v2.0.2
+        env:
+          coverage_value: ${{ matrix.value }}
+        with:
+          label: Tests coverage
+          status: ${{env.coverage_value}}%
+          # right part color only
+          color: ${{ false
+            || env.coverage_value > 90 && 'green'
+            || env.coverage_value > 80 && 'yellow,green'
+            || env.coverage_value > 70 && 'yellow'
+            || env.coverage_value > 60 && 'orange,yellow'
+            || env.coverage_value > 50 && 'orange'
+            || env.coverage_value > 40 && 'red,orange'
+            || env.coverage_value > 30 && 'red,red,orange'
+            || env.coverage_value > 20 && 'red,red,red,orange'
+            || 'red' }}
+          path: windows_Debug_x86_${{ matrix.value }}.svg
+      - name: Put *.svg file to Gists
+        uses: exuanbo/actions-deploy-gist@v1
+        with:
+          token: ${{ secrets.ACCESS_TO_GIST }}
+          gist_id: 2af621bdd237231125e907ea81b1f8a8
+          file_path: windows_Debug_x86_${{ matrix.value }}.svg
