@@ -1,5 +1,5 @@
 name: Run tests, then collect result and coverage
-on: [ push, workflow_dispatch ]
+on: [ workflow_dispatch ]
 # Configuration
 env:
   strPlatform: x86 # or x64
