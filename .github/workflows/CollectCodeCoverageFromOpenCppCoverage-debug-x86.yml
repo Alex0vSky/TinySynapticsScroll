@@ -1,4 +1,4 @@
-name: Run tests, then collect result and coverage
+       name: Run tests, then collect result and coverage
 on: [ workflow_dispatch ]
 # Configuration
 env:
