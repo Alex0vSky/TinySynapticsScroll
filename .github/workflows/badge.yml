@@ -1,0 +1,19 @@
+name: Try put json of badge
+on: [ workflow_dispatch ]
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Get the Numbers
+        run: echo "ANSWER=42" >> $GITHUB_ENV
+      - name: Create the Badge
+        uses: schneegans/dynamic-badges-action@v1.6.0
+        with:
+          auth: ${{ secrets.ACCESS_TO_GIST }}
+          gistID: 2af621bdd237231125e907ea81b1f8a8
+          filename: hello-world.json
+          label: The Answer
+          message: is ${{ env.ANSWER }}
+          valColorRange: ${{ env.ANSWER }}
+          maxColorRange: 100
+          minColorRange: 0
