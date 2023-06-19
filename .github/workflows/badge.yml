@@ -1,17 +1,35 @@
 name: Try put json of badge
 on: [ workflow_dispatch, push ]
 jobs:
+  setup:
+    runs-on: ubuntu-latest
+    outputs:
+      matrix: ${{ steps.matrix.outputs.value }}
+    steps:
+      - id: matrix
+        #echo "matrix=$( echo "$JSON" )" >> $GITHUB_OUTPUT
+        run: |
+          echo 'matrix=[ 0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100 ]' >> $GITHUB_OUTPUT
+  build:
+    needs: [ setup ]
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        value: ${{ fromJson( needs.setup.outputs.matrix ) }}
+    steps:
+      - run: |
+          echo "${{ matrix.value }}"
   deploy:
     runs-on: windows-latest
     steps:
       - name: Generate *.svg file
         uses: emibcn/badge-action@v2.0.2
         env:
-          coverage_value: 56
+          coverage_value: 57
         with:
           label: Tests coverage
-          status: 55.4%
-          # right part color only #color: blue,555,daf
+          status: ${{env.coverage_value}}%
+          # right part color only
           color: ${{ false
             || env.coverage_value > 90 && 'green'
             || env.coverage_value > 80 && 'yellow,green'
