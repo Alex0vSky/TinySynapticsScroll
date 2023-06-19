@@ -1,19 +1,19 @@
 name: Run tests, then collect result and coverage
-on: [ workflow_dispatch ]
+on: [ push, workflow_dispatch ]
 # Configuration
 env:
   strPlatform: x86 # or x64
   strConfiguration: Debug # or Release
-  module0: GTest1.exe
-  module1: GTestDefWindowProc.exe
-  module2: GTestEmptyWorkingSet.exe
-  module3: GTestMem.exe
   strNameOccSetupFile: OpenCppCoverageSetup-x86-0.9.9.0.exe
   strGhTagOccSetupFile: release-0.9.9.0 # from https://github.com/OpenCppCoverage/OpenCppCoverage/tags
   strOccExecutable: OpenCppCoverage.exe
   relHtmlReport: HtmlReportOcc
   strCoberturaReport: CoberturaReportOcc.xml
   relGtestOutput: GtestOutput
+  module0: GTest1.exe
+  module1: GTestDefWindowProc.exe
+  module2: GTestEmptyWorkingSet.exe
+  module3: GTestMem.exe
 jobs:
   collect-tests-code-coverage:
     runs-on: windows-latest
@@ -28,13 +28,21 @@ jobs:
           echo "dirTestExecutables=${{github.workspace}}\qa\UnitTest\bin\${{env.strPlatform}}\${{env.strConfiguration}}" >> $env:GITHUB_ENV
           echo "dirSetupOcc=${env:Programfiles}\Occ" >> $env:GITHUB_ENV
 
+      - name: Download artifact
+        uses: dawidd6/action-download-artifact@v2
+        with:
+          github_token: ${{secrets.GITHUB_TOKEN}}
+          workflow: build-tests-gtest-debug-x86.yml
+          name: artifact-build-tests-gtest-${{env.strPlatform}}-${{env.strConfiguration}}
+          path: ${{env.dirTestExecutables}}
+          search_artifacts: true
+
       - name: Cache tool
         uses: actions/cache@v3
         with:
           path: ${{env.dirSetupOcc}}
           key: cache-key-tool-occ-${{env.strNameOccSetupFile}}
         id: cache-tool-occ
-
       - name: Download tool
         if: steps.cache-tool-occ.outputs.cache-hit != 'true'
         uses: robinraju/release-downloader@v1.8
@@ -48,15 +56,6 @@ jobs:
           $arglist="/VERYSILENT /SUPPRESSMSGBOXES /DIR=""${env:dirSetupOcc}"" /LOG=""${env:RUNNER_TEMP}\${env:strNameOccSetupFile}.log"""
           Start-Process "${env:strNameOccSetupFile}" -ArgumentList $arglist -Wait 
           #type "${env:RUNNER_TEMP}\${env:strNameOccSetupFile}.log"
-
-      - name: Download artifact
-        uses: dawidd6/action-download-artifact@v2
-        with:
-          github_token: ${{secrets.GITHUB_TOKEN}}
-          workflow: build-tests-gtest-debug-x86.yml
-          name: artifact-build-tests-gtest-${{env.strPlatform}}-${{env.strConfiguration}}
-          path: ${{env.dirTestExecutables}}
-          search_artifacts: true
 
       - name: Run tool
         continue-on-error: true
@@ -112,6 +111,31 @@ jobs:
           $dCoveredPercent = ( 100 * ( $uLinesCovered / $uLinesValid ) );
           $strCoveredPercent = [math]::Round( $dCoveredPercent, 2 );
           "CoveredPercent: $strCoveredPercent%"
+          echo "strCoverageValue=$strCoveredPercent" >> $env:GITHUB_ENV
+          echo "strCoverageFile=${{runner.os}}-${{env.strPlatform}}-${{env.strConfiguration}}.svg" >> $env:GITHUB_ENV
+
+      - name: Generate *.svg file for badge
+        uses: emibcn/badge-action@v2.0.2
+        with:
+          label: Tests coverage
+          status: ${{env.strCoverageValue}}%
+          color: ${{ false
+            || env.strCoverageValue > 80 && 'yellow,green'
+            || env.strCoverageValue > 90 && 'green'
+            || env.strCoverageValue > 70 && 'yellow'
+            || env.strCoverageValue > 60 && 'orange,yellow'
+            || env.strCoverageValue > 50 && 'orange'
+            || env.strCoverageValue > 40 && 'red,orange'
+            || env.strCoverageValue > 30 && 'red,red,orange'
+            || env.strCoverageValue > 20 && 'red,red,red,orange'
+            || 'red' }}
+          path: ${{env.strCoverageFile}}
+      - name: Put *.svg file to Gists for badge
+        uses: exuanbo/actions-deploy-gist@v1
+        with:
+          token: ${{ secrets.ACCESS_TO_GIST }}
+          gist_id: 2af621bdd237231125e907ea81b1f8a8
+          file_path: ${{env.strCoverageFile}}
 
       - uses: actions/setup-python@v4
         with:
