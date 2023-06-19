@@ -2,18 +2,18 @@ name: Try put json of badge
 on: [ workflow_dispatch ]
 jobs:
   deploy:
-    runs-on: ubuntu-latest
+    runs-on: windows-latest
     steps:
-      - uses: emibcn/badge-action@v2.0.2
+      - name: Generate *.svg file
+        uses: emibcn/badge-action@v2.0.2
         with:
-          label: Test coverage
-          status: 53.4%
+          label: Tests coverage
+          status: 55.4%
           color: blue,555,daf
           path: windows_Debug_x86.svg
-      - name: Deploy
+      - name: Put *.svg file to Gists
         uses: exuanbo/actions-deploy-gist@v1
         with:
           token: ${{ secrets.ACCESS_TO_GIST }}
           gist_id: 2af621bdd237231125e907ea81b1f8a8
           file_path: windows_Debug_x86.svg
-          #file_type: binary
