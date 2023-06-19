@@ -1,4 +1,4 @@
-[![cpp-logo](https://img.shields.io/badge/C++-Solutions-blue.svg?style=flat&logo=c%2B%2B)]([https://](https://en.wikipedia.org/wiki/C++))
+[![cpp-logo](https://img.shields.io/badge/C++-Solutions-blue.svg?style=flat&logo=c%2B%2B)](https://en.wikipedia.org/wiki/C++)
 
 [![Run tests, then collect result and coverage](https://github.com/Alexovsky5/turbo-octo-adventure/actions/workflows/CollectCodeCoverageFromOpenCppCoverage-debug-x86.yml/badge.svg)](https://github.com/Alexovsky5/turbo-octo-adventure/actions/workflows/CollectCodeCoverageFromOpenCppCoverage-debug-x86.yml)
 
