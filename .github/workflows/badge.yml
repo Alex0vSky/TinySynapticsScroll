@@ -16,4 +16,4 @@ jobs:
           token: ${{ secrets.ACCESS_TO_GIST }}
           gist_id: 2af621bdd237231125e907ea81b1f8a8
           file_path: windows_Debug_x86.svg
-          file_type: binary
+          #file_type: binary
