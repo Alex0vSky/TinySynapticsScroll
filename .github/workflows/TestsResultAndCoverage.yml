@@ -62,7 +62,7 @@ jobs:
         continue-on-error: true
         run: | # double launching because windows system hooks from AppCompat conflicts with gmock-win32 hooks
           @( 
-          	  "${env:module0}"
+              "${env:module0}"
             , "${env:module1}"
             , "${env:module2}"
             , "${env:module3}"
@@ -78,32 +78,29 @@ jobs:
             , 'C:\Program Files'
           ) -join '"'+$sep+'"') );
           $excluded_line_regex='--excluded_line_regex .*@NOCOVERAGE.*'
-          Function runnerOcc_ { Param( 
-              [ValidateNotNullOrEmpty()]$arg_program=$(throw "Is mandatory, please provide a value /questions/9506056/")
-              , [ValidateNotNullOrEmpty()]$arg_export_type=$(throw "Is mandatory, please provide a value /questions/9506056/")
-              , [ValidateNotNullOrEmpty()]$arg_input_coverage=''
-          )
-            $program_to_run="${env:dirTestExecutables}\$arg_program --gtest_brief=1 --gtest_output=xml:${env:RUNNER_TEMP}/${env:relGtestOutput}/$arg_program.xml"
-            $ps = new-object System.Diagnostics.Process; $ps.StartInfo.UseShellExecute = $false; $ps.StartInfo.WorkingDirectory = Get-Location;
-            $ps.StartInfo.Filename = "${env:dirSetupOcc}\${env:strOccExecutable}"
-            $ps.StartInfo.Arguments = "$common_args $modules $excluded_sources $excluded_line_regex $arg_input_coverage $arg_export_type -- $program_to_run"
-            $ps.start( ); $ps.WaitForExit( )
-            #"ps.StartInfo.Arguments: '$($ps.StartInfo.Arguments)'";
-          }
+          Function runnerOcc_ ( $arg_program ) {
+            $export_type="--export_type binary:${env:RUNNER_TEMP}\${arg_program}.cov"
+            $program_to_run="${env:dirTestExecutables}\$arg_program --gtest_brief=1 --gtest_output=xml:${env:RUNNER_TEMP}\${env:relGtestOutput}\$arg_program.xml"
+            Start-Process -Wait -NoNewWindow "${env:dirSetupOcc}\${env:strOccExecutable}" -ArgumentList "$common_args $modules $excluded_sources $excluded_line_regex $export_type -- $program_to_run"
+          }          
+          runnerOcc_ $env:module0
+          runnerOcc_ $env:module1
+          runnerOcc_ $env:module2
+          runnerOcc_ $env:module3
           
-          $export_type="--export_type binary:${env:RUNNER_TEMP}\${env:module1}.cov"
-          runnerOcc_ $env:module1 $export_type
-          $export_type="--export_type binary:${env:RUNNER_TEMP}\${env:module2}.cov"
-          runnerOcc_ $env:module2 $export_type
-          $export_type="--export_type binary:${env:RUNNER_TEMP}\${env:module3}.cov"
-          runnerOcc_ $env:module3 $export_type              
+          # Change html template
+          $ffnOccTemplate="${env:dirSetupOcc}\Template\MainTemplate.html"
+          (Get-Content $ffnOccTemplate).replace('{{TITLE}}', 'Merged from all tests') | Set-Content $ffnOccTemplate
+          
           $export_type="--export_type html:${env:RUNNER_TEMP}\${env:relHtmlReport} --export_type cobertura:${env:RUNNER_TEMP}\${env:strCoberturaReport}"
-          $sep = " --input_coverage ${env:RUNNER_TEMP}\"; $input_coverage = $sep + ( @(
-            "${env:module1}.cov"
+          $sep = " --input_coverage ${env:RUNNER_TEMP}\"; 
+          $input_coverage = $sep + ( @(
+              "${env:module0}.cov"
+            , "${env:module1}.cov"
             , "${env:module2}.cov"
             , "${env:module3}.cov"
           ) -join $sep );
-          runnerOcc_ $env:module0 $export_type $input_coverage
+          Start-Process -Wait -NoNewWindow "${env:dirSetupOcc}\${env:strOccExecutable}" -ArgumentList "$input_coverage $export_type" 
           
           [xml]$oSystem_Xml_XmlDocument = Get-Content ${env:RUNNER_TEMP}\${env:strCoberturaReport};
           $oSystem_Xml_XmlElement = $oSystem_Xml_XmlDocument.GetElementsByTagName( 'coverage' ).Item( 0 );
@@ -111,7 +108,6 @@ jobs:
           $uLinesValid = $oSystem_Xml_XmlElement.GetAttribute( 'lines-valid' );
           $dCoveredPercent = ( 100 * ( $uLinesCovered / $uLinesValid ) );
           $strCoveredPercent = [math]::Round( $dCoveredPercent, 2 );
-          "CoveredPercent: $strCoveredPercent%"
           echo "strCoverageValue=$strCoveredPercent" >> $env:GITHUB_ENV
 
       - name: Generate *.svg file for badge if success
@@ -156,13 +152,13 @@ jobs:
       - name: Install xml merger
         run: pip install junitparser
       - name: Merge xml reports
-        run: junitparser merge --suite-name AllTests --glob "${env:RUNNER_TEMP}/${env:relGtestOutput}/*.xml" "${{env.strCfg}}.xml"
+        run: junitparser merge --suite-name AllTests --glob "${env:RUNNER_TEMP}\${env:relGtestOutput}\*.xml" "${{env.strCfg}}.xml"
       - name: Install gtest xml to html converter
         run: git clone https://github.com/Alexovsky5/gtest_report
       - name: Convert xml to html
         working-directory: ./gtest_report # directory html_resources must be in current dir
         run: |
-          py scripts\genHtmlReportFromGtest.py "out/GoogleTestCombinedOutput.html" "../${{env.strCfg}}.xml"
+          py scripts\genHtmlReportFromGtest.py "out\GoogleTestCombinedOutput.html" "..\${{env.strCfg}}.xml"
           mv -v "out" ${env:RUNNER_TEMP}\GoogleTestCombinedOutput
 
       - uses: actions/upload-artifact@v3
