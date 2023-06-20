@@ -27,13 +27,14 @@ jobs:
         run: | # build from *.sln, all tests
           echo "dirTestExecutables=${{github.workspace}}\qa\UnitTest\bin\${{env.strPlatform}}\${{env.strConfiguration}}" >> $env:GITHUB_ENV
           echo "dirSetupOcc=${env:Programfiles}\Occ" >> $env:GITHUB_ENV
+          echo "strCfg=${{env.strPlatform}}-${{env.strConfiguration}}" >> $env:GITHUB_ENV
 
       - name: Download artifact
         uses: dawidd6/action-download-artifact@v2
         with:
           github_token: ${{secrets.GITHUB_TOKEN}}
           workflow: build-tests-gtest-debug-x86.yml
-          name: artifact-build-tests-gtest-${{env.strPlatform}}-${{env.strConfiguration}}
+          name: artifact-build-tests-gtest-${{env.strCfg}}
           path: ${{env.dirTestExecutables}}
           search_artifacts: true
 
@@ -112,25 +113,44 @@ jobs:
           $strCoveredPercent = [math]::Round( $dCoveredPercent, 2 );
           "CoveredPercent: $strCoveredPercent%"
           echo "strCoverageValue=$strCoveredPercent" >> $env:GITHUB_ENV
-          echo "strCoverageFile=${{runner.os}}-${{env.strPlatform}}-${{env.strConfiguration}}.svg" >> $env:GITHUB_ENV
+          echo "strCoverageFile=${{runner.os}}-${{env.strCfg}}.svg" >> $env:GITHUB_ENV
+
+      - name: Badge color and text if success
+      - if: ${{ success( ) }}
+        env:
+            strBadgeText: ${{env.strCoverageValue}}%
+            strBadgeColor: ${{ false
+              || env.strCoverageValue > 90 && 'green'
+              || env.strCoverageValue > 80 && 'yellow,green'
+              || env.strCoverageValue > 70 && 'yellow'
+              || env.strCoverageValue > 60 && 'orange,yellow'
+              || env.strCoverageValue > 50 && 'orange'
+              || env.strCoverageValue > 40 && 'red,orange'
+              || env.strCoverageValue > 30 && 'red,red,orange'
+              || env.strCoverageValue > 20 && 'red,red,red,orange'
+              || 'red' }}
+        run: |
+          echo "strBadgeText=$strBadgeText" >> $env:GITHUB_ENV
+          echo "strBadgeColor=$strBadgeColor" >> $env:GITHUB_ENV
+      - name: Badge color and text if failure
+        if: ${{ failure( ) }}
+        env:
+            strBadgeText: failure
+            strBadgeColor: red
+        run: |
+          echo "strBadgeText=$strBadgeText" >> $env:GITHUB_ENV
+          echo "strBadgeColor=$strBadgeColor" >> $env:GITHUB_ENV
 
       - name: Generate *.svg file for badge
+        if: ${{ success( ) || failure( ) }} # yes, not 'always( )' because 'cancelled( )'
         uses: emibcn/badge-action@v2.0.2
         with:
           label: Tests coverage
-          status: ${{env.strCoverageValue}}%
-          color: ${{ false
-            || env.strCoverageValue > 90 && 'green'
-            || env.strCoverageValue > 80 && 'yellow,green'
-            || env.strCoverageValue > 70 && 'yellow'
-            || env.strCoverageValue > 60 && 'orange,yellow'
-            || env.strCoverageValue > 50 && 'orange'
-            || env.strCoverageValue > 40 && 'red,orange'
-            || env.strCoverageValue > 30 && 'red,red,orange'
-            || env.strCoverageValue > 20 && 'red,red,red,orange'
-            || 'red' }}
+          status: ${{env.strBadgeText}}%
+          color: ${{env.strBadgeColor}}%
           path: ${{env.strCoverageFile}}
       - name: Put *.svg file to Gists for badge
+        if: ${{ success( ) || failure( ) }}
         uses: exuanbo/actions-deploy-gist@v1
         with:
           token: ${{ secrets.ACCESS_TO_GIST }}
@@ -144,18 +164,18 @@ jobs:
       - name: Install xml merger
         run: pip install junitparser
       - name: Merge xml reports
-        run: junitparser merge --suite-name AllTests --glob "${env:RUNNER_TEMP}/${env:relGtestOutput}/*.xml" "${env:strPlatform}-${env:strConfiguration}.xml"
+        run: junitparser merge --suite-name AllTests --glob "${env:RUNNER_TEMP}/${env:relGtestOutput}/*.xml" "${{env.strCfg}}.xml"
       - name: Install gtest xml to html converter
         run: git clone https://github.com/Alexovsky5/gtest_report
       - name: Convert xml to html
         working-directory: ./gtest_report # directory html_resources must be in current dir
         run: |
-          py scripts\genHtmlReportFromGtest.py "out/GoogleTestCombinedOutput.html" "../${env:strPlatform}-${env:strConfiguration}.xml"
+          py scripts\genHtmlReportFromGtest.py "out/GoogleTestCombinedOutput.html" "../${{env.strCfg}}.xml"
           mv -v "out" ${env:RUNNER_TEMP}\GoogleTestCombinedOutput
 
       - uses: actions/upload-artifact@v3
         with:
-          name: artifact-coverage-tests-OpenCppCoverage-${{env.strPlatform}}-${{env.strConfiguration}}
+          name: artifact-coverage-tests-OpenCppCoverage-${{env.strCfg}}
           path: |
             ${{runner.temp}}\${{env.relHtmlReport}}
             ${{runner.temp}}\GoogleTestCombinedOutput
