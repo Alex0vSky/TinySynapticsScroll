@@ -21,7 +21,7 @@ jobs:
       actions: read # for "dawidd6/action-download-artifact@v2"
       contents: read # for "actions/checkout@v3" when GITHUB_TOKEN
     steps:
-      - uses: actions/checkoutXxx@v3
+      - uses: actions/checkout@v3
 
       - name: Set values (windows-latest)
         run: | # build from *.sln, all tests
@@ -30,7 +30,7 @@ jobs:
           echo "strCfg=${{env.strPlatform}}-${{env.strConfiguration}}" >> $env:GITHUB_ENV
 
       - name: Download artifact
-        uses: dawidd6/action-download-artifact@v2
+        uses: dawidd6/action-download-artifactXxx@v2
         with:
           github_token: ${{secrets.GITHUB_TOKEN}}
           workflow: build-tests-gtest-debug-x86.yml
@@ -135,7 +135,7 @@ jobs:
       - name: Badge color and text if failure
         if: ${{ failure( ) }}
         env:
-            strBadgeText: failure
+            strBadgeText: failing
             strBadgeColor: red
         run: |
           echo "strBadgeText=$strBadgeText" >> $env:GITHUB_ENV
