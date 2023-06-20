@@ -182,8 +182,22 @@ jobs:
         run: pip install metrixpp
       - name: Run metrics code
         run: |
-          metrixpp collect --std.code.lines.code --std.code.complexity.cyclomatic -- src
-          metrixpp view > ${{runner.temp}}\metrixpp_view.txt
+          metrix++ collect --std.code.lines.code --std.code.complexity.cyclomatic -- src
+          metrix++ view > ${{runner.temp}}\metrixpp_view.txt
+
+      - name: Linter source code to job summary
+        continue-on-error: true
+        uses: cpp-linter/cpp-linter-action@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          extra-args: -std=c++14
+          style: ''
+          repo-root: src
+          ignore: Legacy
+          step-summary: true
+          file-annotations: false
+          files-changed-only: false
 
       - uses: actions/upload-artifact@v3
         with:
