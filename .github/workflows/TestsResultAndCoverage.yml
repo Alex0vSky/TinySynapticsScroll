@@ -138,7 +138,7 @@ jobs:
         with:
           label: Tests coverage
           status: failing
-          color: red
+          color: red,red
           path: ${{runner.os}}-${{env.strCfg}}.svg
 
       - name: Put *.svg file to Gists for badge
