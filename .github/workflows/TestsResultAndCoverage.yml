@@ -30,10 +30,10 @@ jobs:
           echo "strCfg=${{env.strPlatform}}-${{env.strConfiguration}}" >> $env:GITHUB_ENV
 
       - name: Download artifact
-        uses: dawidd6/action-download-artifactXxx@v2
+        uses: dawidd6/action-download-artifact@v2
         with:
           github_token: ${{secrets.GITHUB_TOKEN}}
-          workflow: build-tests-gtest-debug-x86.yml
+          workflow: build-tests-gtest-debug-x86 Xxx.yml
           name: artifact-build-tests-gtest-${{env.strCfg}}
           path: ${{env.dirTestExecutables}}
           search_artifacts: true
