@@ -1,6 +1,6 @@
 [![cpp-logo](https://img.shields.io/badge/C++v14-Solutions-blue.svg?style=flat&logo=c%2B%2B)](https://en.wikipedia.org/wiki/C++)
 
-[![Run tests, then collect result and coverage](https://github.com/Alexovsky5/turbo-octo-adventure/actions/workflows/CollectCodeCoverageFromOpenCppCoverage-debug-x86.yml/badge.svg)](https://github.com/Alexovsky5/turbo-octo-adventure/actions/workflows/CollectCodeCoverageFromOpenCppCoverage-debug-x86.yml)
+[![Run tests, then collect result and coverage](https://github.com/Alexovsky5/turbo-octo-adventure/actions/workflows/TestsResultAndCoverage.yml/badge.svg)](https://github.com/Alexovsky5/turbo-octo-adventure/actions/workflows/TestsResultAndCoverage.yml)
 
 [![tests coverage Windows-x86-Debug](https://gist.githubusercontent.com/Alexovsky5/2af621bdd237231125e907ea81b1f8a8/raw/Windows-x86-Debug.svg)](https://github.com/Alexovsky5/turbo-octo-adventure/actions/workflows/CollectCodeCoverageFromOpenCppCoverage-debug-x86.yml)
 
