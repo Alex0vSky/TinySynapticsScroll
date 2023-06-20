@@ -33,7 +33,7 @@ jobs:
         uses: dawidd6/action-download-artifact@v2
         with:
           github_token: ${{secrets.GITHUB_TOKEN}}
-          workflow: build-tests-gtest-debug-x86 Xxx.yml
+          workflow: build-tests-gtest-debug-x86Xxx.yml
           name: artifact-build-tests-gtest-${{env.strCfg}}
           path: ${{env.dirTestExecutables}}
           search_artifacts: true
@@ -113,49 +113,41 @@ jobs:
           $strCoveredPercent = [math]::Round( $dCoveredPercent, 2 );
           "CoveredPercent: $strCoveredPercent%"
           echo "strCoverageValue=$strCoveredPercent" >> $env:GITHUB_ENV
-          echo "strCoverageFile=${{runner.os}}-${{env.strCfg}}.svg" >> $env:GITHUB_ENV
 
-      - name: Badge color and text if success
+      - name: Generate *.svg file for badge if success
         if: ${{ success( ) }}
-        env:
-            strBadgeText: ${{env.strCoverageValue}}%
-            strBadgeColor: ${{ false
-              || env.strCoverageValue > 90 && 'green'
-              || env.strCoverageValue > 80 && 'yellow,green'
-              || env.strCoverageValue > 70 && 'yellow'
-              || env.strCoverageValue > 60 && 'orange,yellow'
-              || env.strCoverageValue > 50 && 'orange'
-              || env.strCoverageValue > 40 && 'red,orange'
-              || env.strCoverageValue > 30 && 'red,red,orange'
-              || env.strCoverageValue > 20 && 'red,red,red,orange'
-              || 'red' }}
-        run: |
-          echo "strBadgeText=$strBadgeText" >> $env:GITHUB_ENV
-          echo "strBadgeColor=$strBadgeColor" >> $env:GITHUB_ENV
-      - name: Badge color and text if failure
-        if: ${{ failure( ) }}
-        env:
-            strBadgeText: failing
-            strBadgeColor: red
-        run: |
-          echo "strBadgeText=$strBadgeText" >> $env:GITHUB_ENV
-          echo "strBadgeColor=$strBadgeColor" >> $env:GITHUB_ENV
-
-      - name: Generate *.svg file for badge
-        if: ${{ success( ) || failure( ) }} # yes, not 'always( )' because 'cancelled( )'
         uses: emibcn/badge-action@v2.0.2
         with:
           label: Tests coverage
-          status: ${{env.strBadgeText}}
-          color: ${{env.strBadgeColor}}
-          path: ${{env.strCoverageFile}}
+          status: ${{env.strCoverageValue}}%
+          color: ${{ false
+            || env.strCoverageValue > 90 && 'green'
+            || env.strCoverageValue > 80 && 'yellow,green'
+            || env.strCoverageValue > 70 && 'yellow'
+            || env.strCoverageValue > 60 && 'orange,yellow'
+            || env.strCoverageValue > 50 && 'orange'
+            || env.strCoverageValue > 40 && 'red,orange'
+            || env.strCoverageValue > 30 && 'red,red,orange'
+            || env.strCoverageValue > 20 && 'red,red,red,orange'
+            || 'red' }}
+          path: ${{runner.os}}-${{env.strCfg}}.svg
+      # env-s not pass between steps when failure
+      - name: Generate *.svg file for badge if failure
+        if: ${{ failure( ) }}
+        uses: emibcn/badge-action@v2.0.2
+        with:
+          label: Tests coverage
+          status: failing
+          color: red
+          path: ${{runner.os}}-${{env.strCfg}}.svg
+
       - name: Put *.svg file to Gists for badge
-        if: ${{ success( ) || failure( ) }}
+        if: ${{ success( ) || failure( ) }} # yes, not 'always( )' because 'cancelled( )'
         uses: exuanbo/actions-deploy-gist@v1
         with:
           token: ${{ secrets.ACCESS_TO_GIST }}
           gist_id: 2af621bdd237231125e907ea81b1f8a8
-          file_path: ${{env.strCoverageFile}}
+          file_path: ${{runner.os}}-${{env.strCfg}}.svg
 
       - uses: actions/setup-python@v4
         with:
