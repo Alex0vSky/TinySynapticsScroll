@@ -1,5 +1,5 @@
 name: Run tests, then collect result and coverage
-on: [ push, workflow_dispatch ]
+on: { push: { paths-ignore: README.md }, workflow_dispatch }
 # Configuration
 env:
   strPlatform: x86 # or x64
@@ -26,7 +26,7 @@ jobs:
       - name: Set values (windows-latest)
         run: | # build from *.sln, all tests
           echo "dirTestExecutables=${{github.workspace}}\qa\UnitTest\bin\${{env.strPlatform}}\${{env.strConfiguration}}" >> $env:GITHUB_ENV
-          echo "dirSetupOcc=${{env.Programfiles}}\Occ" >> $env:GITHUB_ENV
+          echo "dirSetupOcc=${env:Programfiles}\Occ" >> $env:GITHUB_ENV
           echo "strCfg=${{env.strPlatform}}-${{env.strConfiguration}}" >> $env:GITHUB_ENV
 
       - name: Download artifact
@@ -160,6 +160,23 @@ jobs:
         run: |
           py scripts\genHtmlReportFromGtest.py "out\GoogleTestCombinedOutput.html" "..\${{env.strCfg}}.xml"
           mv -v "out" ${{runner.temp}}\GoogleTestCombinedOutput
+          [xml]$oSystem_Xml_XmlDocument = Get-Content ..\${{env.strCfg}}.xml
+          $oSystem_Xml_XmlElement = $oSystem_Xml_XmlDocument.GetElementsByTagName( 'testsuites' ).Item( 0 );
+          $uTests = $oSystem_Xml_XmlElement.GetAttribute( 'tests' );
+          echo "uTests=$uTests" >> $env:GITHUB_ENV
+
+      - name: Generate *.svg file for badge2
+        uses: emibcn/badge-action@v2.0.2
+        with:
+          label: GoogleTest
+          status: ${{env.uTests}} testsuites
+          path: GoogleTest-testsuites-${{runner.os}}-${{env.strCfg}}.svg
+      - name: Put *.svg file to Gists for badge2
+        uses: exuanbo/actions-deploy-gist@v1
+        with:
+          token: ${{ secrets.ACCESS_TO_GIST }}
+          gist_id: 2af621bdd237231125e907ea81b1f8a8
+          file_path: GoogleTest-testsuites-${{runner.os}}-${{env.strCfg}}.svg
 
       - uses: actions/upload-artifact@v3
         with:
