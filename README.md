@@ -2,7 +2,7 @@
 
 [![Run tests, then collect result and coverage](https://github.com/Alexovsky5/turbo-octo-adventure/actions/workflows/CollectCodeCoverageFromOpenCppCoverage-debug-x86.yml/badge.svg)](https://github.com/Alexovsky5/turbo-octo-adventure/actions/workflows/CollectCodeCoverageFromOpenCppCoverage-debug-x86.yml)
 
-[![tests coverage Windows-x86-Debug](https://gist.githubusercontent.com/Alexovsky5/2af621bdd237231125e907ea81b1f8a8/Windows-x86-Debug.svg)](https://github.com/Alexovsky5/turbo-octo-adventure/actions/workflows/CollectCodeCoverageFromOpenCppCoverage-debug-x86.yml)
+[![tests coverage Windows-x86-Debug](https://gist.githubusercontent.com/Alexovsky5/2af621bdd237231125e907ea81b1f8a8/raw/Windows-x86-Debug.svg)](https://github.com/Alexovsky5/turbo-octo-adventure/actions/workflows/CollectCodeCoverageFromOpenCppCoverage-debug-x86.yml)
 
 <!-- 
 [![cpp-linter](https://github.com/cpp-linter/cpp-linter-action/actions/workflows/cpp-linter.yml/badge.svg)](https://github.com/cpp-linter/cpp-linter-action/actions/workflows/cpp-linter.yml)
