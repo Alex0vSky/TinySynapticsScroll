@@ -116,7 +116,7 @@ jobs:
           echo "strCoverageFile=${{runner.os}}-${{env.strCfg}}.svg" >> $env:GITHUB_ENV
 
       - name: Badge color and text if success
-      - if: ${{ success( ) }}
+        if: ${{ success( ) }}
         env:
             strBadgeText: ${{env.strCoverageValue}}%
             strBadgeColor: ${{ false
