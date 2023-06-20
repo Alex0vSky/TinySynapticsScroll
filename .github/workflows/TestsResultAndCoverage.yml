@@ -26,7 +26,7 @@ jobs:
       - name: Set values (windows-latest)
         run: | # build from *.sln, all tests
           echo "dirTestExecutables=${{github.workspace}}\qa\UnitTest\bin\${{env.strPlatform}}\${{env.strConfiguration}}" >> $env:GITHUB_ENV
-          echo "dirSetupOcc=${env:Programfiles}\Occ" >> $env:GITHUB_ENV
+          echo "dirSetupOcc=${{env.Programfiles}}\Occ" >> $env:GITHUB_ENV
           echo "strCfg=${{env.strPlatform}}-${{env.strConfiguration}}" >> $env:GITHUB_ENV
 
       - name: Download artifact
@@ -54,22 +54,22 @@ jobs:
       - name: Install tool
         if: steps.cache-tool-occ.outputs.cache-hit != 'true'
         run: |
-          $arglist="/VERYSILENT /SUPPRESSMSGBOXES /DIR=""${env:dirSetupOcc}"" /LOG=""${env:RUNNER_TEMP}\${env:strNameOccSetupFile}.log"""
-          Start-Process "${env:strNameOccSetupFile}" -ArgumentList $arglist -Wait 
-          #type "${env:RUNNER_TEMP}\${env:strNameOccSetupFile}.log"
+          $arglist="/VERYSILENT /SUPPRESSMSGBOXES /DIR=""${{env.dirSetupOcc}}"" /LOG=""${{runner.temp}}\${{env.strNameOccSetupFile}}.log"""
+          Start-Process "${{env.strNameOccSetupFile}}" -ArgumentList $arglist -Wait 
+          #type "${{runner.temp}}\${{env.strNameOccSetupFile}}.log"
 
       - name: Run tool
         continue-on-error: true
         run: | # double launching because windows system hooks from AppCompat conflicts with gmock-win32 hooks
           @( 
-              "${env:module0}"
-            , "${env:module1}"
-            , "${env:module2}"
-            , "${env:module3}"
-          ).ForEach{ Start-Process "${env:dirTestExecutables}\$_" -ArgumentList '--gtest_repeat=0' -NoNewWindow; } 
+              "${{env.module0}}"
+            , "${{env.module1}}"
+            , "${{env.module2}}"
+            , "${{env.module3}}"
+          ).ForEach{ Start-Process "${{env.dirTestExecutables}}\$_" -ArgumentList '--gtest_repeat=0' -NoNewWindow; } 
           
           $common_args='-q --working_dir "src"'
-          $modules="--modules ${env:dirTestExecutables}"
+          $modules="--modules ${{env.dirTestExecutables}}"
           $sep = ' --excluded_sources '; $excluded_sources = $sep + ( '"{0}"' -f ( @( 
           'src\Main.h'
             , 'src\Legacy'
@@ -79,30 +79,30 @@ jobs:
           ) -join '"'+$sep+'"') );
           $excluded_line_regex='--excluded_line_regex .*@NOCOVERAGE.*'
           Function runnerOcc_ ( $arg_program ) {
-            $export_type="--export_type binary:${env:RUNNER_TEMP}\${arg_program}.cov"
-            $program_to_run="${env:dirTestExecutables}\$arg_program --gtest_brief=1 --gtest_output=xml:${env:RUNNER_TEMP}\${env:relGtestOutput}\$arg_program.xml"
-            Start-Process -Wait -NoNewWindow "${env:dirSetupOcc}\${env:strOccExecutable}" -ArgumentList "$common_args $modules $excluded_sources $excluded_line_regex $export_type -- $program_to_run"
+            $export_type="--export_type binary:${{runner.temp}}\${arg_program}.cov"
+            $program_to_run="${{env.dirTestExecutables}}\$arg_program --gtest_brief=1 --gtest_output=xml:${{runner.temp}}\${{env.relGtestOutput}}\$arg_program.xml"
+            Start-Process -Wait -NoNewWindow "${{env.dirSetupOcc}}\${{env.strOccExecutable}}" -ArgumentList "$common_args $modules $excluded_sources $excluded_line_regex $export_type -- $program_to_run"
           }          
-          runnerOcc_ $env:module0
-          runnerOcc_ $env:module1
-          runnerOcc_ $env:module2
-          runnerOcc_ $env:module3
+          runnerOcc_ ${{env.module0}}
+          runnerOcc_ ${{env.module1}}
+          runnerOcc_ ${{env.module2}}
+          runnerOcc_ ${{env.module3}}
           
           # Change html template
-          $ffnOccTemplate="${env:dirSetupOcc}\Template\MainTemplate.html"
+          $ffnOccTemplate="${{env.dirSetupOcc}}\Template\MainTemplate.html"
           (Get-Content $ffnOccTemplate).replace('{{TITLE}}', 'Merged from all tests') | Set-Content $ffnOccTemplate
           
-          $export_type="--export_type html:${env:RUNNER_TEMP}\${env:relHtmlReport} --export_type cobertura:${env:RUNNER_TEMP}\${env:strCoberturaReport}"
-          $sep = " --input_coverage ${env:RUNNER_TEMP}\"; 
+          $export_type="--export_type html:${{runner.temp}}\${{env.relHtmlReport}} --export_type cobertura:${{runner.temp}}\${{env.strCoberturaReport}}"
+          $sep = " --input_coverage ${{runner.temp}}\"; 
           $input_coverage = $sep + ( @(
-              "${env:module0}.cov"
-            , "${env:module1}.cov"
-            , "${env:module2}.cov"
-            , "${env:module3}.cov"
+              "${{env.module0}}.cov"
+            , "${{env.module1}}.cov"
+            , "${{env.module2}}.cov"
+            , "${{env.module3}}.cov"
           ) -join $sep );
-          Start-Process -Wait -NoNewWindow "${env:dirSetupOcc}\${env:strOccExecutable}" -ArgumentList "$input_coverage $export_type" 
+          Start-Process -Wait -NoNewWindow "${{env.dirSetupOcc}}\${{env.strOccExecutable}}" -ArgumentList "$input_coverage $export_type" 
           
-          [xml]$oSystem_Xml_XmlDocument = Get-Content ${env:RUNNER_TEMP}\${env:strCoberturaReport};
+          [xml]$oSystem_Xml_XmlDocument = Get-Content ${{runner.temp}}\${{env.strCoberturaReport}};
           $oSystem_Xml_XmlElement = $oSystem_Xml_XmlDocument.GetElementsByTagName( 'coverage' ).Item( 0 );
           $uLinesCovered = $oSystem_Xml_XmlElement.GetAttribute( 'lines-covered' );
           $uLinesValid = $oSystem_Xml_XmlElement.GetAttribute( 'lines-valid' );
@@ -152,14 +152,14 @@ jobs:
       - name: Install xml merger
         run: pip install junitparser
       - name: Merge xml reports
-        run: junitparser merge --suite-name AllTests --glob "${env:RUNNER_TEMP}\${env:relGtestOutput}\*.xml" "${{env.strCfg}}.xml"
+        run: junitparser merge --suite-name AllTests --glob "${{runner.temp}}\${{env.relGtestOutput}}\*.xml" "${{env.strCfg}}.xml"
       - name: Install gtest xml to html converter
         run: git clone https://github.com/Alexovsky5/gtest_report
       - name: Convert xml to html
         working-directory: ./gtest_report # directory html_resources must be in current dir
         run: |
           py scripts\genHtmlReportFromGtest.py "out\GoogleTestCombinedOutput.html" "..\${{env.strCfg}}.xml"
-          mv -v "out" ${env:RUNNER_TEMP}\GoogleTestCombinedOutput
+          mv -v "out" ${{runner.temp}}\GoogleTestCombinedOutput
 
       - uses: actions/upload-artifact@v3
         with:
