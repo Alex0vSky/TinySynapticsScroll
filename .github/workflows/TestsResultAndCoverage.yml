@@ -178,9 +178,17 @@ jobs:
           gist_id: 2af621bdd237231125e907ea81b1f8a8
           file_path: GoogleTest-testsuites-${{runner.os}}-${{env.strCfg}}.svg
 
+      - name: Install metrics code
+        run: pip install metrixpp
+      - name: Run metrics code
+        run: |
+          metrixpp collect --std.code.lines.code --std.code.complexity.cyclomatic -- src
+          metrixpp view > ${{runner.temp}}\metrixpp_view.txt
+
       - uses: actions/upload-artifact@v3
         with:
           name: artifact-coverage-tests-OpenCppCoverage-${{env.strCfg}}
           path: |
             ${{runner.temp}}\${{env.relHtmlReport}}
             ${{runner.temp}}\GoogleTestCombinedOutput
+            ${{runner.temp}}\metrixpp_view.txt
