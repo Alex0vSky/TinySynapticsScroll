@@ -178,12 +178,16 @@ jobs:
           gist_id: 2af621bdd237231125e907ea81b1f8a8
           file_path: GoogleTest-testsuites-${{runner.os}}-${{env.strCfg}}.svg
 
+      # - name: Install metrics code
+        # run: pip install metrixpp
+#-old
       - name: Install metrics code
-        run: pip install metrixpp
+        run: git clone https://github.com/metrixplusplus/metrixplusplus metrixplusplus
       - name: Run metrics code
+        continue-on-error: true
         run: |
-          metrix++ collect --std.code.lines.code --std.code.complexity.cyclomatic -- src
-          metrix++ view > ${{runner.temp}}\metrixpp_view.txt
+          py metrixplusplus\metrix++.py collect --std.code.lines.code --std.code.complexity.cyclomatic --db-file=${{runner.temp}}\metrixpp.db -- ${{github.workspace}}\src
+          py metrixplusplus\metrix++.py view --db-file=${{runner.temp}}\metrixpp.db > ${{runner.temp}}\metrixpp_view.txt
 
       - name: Linter source code to job summary
         continue-on-error: true
