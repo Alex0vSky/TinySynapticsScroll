@@ -36,12 +36,18 @@ jobs:
           echo "cpplint_failures=$cpplint_failures" >> $env:GITHUB_ENV
           echo "cpplint_arrFilter_Count=$arrFilter_Count" >> $env:GITHUB_ENV
           echo "cpplint_linelength=$linelength" >> $env:GITHUB_ENV
+          [xml]$oSystem_Xml_XmlDocument = Get-Content ${{runner.temp}}\cpplint.xml
+          $child = $oSystem_Xml_XmlDocument.CreateElement( 'Arguments' )
+          $child.InnerText = $cpplint_args;
+          $oSystem_Xml_XmlDocument.DocumentElement.AppendChild( $child );
+          $oSystem_Xml_XmlDocument.Save( "${{runner.temp}}\cpplint.xml" )
+          type "${{runner.temp}}\cpplint.xml"
       - name: Generate *.svg file for badge cpplint if success
         if: env.cpplint_failures == 0
         uses: emibcn/badge-action@v2.0.2
         with:
           label: cpplint
-          status: 5 filters, linelength=120
+          status: ${{env.cpplint_arrFilter_Count}} filters, linelength=$cpplint_linelength
           path: cpplint.svg
       - name: Generate *.svg file for badge cpplint if failure
         if: env.cpplint_failures > 0 || env.cpplint_failures == ''
