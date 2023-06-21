@@ -1,6 +1,6 @@
 // src\Main.h - main code class, for unittests code coverage
 #pragma once
-#include "resource.h"
+#include "resource.h" // NOLINT(build/include_subdir)
 #include "Tool\Zeroid.h"
 #include "Tool\ErrorHandler.h"
 #include "Tool\HeapMem.h"
@@ -23,10 +23,10 @@ struct Main {
 	static UINT run(HINSTANCE hInst) {
 		// Objects chain
 		WrapperTouchPad<> oTouchPad;
-		if ( ! oTouchPad.start( ) ) 
+		if ( !oTouchPad.start( ) ) 
 			return Tool::ErrorHandler::showMsg( "Start working with TouchPad" );
 		PersistSettings::Scroll<> oSettingsScroll( &oTouchPad );
-		if ( ! oSettingsScroll.readConfigFromRegistry( ) ) 
+		if ( !oSettingsScroll.readConfigFromRegistry( ) ) 
 			return Tool::ErrorHandler::showMsg( "Read or initialize config from registry" );
 		DialogPopupSettings<> oDialog( &oSettingsScroll );
 		Menu< > oMenu( &oDialog );

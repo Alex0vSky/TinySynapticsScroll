@@ -1,17 +1,17 @@
 // src\CEmptyWorkingSet.h - ... useless?
 #pragma once
 namespace prj_sysw { namespace TinySynapticsScroll {
-template<class T=Tray< > >
+template<class T = Tray< > >
 class CEmptyWorkingSet {
 	static const DWORD c_dwClearMemTimerId = 1;
 	static const UINT c_uPeriodMemClear_sec = 5;
 	const HWND c_hWnd;
 	const HANDLE c_hCurProc;
-public:
+	
+ public:
 	explicit CEmptyWorkingSet(const T &oTray)
 		: c_hWnd( oTray.getHwnd( ) )
-		, c_hCurProc( ::GetCurrentProcess( ) )
-	{
+		, c_hCurProc( ::GetCurrentProcess( ) ) {
 		::SetTimer( c_hWnd, c_dwClearMemTimerId, c_uPeriodMemClear_sec *1000, nullptr );
 	}
 	void handleWindowMessage(const MSG &stMsg) const {

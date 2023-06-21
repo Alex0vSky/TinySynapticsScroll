@@ -1,18 +1,19 @@
 // src\RestoreTouchPadFromSuspend.h - trickly restore a touchpad when goaway from power suspend mode
 #pragma once
 namespace prj_sysw { namespace TinySynapticsScroll { 
-template<class T=WrapperTouchPad< > >
+template<class T = WrapperTouchPad< > >
 class RestoreTouchPadFromSuspend {
 	DWORD m_dwTickFinRestore_milli;
 	T *m_poTouchPad;
 	static const DWORD c_dwRestoreTouchpadTimerId = 2;
 	static const UINT uRestoreDuration_sec = 20;
 	static const UINT uPeriod_sec = 1;
-public:
+	
+ public:
 	explicit RestoreTouchPadFromSuspend(T *poTouchPad)
 		: m_dwTickFinRestore_milli( 0 )
 		, m_poTouchPad( poTouchPad )
-	{}
+    {}
 
 	// @insp https://stackoverflow.com/questions/228288/how-can-i-know-when-windows-is-going-into-out-of-sleep-or-hibernate-mode
 	bool handleWindowMessage(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM) {
@@ -31,6 +32,5 @@ public:
 		}
 		return false;
 	}
-
 };
 }} // namespace prj_sysw::TinySynapticsScroll _

@@ -2,7 +2,7 @@
 #pragma once
 namespace prj_sysw { namespace TinySynapticsScroll { namespace Tool { 
 class ErrorHandler {
-public:
+ public:
 	static UINT showMsg(const char *szText) {
 		::MessageBoxA( NULL, szText, "TinySynapticsScroll error!", MB_ICONEXCLAMATION | MB_OK );
 		return 0;

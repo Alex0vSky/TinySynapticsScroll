@@ -2,7 +2,7 @@
 #pragma once
 namespace prj_sysw { namespace TinySynapticsScroll { 
 namespace detail_ { 
-template<class T=RestoreTouchPadFromSuspend< >, class T2=Tray< >, class T3=Menu< > >
+template<class T = RestoreTouchPadFromSuspend< >, class T2 = Tray< >, class T3 = Menu< >>
 class WndProc_ : public ForwardToInstance::Base {
 	static const LRESULT c_dwHandled = 0; // warning, all return code depends of message kind
 	LRESULT messagesHandler_(UINT uMsg, WPARAM wParam, LPARAM lParam) {
@@ -25,19 +25,27 @@ class WndProc_ : public ForwardToInstance::Base {
 		return c_dwHandled;
 	}
 	static constexpr auto cast_v = &CREATESTRUCTA::lpCreateParams;
-protected:
+	
+ protected:
 	T m_oRestoreTouchPad;
 	T2 *m_poTray;
 	T3 *m_poMenu;
-public: 
+	
+ public: 
 	WndProc_(WrapperTouchPad<> *poTouchPad, T2 *poTray, T3 *poMenu) 
 		: m_oRestoreTouchPad( poTouchPad )
 		, m_poTray( poTray )
 		, m_poMenu( poMenu )
-	{}
+    {}
 
-	//using parrent_t = ForwardToInstance::OfWindow< decltype( &WndProc_::messagesHandler_ ), &WndProc_::messagesHandler_, decltype( cast_v ), cast_v >; // clang
-	using parrent_t = ForwardToInstance::OfWindow< decltype( &WndProc_::messagesHandler_ ), &WndProc_::messagesHandler_, decltype( &CREATESTRUCTA::lpCreateParams ), &CREATESTRUCTA::lpCreateParams >;
+	//using parrent_t = ForwardToInstance::OfWindow< // clang failure
+	//	decltype( &WndProc_::messagesHandler_ ), &WndProc_::messagesHandler_, decltype( cast_v ), cast_v >; // clang failure
+	using parrent_t = ForwardToInstance::OfWindow< 
+			decltype( &WndProc_::messagesHandler_ )
+			, &WndProc_::messagesHandler_
+			, decltype( &CREATESTRUCTA::lpCreateParams )
+			, &CREATESTRUCTA::lpCreateParams 
+		>;
 };
 } // namespace detail_ _
 class WndProc : public detail_::WndProc_< >, public detail_::WndProc_< >::parrent_t {

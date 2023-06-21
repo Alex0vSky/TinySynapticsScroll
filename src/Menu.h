@@ -1,7 +1,7 @@
 // src\Menu.h - menu, create and process window messages
 #pragma once
 namespace prj_sysw { namespace TinySynapticsScroll {
-template< class T=DialogPopupSettings< > >
+template<class T = DialogPopupSettings< >>
 class Menu {
 	// functon "IsDialogMessage()" uses "WM_USER" and "WM_USER + 1" id's
 	static const UINT c_uMessageId = WM_USER + 2;
@@ -31,23 +31,29 @@ class Menu {
 
 		// Display menu
 		::SetForegroundWindow( hWnd );
-		::TrackPopupMenu( hSubMenu, TPM_LEFTALIGN | TPM_LEFTBUTTON | TPM_BOTTOMALIGN, lpClickPoint.x, lpClickPoint.y, 0, hWnd, NULL );
+		::TrackPopupMenu( 
+				hSubMenu
+				, TPM_LEFTALIGN | TPM_LEFTBUTTON | TPM_BOTTOMALIGN
+				, lpClickPoint.x, lpClickPoint.y, 0, hWnd, NULL 
+			);
 		::SendMessageA( hWnd, WM_NULL, 0, 0 );
 
 		::DestroyMenu( hSubMenu );
 		::DestroyMenu( hMenu );
 		return true;
 	}
-protected:
+	
+ protected:
 	enum struct EnuIdPopup : WORD {
 		Exit,
 		Settings,
 	};
-public:
+	
+ public:
 	Menu(const Menu &) = delete;
 	explicit Menu(T *poDialog)
 		: m_poDialog( poDialog )
-	{}
+    {}
 	bool handleWindowMessage(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam) const {
 		if ( c_uMessageId == uMsg && WM_RBUTTONDOWN == LOWORD( lParam ) ) {
 			if ( create_( hWnd ) )

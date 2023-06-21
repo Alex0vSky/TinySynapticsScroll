@@ -3,7 +3,8 @@
 #include "Main.h"
 #ifdef _DEBUG
 int WINAPI wWinMain(_In_ HINSTANCE hInst, _In_opt_ HINSTANCE, _In_ PWSTR, _In_ int) {
-    HeapSetInformation( NULL, HeapEnableTerminationOnCorruption, NULL, NULL ), _CrtSetDbgFlag( _CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF );
+    HeapSetInformation( NULL, HeapEnableTerminationOnCorruption, NULL, NULL );
+	_CrtSetDbgFlag( _CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF );
 #else
 int WINAPI WinMainCRTStartup(HINSTANCE, HINSTANCE, PWSTR, int) {
 	HINSTANCE hInst = ::GetModuleHandleA( NULL );

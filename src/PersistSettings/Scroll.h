@@ -1,7 +1,7 @@
 // src\PersistSettings\Scroll.h - place current touchPad settings values to ui, store changed values in registry
 #pragma once
 namespace prj_sysw { namespace TinySynapticsScroll { namespace PersistSettings { 
-template<class T=Tool::Registry, class T2=WrapperTouchPad<> >
+template<class T = Tool::Registry, class T2 = WrapperTouchPad<> >
 class Scroll {
 	bool readOrCreateNew_(const wchar_t *wcsValueName, DWORD *pdwReadValue, const DWORD dwNewValue) const { 
 		if ( m_oReg.readDword( wcsValueName, pdwReadValue ) )
@@ -23,20 +23,30 @@ class Scroll {
 			m_poTouchPad ->setScrollModeCompatible( );
 		m_poTouchPad ->setValueSpeed( m_dwSpeedValue );
 	}
-protected:
+	
+ protected:
 	const T m_oReg;
-public:
+	
+ public:
 	Scroll(const Scroll &) = delete;
 	explicit Scroll(T2 *poTouchPad) 
 		: m_poTouchPad( poTouchPad )
 		, m_dwAccelerationValue(0), m_dwAccelerationEnable(0), m_dwLinearEdgeEnable(0), m_dwMode(0), m_dwSpeedValue(0)
-		, m_oReg( T::openAlways( Config::Movement::s_enuRootKey, Config::Movement::getRegSubkey( ), Tool::Registry::EnuDesiredAccessRights::ALL_ACCESS ) )
-	{}
+		, m_oReg( 
+			T::openAlways( 
+				Config::Movement::s_enuRootKey
+				, Config::Movement::getRegSubkey( )
+				, Tool::Registry::EnuDesiredAccessRights::ALL_ACCESS 
+				) 
+			)
+    {}
 	bool readConfigFromRegistry() { 
 		using Default = Config::Movement::DefaultSettings;
 		if ( !readOrCreateNew_( m_stNames.c_wcsAccelerationValue, &m_dwAccelerationValue, Default::c_dwAccelerationValue ) )
 			return false;
-		if ( !readOrCreateNew_( m_stNames.c_wcsAccelerationEnable, &m_dwAccelerationEnable, Default::c_dwAccelerationEnable ) )
+		if ( !readOrCreateNew_( 
+				m_stNames.c_wcsAccelerationEnable, &m_dwAccelerationEnable, Default::c_dwAccelerationEnable 
+			) )
 			return false;
 		if ( !readOrCreateNew_( m_stNames.c_wcsLinearEdgeEnable, &m_dwLinearEdgeEnable, Default::c_dwLinearEdgeEnable ) )
 			return false;
@@ -117,7 +127,7 @@ public:
 	void setSliderValue(enuSlider enu, WORD wValue) {
 		switch ( enu ) {
 			case enuSlider::AccelerationValue:
-			{
+		    {
 				m_oReg.createAndSetValueDword( m_stNames.c_wcsAccelerationValue, wValue );
 				m_poTouchPad ->setValueAcceleration( wValue );
 				m_dwAccelerationValue = wValue;
@@ -131,7 +141,7 @@ public:
 		}
 	}
 
-private:
+ private:
 	void operation_(enuToggle enu, const DWORD dwSwitcher) {
 		switch ( enu ) {
 			case enuToggle::Acceleration:

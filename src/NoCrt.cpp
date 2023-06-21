@@ -21,7 +21,11 @@ void* __cdecl memset(_Out_writes_bytes_all_(_Size) void*  _Dst, _In_ int _Val, _
 }
 // cause: prj_sysw::TinySynapticsScroll::Legacy::SynapticTouchPad::DoScroll()
 // @insp https://codebrowser.dev/glibc/glibc/stdlib/labs.c.html
-_Check_return_ long __cdecl labs(_In_ long _X) { 
+_Check_return_ 
+long // NOLINT(runtime/int)
+__cdecl labs(_In_ 
+long // NOLINT(runtime/int)
+_X) { 
 	return ( _X < 0 ) ?-_X :_X;
 }
 #endif // _DEBUG

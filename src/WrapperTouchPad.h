@@ -1,12 +1,12 @@
 // src\WrapperTouchPad.h - wrap of ugly VCL(Borland C++) legacy software
 #pragma once
 namespace prj_sysw { namespace TinySynapticsScroll { 
-template<class T=Legacy::SynapticTouchPad>
+template<class T = Legacy::SynapticTouchPad>
 class WrapperTouchPad {
-protected:
+ protected:
 	T m_oSynapticTouchPad;
 
-public:
+ public:
 	WrapperTouchPad() = default;
 	// Is "hWnd = NULL" For normal working SynCOM.dll via ISynDevice::SetSynchronousNotification (WM_APP == stMsg.message)
 	static HWND getHwndForMessagesDispatch(HWND) {
@@ -36,10 +36,10 @@ public:
 		m_oSynapticTouchPad.scrollCompatible->Checked = true;
 	}
 	void setValueAcceleration(unsigned int uValue) {
-		m_oSynapticTouchPad.scrollAcc ->Position = (int)uValue;
+		m_oSynapticTouchPad.scrollAcc ->Position = static_cast<int>( uValue );
 	}
 	void setValueSpeed(unsigned int uValue) {
-		m_oSynapticTouchPad.scrollSpeed ->Position = (int)uValue;
+		m_oSynapticTouchPad.scrollSpeed ->Position = static_cast<int>( uValue );
 	}
 	WrapperTouchPad(const WrapperTouchPad &) = delete;
 	WrapperTouchPad &operator = (const WrapperTouchPad &) = delete;

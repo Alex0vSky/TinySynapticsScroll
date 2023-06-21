@@ -7,8 +7,9 @@ class Registry {
 	const REGSAM m_samDesired;
 	Registry(HKEY hRootKey, HKEY hSubKey, REGSAM samDesired) 
 		: m_hRootKey( hRootKey ), m_hSubKey( hSubKey ), m_samDesired( samDesired )
-	{}
-public:
+    {}
+	
+ public:
 	static const size_t s_hInitialSubKey = MAXSIZE_T;
 	~Registry() {
 		::RegCloseKey( m_hRootKey );
@@ -30,7 +31,8 @@ public:
 
 	bool readString(const wchar_t *wcsValueName, Tool::HeapMem *poBuf, size_t *psiLen = nullptr) const { 
 		DWORD cbData = (DWORD)poBuf ->getSize( );
-		LSTATUS lst = ::RegGetValueW( m_hSubKey, nullptr, wcsValueName, RRF_RT_REG_SZ, nullptr, poBuf ->getMemPtr( ), &cbData );
+		LSTATUS lst = ::RegGetValueW( 
+			m_hSubKey, nullptr, wcsValueName, RRF_RT_REG_SZ, nullptr, poBuf ->getMemPtr( ), &cbData );
 		if ( ERROR_SUCCESS != lst )
 			return false;
 		if ( psiLen )
@@ -39,14 +41,22 @@ public:
 	}
 	bool readDword(const wchar_t *wcsValueName, DWORD *pdwReadValue) const { 
 		DWORD dwType = REG_DWORD, cbData = sizeof( DWORD );
-		return ERROR_SUCCESS == ::RegQueryValueExW( m_hSubKey, wcsValueName, nullptr, &dwType, reinterpret_cast<LPBYTE>( pdwReadValue ), &cbData );
+		return ERROR_SUCCESS == ::RegQueryValueExW( 
+			m_hSubKey, wcsValueName, nullptr, &dwType, reinterpret_cast<LPBYTE>( pdwReadValue ), &cbData );
 	}
 	bool createAndSetValueDword(const wchar_t *wcsValueName, const DWORD dwValue) const { 
-		return ERROR_SUCCESS == ::RegSetValueExW( m_hSubKey, wcsValueName, 0, REG_DWORD, (LPBYTE)&dwValue, sizeof( DWORD ) );
+		return ERROR_SUCCESS == ::RegSetValueExW( 
+			m_hSubKey, wcsValueName, 0, REG_DWORD, (LPBYTE)&dwValue, sizeof( DWORD ) );
 	}
 	bool createAndSetValueString(const wchar_t *wcsValueName, const wchar_t *wcsValue) const { 
-		size_t cchLength = 0; const wchar_t *wcs = wcsValue; while ( *(wcs++) ) ; --wcs; cchLength = (size_t)( wcs - wcsValue ); // aka strlen
-		LSTATUS lst = ::RegSetValueExW( m_hSubKey, wcsValueName, 0, REG_SZ, reinterpret_cast<const BYTE *>( wcsValue ), DWORD( cchLength *sizeof( wchar_t ) ) );
+		size_t cchLength = 0; 
+		const wchar_t *wcs = wcsValue; 
+		while ( *(wcs++) ) {}
+		--wcs; 
+		cchLength = static_cast<size_t>( wcs - wcsValue ); // aka strlen
+		LSTATUS lst = ::RegSetValueExW( 
+			m_hSubKey, wcsValueName, 0, REG_SZ, reinterpret_cast<const BYTE *>( wcsValue )
+			, DWORD( cchLength *sizeof( wchar_t ) ) );
 		return ERROR_SUCCESS == lst;
 	}
 	bool deleteValue(const wchar_t *wcsValueName) const { 
@@ -54,15 +64,19 @@ public:
 	}
 
 	// RVO
-	static Registry openAlways(EnuRootKey enuRootKey, const wchar_t *wcsSubKey, EnuDesiredAccessRights enuRights = EnuDesiredAccessRights::READ) {
+	static Registry openAlways(
+		EnuRootKey enuRootKey
+		, const wchar_t *wcsSubKey
+		, EnuDesiredAccessRights enuRights = EnuDesiredAccessRights::READ
+	) {
 		HKEY hRootKey = (HKEY)-1;
-		if ( false );
+		if ( false ) {}
 		else if ( EnuRootKey::HKCU == enuRootKey )
 			hRootKey = HKEY_CURRENT_USER;
 		else if ( EnuRootKey::HKLM == enuRootKey )
 			hRootKey = HKEY_LOCAL_MACHINE;
 		REGSAM samDesired = 0;
-		if ( false );
+		if ( false ) {}
 		else if ( EnuDesiredAccessRights::ALL_ACCESS == enuRights )
 			samDesired = KEY_ALL_ACCESS;
 		else if ( EnuDesiredAccessRights::READ == enuRights )
@@ -74,10 +88,10 @@ public:
 		return Registry( hRootKey, hSubKey, samDesired );
 	}
 	Registry(const Registry&& rhs) 
-		: m_hRootKey( std::move( rhs.m_hRootKey ) )
-		, m_hSubKey( std::move( rhs.m_hSubKey ) )
-		, m_samDesired( std::move( rhs.m_samDesired ) )
-	{}
+		: m_hRootKey( std::move( rhs.m_hRootKey ) ) // NOLINT(build/include_what_you_use)
+		, m_hSubKey( std::move( rhs.m_hSubKey ) ) // NOLINT(build/include_what_you_use)
+		, m_samDesired( std::move( rhs.m_samDesired ) ) // NOLINT(build/include_what_you_use)
+    {}
 	Registry(const Registry&) = delete;
 
 	Registry &operator = (const Registry &) = delete;

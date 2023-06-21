@@ -2,7 +2,7 @@
 #pragma once
 namespace prj_sysw { namespace TinySynapticsScroll { 
 class WndProc;
-template<class T=WndProc, class T2=Menu< > >
+template<class T = WndProc, class T2 = Menu< > >
 class Tray {
 	// Must be a valid or LoadIcon() == ERROR_RESOURCE_TYPE_NOT_FOUND;
 	const HINSTANCE m_hInst;
@@ -18,14 +18,15 @@ class Tray {
 		for ( std::size_t i = 0; i < N1 && i < N2; ++i ) 
 			szDst[ i ] = szSrc[ i ];
 	}
-public:
+	
+ public:
 	explicit Tray(HINSTANCE hInst)
 		: m_hInst( hInst )
 		, m_hIcon( ::LoadIconA( hInst, static_cast<LPCTSTR>( MAKEINTRESOURCEA( IDI_ICON1 ) ) ) )
 		, c_uWM_TASKBAR_CREATE( ::RegisterWindowMessageA( "TaskbarCreated" ) )
 		, m_hHiddenWnd( nullptr )
 		, m_stNotifyIconData{ }
-	{}
+    {}
 	
 	bool init(WNDPROC lpfnWndProc, T *poWndProc, const T2 &oMenu) {
 		char szClassName[] = "TinySynapticsScrollApplication";

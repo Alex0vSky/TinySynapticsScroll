@@ -2,7 +2,7 @@
 #pragma once
 namespace prj_sysw { namespace TinySynapticsScroll { 
 namespace detail_ { 
-template<class T=PersistSettings::Scroll<>, class T2=PersistSettings::Autorun<>>
+template<class T = PersistSettings::Scroll<>, class T2 = PersistSettings::Autorun<>>
 class DialogPopupSettings_ : public ForwardToInstance::Base {
 	INT_PTR dialogFunc_(UINT uMsg, WPARAM wParam, LPARAM lParam) { 
 		switch ( uMsg )  { 
@@ -45,20 +45,20 @@ class DialogPopupSettings_ : public ForwardToInstance::Base {
 							// be aware of
 							if ( !m_oSettingsAutorun.saveToAutorun( ) )
 								Tool::ErrorHandler::showMsg( "Save app autostart" );
-						}
-						else 
+						} else {
 							m_oSettingsAutorun.removeFromAutorun( );
+						}
 					break;
 				} 
 			break;
 			case WM_HSCROLL: 
-				{
+			    {
 					HWND hSlider = reinterpret_cast<HWND>( lParam );
 					WORD wRequestKind = LOWORD( wParam );
 					if ( SB_ENDSCROLL != wRequestKind || !hSlider ) 
 						break;
 					WORD wPosition = (WORD)::SendMessageA( hSlider, TBM_GETPOS, 0, 0 );
-					if ( false ) ;
+					if ( false ) {}
 					else if ( hSlider == ::GetDlgItem( m_hWnd, IDC_SLIDER_Speed ) ) 
 						m_poSettingsScroll ->setSliderValue( T::enuSlider::SpeedValue, wPosition );
 					else if ( hSlider == ::GetDlgItem( m_hWnd, IDC_SLIDER_Acceleration ) ) 
@@ -68,29 +68,36 @@ class DialogPopupSettings_ : public ForwardToInstance::Base {
 		}
 		return TRUE;
 	}
-protected:
+	
+ protected:
 	T *m_poSettingsScroll;
 	T2 m_oSettingsAutorun;
 	bool init_() {
 		return m_poSettingsScroll ->loadToUi( m_hWnd ) && m_oSettingsAutorun.initAndLoadToUi( m_hWnd );
 	}
-public:
+	
+ public:
 	explicit DialogPopupSettings_(T *poSettingsScroll) 
 		: m_poSettingsScroll( poSettingsScroll )
 		, m_oSettingsAutorun( IDC_CHECK_Launch_with_Windows )
-	{}
+    {}
 
 	HWND getHandle() const {
 		return m_hWnd;
 	}
-	using parrent_t = ForwardToInstance::OfDialog< decltype( &DialogPopupSettings_::dialogFunc_ ), &DialogPopupSettings_::dialogFunc_ >;
+	using parrent_t = ForwardToInstance::OfDialog< 
+			decltype( &DialogPopupSettings_::dialogFunc_ )
+			, &DialogPopupSettings_::dialogFunc_ 
+		>;
 };
 } // namespace detail_ _
 
-template<class T=PersistSettings::Scroll<>, class T2=PersistSettings::Autorun<>>
-class DialogPopupSettings : public detail_::DialogPopupSettings_< T, T2 >, public detail_::DialogPopupSettings_< T, T2 >::parrent_t {
+template<class T = PersistSettings::Scroll<>, class T2 = PersistSettings::Autorun<>>
+class DialogPopupSettings 
+	: public detail_::DialogPopupSettings_< T, T2 >
+	, public detail_::DialogPopupSettings_< T, T2 >::parrent_t {
 	using detail_::DialogPopupSettings_< T, T2 >::DialogPopupSettings_;
-public:
+ public:
 	// @insp https://learn.microsoft.com/en-us/windows/win32/dlgbox/using-dialog-boxes
 	bool create(HWND hWndParrent) { 
 #pragma warning( push )
