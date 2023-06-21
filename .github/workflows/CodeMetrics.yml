@@ -20,11 +20,11 @@ jobs:
         continue-on-error: true
         run: |
           pip show metrixpp
-          metrix++ collect --std.code.lines.code --std.code.complexity.cyclomatic --db-file=${{runner.temp}}\metrixpp.db -- ${{github.workspace}}\src
-          metrix++ view --db-file=${{runner.temp}}\metrixpp.db
+          metrix++ collect --log-level=ERROR --std.code.lines.code --std.code.complexity.cyclomatic --db-file=${{runner.temp}}\metrixpp.db -- ${{github.workspace}}\src
+          metrix++ view --db-file=${{runner.temp}}\metrixpp.db -- ${{github.workspace}}\src
       - name: Run metrics code2
         continue-on-error: true
         run: |
           type metrixplusplus\setup.py
-          py metrixplusplus\metrix++.py collect --std.code.lines.code --std.code.complexity.cyclomatic --db-file=${{runner.temp}}\metrixpp.db -- ${{github.workspace}}\src
-          py metrixplusplus\metrix++.py view --db-file=${{runner.temp}}\metrixpp.db
+          py metrixplusplus\metrix++.py collect --log-level=ERROR --std.code.lines.code --std.code.complexity.cyclomatic --db-file=${{runner.temp}}\metrixpp.db -- ${{github.workspace}}\src
+          py metrixplusplus\metrix++.py view --db-file=${{runner.temp}}\metrixpp.db -- ${{github.workspace}}\src
