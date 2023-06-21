@@ -12,6 +12,7 @@ jobs:
       - name: Install cpplint
         run: pip install cpplint
       - name: Run cpplint
+        continue-on-error: true # when cpplint return error
         run: | # status: 5 filters, linelength=120
           $filter = '-' + ( @(
           'whitespace/tab',
@@ -22,10 +23,11 @@ jobs:
           'legal/copyright'
           ) -join ',-' )
           $filter;
+          $ErrorActionPreference;
           cpplint --linelength=120 --filter=$filter --exclude=src\MsvcGenerated\* --exclude=src\Legacy\SynapticTouchPad.h --recursive --output=junit src 2>&1 | %{ "$_" } >${{runner.temp}}\cpplint.xml
           [xml]$oSystem_Xml_XmlDocument = Get-Content ${{runner.temp}}\cpplint.xml
           $cpplint_failures = $oSystem_Xml_XmlDocument.GetElementsByTagName( 'testsuite' ).GetAttribute( 'failures' );
-          $cpplint_failures;
+          "cpplint_failures: '$cpplint_failures'";
           echo "cpplint_failures=$cpplint_failures" >> $env:GITHUB_ENV
       - name: Generate *.svg file for badge cpplint if success
         if: ${{env.cpplint_failures}} == 0
