@@ -30,21 +30,14 @@ jobs:
           "cpplint_failures: '$cpplint_failures'";
           echo "cpplint_failures=$cpplint_failures" >> $env:GITHUB_ENV
       - name: Generate *.svg file for badge cpplint if success
-        if: ${{env.cpplint_failures}} == 0
+        if: env.cpplint_failures == 0
         uses: emibcn/badge-action@v2.0.2
         with:
           label: cpplint
           status: 5 filters, linelength=120
           path: cpplint.svg
-      - name: Put *.svg file to Gists for badge cpplint
-        uses: exuanbo/actions-deploy-gist@v1
-        with:
-          token: ${{ secrets.ACCESS_TO_GIST }}
-          gist_id: 2af621bdd237231125e907ea81b1f8a8
-          file_path: cpplint.svg
-
       - name: Generate *.svg file for badge cpplint if failure
-        if: ${{env.cpplint_failures}} != 0
+        if: env.cpplint_failures > 0  || env.cpplint_failures == ''
         uses: emibcn/badge-action@v2.0.2
         with:
           label: cpplint
