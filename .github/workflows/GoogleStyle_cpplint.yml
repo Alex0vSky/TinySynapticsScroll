@@ -47,7 +47,7 @@ jobs:
         uses: emibcn/badge-action@v2.0.2
         with:
           label: cpplint
-          status: ${{env.cpplint_arrFilter_Count}} filters, linelength=$cpplint_linelength
+          status: ${{env.cpplint_arrFilter_Count}} filters, linelength=${{env.cpplint_linelength}}
           path: cpplint.svg
       - name: Generate *.svg file for badge cpplint if failure
         if: env.cpplint_failures > 0 || env.cpplint_failures == ''
