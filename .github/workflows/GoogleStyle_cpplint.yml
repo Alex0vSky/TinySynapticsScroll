@@ -14,21 +14,28 @@ jobs:
       - name: Run cpplint
         continue-on-error: true # when cpplint return error
         run: | # status: 5 filters, linelength=120
-          $filter = '-' + ( @(
-          'whitespace/tab',
-          'whitespace/end_of_line',
-          'whitespace/parens',
-          'readability/namespace',
-          'whitespace/comments',
-          'legal/copyright'
-          ) -join ',-' )
+          $arrFilter = @(
+            'whitespace/tab',
+            'whitespace/end_of_line',
+            'whitespace/parens',
+            'readability/namespace',
+            'whitespace/comments',
+            'legal/copyright'
+          );
+          $arrFilter_Count=$arrFilter.Count;
+          $arrFilter_Count;
+          $filter = '-' + ( $arrFilter -join ',-' );
           $filter;
-          $ErrorActionPreference;
-          cpplint --linelength=120 --filter=$filter --exclude=src\MsvcGenerated\* --exclude=src\Legacy\SynapticTouchPad.h --recursive --output=junit src 2>&1 | %{ "$_" } >${{runner.temp}}\cpplint.xml
+          $linelength=120
+          $cpplint_args="--linelength=$linelength --filter=$filter --exclude=src\MsvcGenerated\* --exclude=src\Legacy\SynapticTouchPad.h --recursive --output=junit src";
+          $cpplint_args;
+          Start-Process -Wait -NoNewWindow cpplint -ArgumentList $cpplint_args -RedirectStandardError ${{runner.temp}}\cpplint.xml
           [xml]$oSystem_Xml_XmlDocument = Get-Content ${{runner.temp}}\cpplint.xml
           $cpplint_failures = $oSystem_Xml_XmlDocument.GetElementsByTagName( 'testsuite' ).GetAttribute( 'failures' );
           "cpplint_failures: '$cpplint_failures'";
           echo "cpplint_failures=$cpplint_failures" >> $env:GITHUB_ENV
+          echo "cpplint_arrFilter_Count=$arrFilter_Count" >> $env:GITHUB_ENV
+          echo "cpplint_linelength=$linelength" >> $env:GITHUB_ENV
       - name: Generate *.svg file for badge cpplint if success
         if: env.cpplint_failures == 0
         uses: emibcn/badge-action@v2.0.2
@@ -37,7 +44,7 @@ jobs:
           status: 5 filters, linelength=120
           path: cpplint.svg
       - name: Generate *.svg file for badge cpplint if failure
-        if: env.cpplint_failures > 0  || env.cpplint_failures == ''
+        if: env.cpplint_failures > 0 || env.cpplint_failures == ''
         uses: emibcn/badge-action@v2.0.2
         with:
           label: cpplint
