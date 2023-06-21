@@ -110,7 +110,7 @@ jobs:
           $strCoveredPercent = [math]::Round( $dCoveredPercent, 2 );
           echo "strCoverageValue=$strCoveredPercent" >> $env:GITHUB_ENV
 
-      - name: Generate *.svg file for badge if success
+      - name: Generate *.svg file for badge TestsCoverage if success
         if: ${{ success( ) }}
         uses: emibcn/badge-action@v2.0.2
         with:
@@ -128,7 +128,7 @@ jobs:
             || 'red' }}
           path: ${{runner.os}}-${{env.strCfg}}.svg
       # env-s not pass between steps when failure
-      - name: Generate *.svg file for badge if failure
+      - name: Generate *.svg file for badge TestsCoverage if failure
         if: ${{ failure( ) }}
         uses: emibcn/badge-action@v2.0.2
         with:
@@ -137,7 +137,7 @@ jobs:
           color: red
           path: ${{runner.os}}-${{env.strCfg}}.svg
 
-      - name: Put *.svg file to Gists for badge
+      - name: Put *.svg file to Gists for badge TestsCoverage
         if: ${{ success( ) || failure( ) }} # yes, not 'always( )' because 'cancelled( )'
         uses: exuanbo/actions-deploy-gist@v1
         with:
@@ -165,43 +165,64 @@ jobs:
           $uTests = $oSystem_Xml_XmlElement.GetAttribute( 'tests' );
           echo "uTests=$uTests" >> $env:GITHUB_ENV
 
-      - name: Generate *.svg file for badge2
+      - name: Generate *.svg file for badge GoogleTest
         uses: emibcn/badge-action@v2.0.2
         with:
           label: GoogleTest
           status: ${{env.uTests}} testsuites
           path: GoogleTest-testsuites-${{runner.os}}-${{env.strCfg}}.svg
-      - name: Put *.svg file to Gists for badge2
+      - name: Put *.svg file to Gists for badge GoogleTest
         uses: exuanbo/actions-deploy-gist@v1
         with:
           token: ${{ secrets.ACCESS_TO_GIST }}
           gist_id: 2af621bdd237231125e907ea81b1f8a8
           file_path: GoogleTest-testsuites-${{runner.os}}-${{env.strCfg}}.svg
 
-      # - name: Install metrics code
-        # run: pip install metrixpp
-#-old
       - name: Install metrics code
-        run: git clone https://github.com/metrixplusplus/metrixplusplus metrixplusplus
+        run: pip install metrixpp
       - name: Run metrics code
-        continue-on-error: true
         run: |
-          py metrixplusplus\metrix++.py collect --std.code.lines.code --std.code.complexity.cyclomatic --db-file=${{runner.temp}}\metrixpp.db -- ${{github.workspace}}\src
-          py metrixplusplus\metrix++.py view --db-file=${{runner.temp}}\metrixpp.db > ${{runner.temp}}\metrixpp_view.txt
-
-      - name: Linter source code to job summary
-        continue-on-error: true
-        uses: cpp-linter/cpp-linter-action@v2
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          $strVersionMetrixpp=( pip show metrixpp |findstr Version ) -replace 'Version: ',''
+          echo "strVersionMetrixpp=$strVersionMetrixpp" >> $env:GITHUB_ENV
+          metrix++ collect --log-level=ERROR --std.code.lines.code --std.code.lines.comments --std.code.complexity.cyclomatic --db-file=${{runner.temp}}\metrixpp.db -- ${{github.workspace}}\src
+          metrix++ view --log-level=ERROR --db-file=${{runner.temp}}\metrixpp.db -- ${{github.workspace}}\src > ${{runner.temp}}\metrixpp.txt
+          type ${{runner.temp}}\metrixpp.txt # for artifact
+          metrix++ view --log-level=ERROR --format=xml --db-file=${{runner.temp}}\metrixpp.db -- ${{github.workspace}}\src > ${{runner.temp}}\metrixpp.xml
+          
+          [xml]$oSystem_Xml_XmlDocument = Get-Content ${{runner.temp}}\metrixpp.xml
+          $uLocTotalCode = $oSystem_Xml_XmlDocument.GetElementsByTagName( 'std.code.lines' ).GetElementsByTagName( 'code' ).GetAttribute( 'total' );
+          $uLocTotalCode = [math]::Round( $uLocTotalCode, 0 );
+          echo "uLocTotalCode=$uLocTotalCode" >> $env:GITHUB_ENV
+          $uLocTotalComments = $oSystem_Xml_XmlDocument.GetElementsByTagName( 'std.code.lines' ).GetElementsByTagName( 'comments' ).GetAttribute( 'total' );
+          $uLocTotalComments = [math]::Round( $uLocTotalComments, 0 );
+          echo "uLocTotalComments=$uLocTotalComments" >> $env:GITHUB_ENV
+      - name: Generate *.svg file for badge LinesOfСode
+        uses: emibcn/badge-action@v2.0.2
         with:
-          extra-args: -std=c++14
-          style: ''
-          repo-root: src
-          ignore: Legacy
-          step-summary: true
-          file-annotations: false
-          files-changed-only: false
+          label: LinesOfСode
+          status: ${{env.uLocTotalCode}}
+          color: d3d3d3 # lightgrey
+          path: Metrixpp-LinesOfСode.svg
+      - name: Put *.svg file to Gists for badge LinesOfСode
+        uses: exuanbo/actions-deploy-gist@v1
+        with:
+          token: ${{ secrets.ACCESS_TO_GIST }}
+          gist_id: 2af621bdd237231125e907ea81b1f8a8
+          file_path: Metrixpp-LinesOfСode.svg
+
+      - name: Generate *.svg file for badge Comments
+        uses: emibcn/badge-action@v2.0.2
+        with:
+          label: Comments
+          status: ${{env.uLocTotalComments}}
+          color: d3d3d3 # lightgrey
+          path: Metrixpp-Comments.svg
+      - name: Put *.svg file to Gists for badge Comments
+        uses: exuanbo/actions-deploy-gist@v1
+        with:
+          token: ${{ secrets.ACCESS_TO_GIST }}
+          gist_id: 2af621bdd237231125e907ea81b1f8a8
+          file_path: Metrixpp-Comments.svg
 
       - uses: actions/upload-artifact@v3
         with:
@@ -209,4 +230,4 @@ jobs:
           path: |
             ${{runner.temp}}\${{env.relHtmlReport}}
             ${{runner.temp}}\GoogleTestCombinedOutput
-            ${{runner.temp}}\metrixpp_view.txt
+            ${{runner.temp}}\metrixpp.txt
