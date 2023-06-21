@@ -1,0 +1,57 @@
+name: GoogleStyle cpplint
+on: { push: { paths-ignore: [ 'README.md', '**/requirements.txt' ] }, workflow_dispatch }
+# Configuration
+env:
+  strPlatform: x86 # or x64
+  strConfiguration: Debug # or Release
+jobs:
+  cpplint:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Install cpplint
+        run: pip install cpplint
+      - name: Run cpplint
+        run: | # status: 5 filters, linelength=120
+          $filter = '-' + ( @(
+          'whitespace/tab',
+          'whitespace/end_of_line',
+          'whitespace/parens',
+          'readability/namespace',
+          'whitespace/comments',
+          'legal/copyright'
+          ) -join ',-' )
+          $filter;
+          cpplint --linelength=120 --filter=$filter --exclude=src\MsvcGenerated\* --exclude=src\Legacy\SynapticTouchPad.h --recursive --output=junit src 2>&1 | %{ "$_" } >${{runner.temp}}\cpplint.xml
+          [xml]$oSystem_Xml_XmlDocument = Get-Content ${{runner.temp}}\cpplint.xml
+          $cpplint_failures = $oSystem_Xml_XmlDocument.GetElementsByTagName( 'testsuite' ).GetAttribute( 'failures' );
+          $cpplint_failures;
+          echo "cpplint_failures=$cpplint_failures" >> $env:GITHUB_ENV
+      - name: Generate *.svg file for badge cpplint if success
+        if: ${{env.cpplint_failures}} == 0
+        uses: emibcn/badge-action@v2.0.2
+        with:
+          label: cpplint
+          status: 5 filters, linelength=120
+          path: cpplint.svg
+      - name: Put *.svg file to Gists for badge cpplint
+        uses: exuanbo/actions-deploy-gist@v1
+        with:
+          token: ${{ secrets.ACCESS_TO_GIST }}
+          gist_id: 2af621bdd237231125e907ea81b1f8a8
+          file_path: cpplint.svg
+
+      - name: Generate *.svg file for badge cpplint if failure
+        if: ${{env.cpplint_failures}} != 0
+        uses: emibcn/badge-action@v2.0.2
+        with:
+          label: cpplint
+          status: failing
+          color: red
+          path: cpplint.svg
+      - name: Put *.svg file to Gists for badge cpplint
+        uses: exuanbo/actions-deploy-gist@v1
+        with:
+          token: ${{ secrets.ACCESS_TO_GIST }}
+          gist_id: 2af621bdd237231125e907ea81b1f8a8
+          file_path: cpplint.svg
