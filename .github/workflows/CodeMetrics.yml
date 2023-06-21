@@ -20,7 +20,7 @@ jobs:
           echo "strVersionMetrixpp=$strVersionMetrixpp" >> $env:GITHUB_ENV
           metrix++ collect --log-level=ERROR --std.code.lines.code --std.code.lines.comments --std.code.complexity.cyclomatic --db-file=${{runner.temp}}\metrixpp.db -- ${{github.workspace}}\src
           metrix++ view --log-level=ERROR --db-file=${{runner.temp}}\metrixpp.db -- ${{github.workspace}}\src > ${{runner.temp}}\metrixpp.txt
-          ${{runner.temp}}\metrixpp.txt
+          type ${{runner.temp}}\metrixpp.txt # for artifact
           metrix++ view --log-level=ERROR --format=xml --db-file=${{runner.temp}}\metrixpp.db -- ${{github.workspace}}\src > ${{runner.temp}}\metrixpp.xml
           
           [xml]$oSystem_Xml_XmlDocument = Get-Content ${{runner.temp}}\metrixpp.xml
@@ -35,7 +35,7 @@ jobs:
         with:
           label: LinesOfСode
           status: ${{env.uLocTotalCode}}
-          color: lightgrey
+          color: d3d3d3 # lightgrey
           path: Metrixpp-LinesOfСode.svg
       - name: Put *.svg file to Gists for badge LinesOfСode
         uses: exuanbo/actions-deploy-gist@v1
@@ -49,7 +49,7 @@ jobs:
         with:
           label: Comments
           status: ${{env.uLocTotalComments}}
-          color: lightgrey
+          color: d3d3d3 # lightgrey
           path: Metrixpp-Comments.svg
       - name: Put *.svg file to Gists for badge Comments
         uses: exuanbo/actions-deploy-gist@v1
