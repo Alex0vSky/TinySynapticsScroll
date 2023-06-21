@@ -12,19 +12,48 @@ jobs:
       contents: read # for "actions/checkout@v3" when GITHUB_TOKEN
     steps:
       - uses: actions/checkout@v3
-      - name: Install metrics code1
+      - name: Install metrics code
         run: pip install metrixpp
-      - name: Install metrics code2
-        run: git clone https://github.com/metrixplusplus/metrixplusplus metrixplusplus
-      - name: Run metrics code1
-        continue-on-error: true
+      - name: Run metrics code
         run: |
-          pip show metrixpp
-          metrix++ collect --log-level=ERROR --std.code.lines.code --std.code.complexity.cyclomatic --db-file=${{runner.temp}}\metrixpp.db -- ${{github.workspace}}\src
-          metrix++ view --db-file=${{runner.temp}}\metrixpp.db -- ${{github.workspace}}\src
-      - name: Run metrics code2
-        continue-on-error: true
-        run: |
-          type metrixplusplus\setup.py
-          py metrixplusplus\metrix++.py collect --log-level=ERROR --std.code.lines.code --std.code.complexity.cyclomatic --db-file=${{runner.temp}}\metrixpp.db -- ${{github.workspace}}\src
-          py metrixplusplus\metrix++.py view --db-file=${{runner.temp}}\metrixpp.db -- ${{github.workspace}}\src
+          $strVersionMetrixpp=( pip show metrixpp |findstr Version ) -replace 'Version: ',''
+          echo "strVersionMetrixpp=$strVersionMetrixpp" >> $env:GITHUB_ENV
+          metrix++ collect --log-level=ERROR --std.code.lines.code --std.code.lines.comments --std.code.complexity.cyclomatic --db-file=${{runner.temp}}\metrixpp.db -- ${{github.workspace}}\src
+          metrix++ view --log-level=ERROR --db-file=${{runner.temp}}\metrixpp.db -- ${{github.workspace}}\src > ${{runner.temp}}\metrixpp.txt
+          ${{runner.temp}}\metrixpp.txt
+          metrix++ view --log-level=ERROR --format=xml --db-file=${{runner.temp}}\metrixpp.db -- ${{github.workspace}}\src > ${{runner.temp}}\metrixpp.xml
+          
+          [xml]$oSystem_Xml_XmlDocument = Get-Content ${{runner.temp}}\metrixpp.xml
+          $uLocTotalCode = $oSystem_Xml_XmlDocument.GetElementsByTagName( 'std.code.lines' ).GetElementsByTagName( 'code' ).GetAttribute( 'total' );
+          $uLocTotalCode = [math]::Round( $uLocTotalCode, 0 );
+          echo "uLocTotalCode=$uLocTotalCode" >> $env:GITHUB_ENV
+          $uLocTotalComments = $oSystem_Xml_XmlDocument.GetElementsByTagName( 'std.code.lines' ).GetElementsByTagName( 'comments' ).GetAttribute( 'total' );
+          $uLocTotalComments = [math]::Round( $uLocTotalComments, 0 );
+          echo "uLocTotalComments=$uLocTotalComments" >> $env:GITHUB_ENV
+      - name: Generate *.svg file for badge LinesOfСode
+        uses: emibcn/badge-action@v2.0.2
+        with:
+          label: LinesOfСode
+          status: ${{env.uLocTotalCode}}
+          color: lightgrey
+          path: Metrixpp-LinesOfСode.svg
+      - name: Put *.svg file to Gists for badge LinesOfСode
+        uses: exuanbo/actions-deploy-gist@v1
+        with:
+          token: ${{ secrets.ACCESS_TO_GIST }}
+          gist_id: 2af621bdd237231125e907ea81b1f8a8
+          file_path: Metrixpp-LinesOfСode.svg
+
+      - name: Generate *.svg file for badge Comments
+        uses: emibcn/badge-action@v2.0.2
+        with:
+          label: Comments
+          status: ${{env.uLocTotalComments}}
+          color: lightgrey
+          path: Metrixpp-Comments.svg
+      - name: Put *.svg file to Gists for badge Comments
+        uses: exuanbo/actions-deploy-gist@v1
+        with:
+          token: ${{ secrets.ACCESS_TO_GIST }}
+          gist_id: 2af621bdd237231125e907ea81b1f8a8
+          file_path: Metrixpp-Comments.svg
