@@ -1,5 +1,5 @@
 name: Run tests, then collect result and coverage
-on: { push: { paths-ignore: README.md }, workflow_dispatch }
+on: { push: { paths-ignore: [ 'README.md', '**/requirements.txt' ] }, workflow_dispatch }
 # Configuration
 env:
   strPlatform: x86 # or x64
@@ -224,6 +224,54 @@ jobs:
           gist_id: 2af621bdd237231125e907ea81b1f8a8
           file_path: Metrixpp-Comments.svg
 
+      - name: Install cpplint
+        run: pip install cpplint
+      - name: Run cpplint
+        continue-on-error: true # when cpplint return error
+        run: | 
+          $arrFilter = @(
+            'whitespace/tab',
+            'whitespace/end_of_line',
+            'whitespace/parens',
+            'readability/namespace',
+            'whitespace/comments',
+            'legal/copyright'
+          );
+          $filter = '-' + ( $arrFilter -join ',-' );
+          $linelength=120
+          $cpplint_args="--linelength=$linelength --filter=$filter --exclude=src\MsvcGenerated\* --exclude=src\Legacy\SynapticTouchPad.h --recursive --output=junit src";
+          Start-Process -Wait -NoNewWindow cpplint -ArgumentList $cpplint_args -RedirectStandardError ${{runner.temp}}\cpplint.xml
+          [xml]$oSystem_Xml_XmlDocument = Get-Content ${{runner.temp}}\cpplint.xml
+          $cpplint_failures = $oSystem_Xml_XmlDocument.GetElementsByTagName( 'testsuite' ).GetAttribute( 'failures' );
+          $child = $oSystem_Xml_XmlDocument.CreateElement( 'Arguments' )
+          $child.InnerText = $cpplint_args;
+          $oSystem_Xml_XmlDocument.DocumentElement.AppendChild( $child );
+          $oSystem_Xml_XmlDocument.Save( "${{runner.temp}}\cpplint.xml" )
+          echo "cpplint_failures=$cpplint_failures" >> $env:GITHUB_ENV
+          echo "cpplint_arrFilter_Count=$($arrFilter.Count)" >> $env:GITHUB_ENV
+          echo "cpplint_linelength=$linelength" >> $env:GITHUB_ENV
+      - name: Generate *.svg file for badge cpplint if success
+        if: env.cpplint_failures == 0
+        uses: emibcn/badge-action@v2.0.2
+        with:
+          label: cpplint
+          status: ${{env.cpplint_arrFilter_Count}} filters, linelength=${{env.cpplint_linelength}}
+          path: cpplint.svg
+      - name: Generate *.svg file for badge cpplint if failure
+        if: env.cpplint_failures > 0 || env.cpplint_failures == ''
+        uses: emibcn/badge-action@v2.0.2
+        with:
+          label: cpplint
+          status: failing
+          color: red
+          path: cpplint.svg
+      - name: Put *.svg file to Gists for badge cpplint
+        uses: exuanbo/actions-deploy-gist@v1
+        with:
+          token: ${{ secrets.ACCESS_TO_GIST }}
+          gist_id: 2af621bdd237231125e907ea81b1f8a8
+          file_path: cpplint.svg
+
       - uses: actions/upload-artifact@v3
         with:
           name: artifact-coverage-tests-OpenCppCoverage-${{env.strCfg}}
@@ -231,3 +279,4 @@ jobs:
             ${{runner.temp}}\${{env.relHtmlReport}}
             ${{runner.temp}}\GoogleTestCombinedOutput
             ${{runner.temp}}\metrixpp.txt
+            ${{runner.temp}}\cpplint.xml
