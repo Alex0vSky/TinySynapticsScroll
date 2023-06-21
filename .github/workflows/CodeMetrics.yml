@@ -1,0 +1,30 @@
+name: CodeMetrics
+on: { push: { paths-ignore: README.md }, workflow_dispatch }
+# Configuration
+env:
+  strPlatform: x86 # or x64
+  strConfiguration: Debug # or Release
+jobs:
+  collect-tests-code-coverage:
+    runs-on: windows-latest
+    permissions:
+      actions: read # for "dawidd6/action-download-artifact@v2"
+      contents: read # for "actions/checkout@v3" when GITHUB_TOKEN
+    steps:
+      - uses: actions/checkout@v3
+      - name: Install metrics code1
+        run: pip install metrixpp
+      - name: Install metrics code2
+        run: git clone https://github.com/metrixplusplus/metrixplusplus metrixplusplus
+      - name: Run metrics code1
+        continue-on-error: true
+        run: |
+          pip show metrixpp
+          metrix++ collect --std.code.lines.code --std.code.complexity.cyclomatic --db-file=${{runner.temp}}\metrixpp.db -- ${{github.workspace}}\src
+          metrix++ view --db-file=${{runner.temp}}\metrixpp.db
+      - name: Run metrics code2
+        continue-on-error: true
+        run: |
+          type metrixplusplus\setup.py
+          py metrixplusplus\metrix++.py collect --std.code.lines.code --std.code.complexity.cyclomatic --db-file=${{runner.temp}}\metrixpp.db -- ${{github.workspace}}\src
+          py metrixplusplus\metrix++.py view --db-file=${{runner.temp}}\metrixpp.db
