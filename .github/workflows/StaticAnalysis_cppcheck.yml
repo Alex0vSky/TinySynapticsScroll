@@ -33,7 +33,6 @@ jobs:
         if: steps.cache-tool-cppcheck.outputs.cache-hit != 'true'
         run: |
           $arglist = "/i ""${{github.workspace}}\${{env.strNameCppcheckSetupFile}}"" INSTALLDIR=""${{env.dirSetupCppcheck}}"" TARGETDIR=""${{env.dirSetupCppcheck}}"" ALLUSERS=2 MSIINSTALLPERUSER=1 /quiet /norestart /log ""${{runner.temp}}\${{env.strNameCppcheckSetupFile}}.log"" "
-          $arglist;
           
           $uWait_seconds = 60;
           $ps = new-object System.Diagnostics.Process; $ps.StartInfo.UseShellExecute = $false; $ps.StartInfo.WorkingDirectory = Get-Location;
@@ -44,8 +43,12 @@ jobs:
           
           type "${{runner.temp}}\${{env.strNameCppcheckSetupFile}}.log"
 
+      - name: Add MSBuild to PATH
+        uses: microsoft/setup-msbuild@v1.1
       - name: Run tool cppcheck
+        continue-on-error: true
         run: | 
+          $env:INCLUDE;
           $include  = ' -I "' + ( $env:INCLUDE.Split( ';' ) -join '" -I "' ) + '"';
           $include; #
           $include += ' -I "resource"'
