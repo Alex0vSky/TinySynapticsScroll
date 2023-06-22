@@ -11,6 +11,8 @@
 
 [![cpplint](https://gist.githubusercontent.com/Alexovsky5/2af621bdd237231125e907ea81b1f8a8/raw/GoogleStyle_cpplint.svg)](https://github.com/Alexovsky5/turbo-octo-adventure/actions/workflows/TestsResultAndCoverage.yml)
 
+[![cppcheck](https://gist.githubusercontent.com/Alexovsky5/2af621bdd237231125e907ea81b1f8a8/raw/StaticAnalysis_cppcheck.svg)](https://github.com/Alexovsky5/turbo-octo-adventure/actions/workflows/TestsResultAndCoverage.yml)
+
 <!-- 
 [![cpp-linter](https://github.com/cpp-linter/cpp-linter-action/actions/workflows/cpp-linter.yml/badge.svg)](https://github.com/cpp-linter/cpp-linter-action/actions/workflows/cpp-linter.yml)
 [![cccc](https://github.com/sarnold/cccc-action/actions/workflows/main.yml/badge.svg)](https://github.com/sarnold/cccc-action/actions/workflows/main.yml)
