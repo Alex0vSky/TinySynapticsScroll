@@ -43,31 +43,19 @@ jobs:
           
           type "${{runner.temp}}\${{env.strNameCppcheckSetupFile}}.log"
 
-      - name: Add MSBuild to PATH
-        uses: microsoft/setup-msbuild@v1.1
       - name: Run tool cppcheck
         continue-on-error: true
         run: | 
-          "env:INCLUDE: '$env:INCLUDE'";
-          if ( !$env:INCLUDE ) { 
-              # $installationPath="C:\Program Files (x86)\Microsoft Visual Studio\2019\Community";
-              $installationPath=vswhere.exe -prerelease -latest -property installationPath
-              "installationPath: '$installationPath'";
-              & "${env:COMSPEC}" /s /c """$installationPath\Common7\Tools\vsdevcmd.bat"" -no_logo && set" | foreach-object { 
-                  if ( $_.StartsWith("INCLUDE=") ) { $env:INCLUDE=$_.Replace( 'INCLUDE=', '' ); }
-              }
-          }
-          "env:INCLUDE: '$env:INCLUDE'";
-          $include  = ' -I "' + ( $env:INCLUDE.Split( ';' ) -join '" -I "' ) + '"';
-          $include; #
+          $common = ' --std=c++14 --platform=win32A --library=microsoft_sal --library=windows --enable=all -q --xml ';
+          $include = '';
           $include += ' -I "resource"'
           $include += ' -I "src"'
           $include += ' -I "ThirdParty\SynCOMAPIv1_0\Include"'
-          $defines  = ' -DDECLSPEC_IMPORT=__declspec(import)'
+          $defines  = ''
+          $defines += ' -DDECLSPEC_IMPORT=__declspec(import)'
           $defines += ' -D_X86_=1'
           $defines += ' -D_M_HYBRID_X86_ARM64=1'
-          $suppress = ' --suppress=syntaxError:"*\WTypesbase.h":359'
-          $common = '--std=c++14 --platform=win32A --library=microsoft_sal --library=windows --enable=all --xml -q';
+          $suppress = ' --suppress=missingIncludeSystem --suppress=missingInclude:*\SynCtrl.h --suppress=preprocessorErrorDirective:*\SynCtrl.h'
           $cppcheck_exe = "${{env.dirSetupCppcheck}}\cppcheck.exe"
           $cppcheck_args = $common + $include + $defines + $suppress + ' ' + 'src';
           $cppcheck_args; #
