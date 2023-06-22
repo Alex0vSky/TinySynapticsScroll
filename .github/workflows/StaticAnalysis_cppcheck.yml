@@ -48,7 +48,16 @@ jobs:
       - name: Run tool cppcheck
         continue-on-error: true
         run: | 
-          $env:INCLUDE;
+          "env:INCLUDE: '$env:INCLUDE'";
+          if ( !$env:INCLUDE ) { 
+              # $installationPath="C:\Program Files (x86)\Microsoft Visual Studio\2019\Community";
+              $installationPath=vswhere.exe -prerelease -latest -property installationPath
+              "installationPath: '$installationPath'";
+              & "${env:COMSPEC}" /s /c """$installationPath\Common7\Tools\vsdevcmd.bat"" -no_logo && set" | foreach-object { 
+                  if ( $_.StartsWith("INCLUDE=") ) { $env:INCLUDE=$_.Replace( 'INCLUDE=', '' ); }
+              }
+          }
+          "env:INCLUDE: '$env:INCLUDE'";
           $include  = ' -I "' + ( $env:INCLUDE.Split( ';' ) -join '" -I "' ) + '"';
           $include; #
           $include += ' -I "resource"'
@@ -76,7 +85,7 @@ jobs:
           echo "cppcheck_uCountError=$uCountError" >> $env:GITHUB_ENV
 
       - name: Generate *.svg file for badge cppcheck if success
-        if: env.cppcheck_uCountError == 0
+        if: env.cppcheck_uCountError == '0'
         uses: emibcn/badge-action@v2.0.2
         with:
           label: cppcheck
