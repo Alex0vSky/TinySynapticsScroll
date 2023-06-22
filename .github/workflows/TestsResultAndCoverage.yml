@@ -184,7 +184,7 @@ jobs:
       - name: Run metrics code
         run: |
           $strVersionMetrixpp=( pip show metrixpp |findstr Version ) -replace 'Version: ',''
-          echo "strVersionMetrixpp=$strVersionMetrixpp" >> $env:GITHUB_ENV
+          "`nVersion: $strVersionMetrixpp" >> ${{runner.temp}}\metrixpp.txt
           metrix++ collect --log-level=ERROR --std.code.lines.code --std.code.lines.comments --std.code.complexity.cyclomatic --db-file=${{runner.temp}}\metrixpp.db -- ${{github.workspace}}\src
           metrix++ view --log-level=ERROR --db-file=${{runner.temp}}\metrixpp.db -- ${{github.workspace}}\src > ${{runner.temp}}\metrixpp.txt
           type ${{runner.temp}}\metrixpp.txt # for artifact
@@ -192,17 +192,21 @@ jobs:
           
           [xml]$oSystem_Xml_XmlDocument = Get-Content ${{runner.temp}}\metrixpp.xml
           $uLocTotalCode = $oSystem_Xml_XmlDocument.GetElementsByTagName( 'std.code.lines' ).GetElementsByTagName( 'code' ).GetAttribute( 'total' );
-          $uLocTotalCode = [math]::Round( $uLocTotalCode, 0 );
-          echo "uLocTotalCode=$uLocTotalCode" >> $env:GITHUB_ENV
           $uLocTotalComments = $oSystem_Xml_XmlDocument.GetElementsByTagName( 'std.code.lines' ).GetElementsByTagName( 'comments' ).GetAttribute( 'total' );
+          $child = $oSystem_Xml_XmlDocument.CreateElement( 'Version' )
+          $child.InnerText = $strVersionMetrixpp;
+          $oSystem_Xml_XmlDocument.DocumentElement.AppendChild( $child );
+          $oSystem_Xml_XmlDocument.Save( "${{runner.temp}}\metrixpp.xml" )
+          $uLocTotalCode = [math]::Round( $uLocTotalCode, 0 );
           $uLocTotalComments = [math]::Round( $uLocTotalComments, 0 );
-          echo "uLocTotalComments=$uLocTotalComments" >> $env:GITHUB_ENV
+          echo "metrixpp_uLocTotalCode=$uLocTotalCode" >> $env:GITHUB_ENV
+          echo "metrixpp_uLocTotalComments=$uLocTotalComments" >> $env:GITHUB_ENV
       - name: Generate *.svg file for badge LinesOfСode
         uses: emibcn/badge-action@v2.0.2
         with:
           label: LinesOfСode
-          status: ${{env.uLocTotalCode}}
-          color: d3d3d3 # lightgrey
+          status: ${{env.metrixpp_uLocTotalCode}}
+          color: a9a9a9 # darkgrey=a9a9a9, lightgrey=d3d3d3
           path: Metrixpp-LinesOfСode.svg
       - name: Put *.svg file to Gists for badge LinesOfСode
         uses: exuanbo/actions-deploy-gist@v1
@@ -214,8 +218,8 @@ jobs:
         uses: emibcn/badge-action@v2.0.2
         with:
           label: Comments
-          status: ${{env.uLocTotalComments}}
-          color: d3d3d3 # lightgrey
+          status: ${{env.metrixpp_uLocTotalComments}}
+          color: a9a9a9 # darkgrey=a9a9a9, lightgrey=d3d3d3
           path: Metrixpp-Comments.svg
       - name: Put *.svg file to Gists for badge Comments
         uses: exuanbo/actions-deploy-gist@v1
@@ -229,6 +233,8 @@ jobs:
       - name: Run GoogleStyle cpplint
         continue-on-error: true # when cpplint return error
         run: | 
+          $strVersionCpplint=(pip show cpplint |findstr Version) -replace 'Version: ',''
+          $strVersionCpplint; #
           $arrFilter = @(
             'whitespace/tab',
             'whitespace/end_of_line',
@@ -245,6 +251,9 @@ jobs:
           $cpplint_failures = $oSystem_Xml_XmlDocument.GetElementsByTagName( 'testsuite' ).GetAttribute( 'failures' );
           $child = $oSystem_Xml_XmlDocument.CreateElement( 'Arguments' )
           $child.InnerText = $cpplint_args;
+          $oSystem_Xml_XmlDocument.DocumentElement.AppendChild( $child );
+          $child = $oSystem_Xml_XmlDocument.CreateElement( 'Version' )
+          $child.InnerText = $strVersionCpplint;
           $oSystem_Xml_XmlDocument.DocumentElement.AppendChild( $child );
           $oSystem_Xml_XmlDocument.Save( "${{runner.temp}}\cpplint.xml" )
           echo "cpplint_failures=$cpplint_failures" >> $env:GITHUB_ENV
