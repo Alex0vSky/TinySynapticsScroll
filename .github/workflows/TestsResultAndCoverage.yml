@@ -6,6 +6,8 @@ env:
   strConfiguration: Debug # or Release
   strNameOccSetupFile: OpenCppCoverageSetup-x86-0.9.9.0.exe
   strGhTagOccSetupFile: release-0.9.9.0 # from https://github.com/OpenCppCoverage/OpenCppCoverage/tags
+  strNameCppcheckSetupFile: cppcheck-2.11-x64-Setup.msi
+  strGhTagCppcheckSetupFile: 2.11 # from https://github.com/danmar/cppcheck/releases/tag/
   strOccExecutable: OpenCppCoverage.exe
   relHtmlReport: HtmlReportOcc
   strCoberturaReport: CoberturaReportOcc.xml
@@ -25,9 +27,10 @@ jobs:
 
       - name: Set values (windows-latest)
         run: | # build from *.sln, all tests
+          echo "strCfg=${{env.strPlatform}}-${{env.strConfiguration}}" >> $env:GITHUB_ENV
           echo "dirTestExecutables=${{github.workspace}}\qa\UnitTest\bin\${{env.strPlatform}}\${{env.strConfiguration}}" >> $env:GITHUB_ENV
           echo "dirSetupOcc=${env:Programfiles}\Occ" >> $env:GITHUB_ENV
-          echo "strCfg=${{env.strPlatform}}-${{env.strConfiguration}}" >> $env:GITHUB_ENV
+          echo "dirSetupCppcheck=${env:Programfiles}\cppcheck" >> $env:GITHUB_ENV
 
       - name: Download artifact
         uses: dawidd6/action-download-artifact@v2
@@ -38,27 +41,27 @@ jobs:
           path: ${{env.dirTestExecutables}}
           search_artifacts: true
 
-      - name: Cache tool
+      - name: Cache tool Occ
         uses: actions/cache@v3
         with:
           path: ${{env.dirSetupOcc}}
           key: cache-key-tool-occ-${{env.strNameOccSetupFile}}
         id: cache-tool-occ
-      - name: Download tool
+      - name: Download tool Occ
         if: steps.cache-tool-occ.outputs.cache-hit != 'true'
         uses: robinraju/release-downloader@v1.8
         with:
           repository: OpenCppCoverage/OpenCppCoverage
           fileName: ${{env.strNameOccSetupFile}}
           tag: ${{env.strGhTagOccSetupFile}}
-      - name: Install tool
+      - name: Install tool Occ
         if: steps.cache-tool-occ.outputs.cache-hit != 'true'
         run: |
           $arglist="/VERYSILENT /SUPPRESSMSGBOXES /DIR=""${{env.dirSetupOcc}}"" /LOG=""${{runner.temp}}\${{env.strNameOccSetupFile}}.log"""
           Start-Process "${{env.strNameOccSetupFile}}" -ArgumentList $arglist -Wait 
           #type "${{runner.temp}}\${{env.strNameOccSetupFile}}.log"
 
-      - name: Run tool
+      - name: Run tool Occ
         continue-on-error: true
         run: | # double launching because windows system hooks from AppCompat conflicts with gmock-win32 hooks
           @( 
@@ -109,7 +112,6 @@ jobs:
           $dCoveredPercent = ( 100 * ( $uLinesCovered / $uLinesValid ) );
           $strCoveredPercent = [math]::Round( $dCoveredPercent, 2 );
           echo "strCoverageValue=$strCoveredPercent" >> $env:GITHUB_ENV
-
       - name: Generate *.svg file for badge TestsCoverage if success
         if: ${{ success( ) }}
         uses: emibcn/badge-action@v2.0.2
@@ -136,7 +138,6 @@ jobs:
           status: failing
           color: red
           path: ${{runner.os}}-${{env.strCfg}}.svg
-
       - name: Put *.svg file to Gists for badge TestsCoverage
         if: ${{ success( ) || failure( ) }} # yes, not 'always( )' because 'cancelled( )'
         uses: exuanbo/actions-deploy-gist@v1
@@ -149,6 +150,7 @@ jobs:
         with:
           python-version: 3.10 # need for metrixpp/metrix++ because "python ValueError: invalid mode: 'rU'"
           cache: pip
+
       - name: Install xml merger
         run: pip install junitparser
       - name: Merge xml reports
@@ -164,7 +166,6 @@ jobs:
           $oSystem_Xml_XmlElement = $oSystem_Xml_XmlDocument.GetElementsByTagName( 'testsuites' ).Item( 0 );
           $uTests = $oSystem_Xml_XmlElement.GetAttribute( 'tests' );
           echo "uTests=$uTests" >> $env:GITHUB_ENV
-
       - name: Generate *.svg file for badge GoogleTest
         uses: emibcn/badge-action@v2.0.2
         with:
@@ -209,7 +210,6 @@ jobs:
           token: ${{ secrets.ACCESS_TO_GIST }}
           gist_id: 2af621bdd237231125e907ea81b1f8a8
           file_path: Metrixpp-LinesOfСode.svg
-
       - name: Generate *.svg file for badge Comments
         uses: emibcn/badge-action@v2.0.2
         with:
@@ -224,9 +224,9 @@ jobs:
           gist_id: 2af621bdd237231125e907ea81b1f8a8
           file_path: Metrixpp-Comments.svg
 
-      - name: Install cpplint
+      - name: Install GoogleStyle cpplint
         run: pip install cpplint
-      - name: Run cpplint
+      - name: Run GoogleStyle cpplint
         continue-on-error: true # when cpplint return error
         run: | 
           $arrFilter = @(
@@ -250,27 +250,104 @@ jobs:
           echo "cpplint_failures=$cpplint_failures" >> $env:GITHUB_ENV
           echo "cpplint_arrFilter_Count=$($arrFilter.Count)" >> $env:GITHUB_ENV
           echo "cpplint_linelength=$linelength" >> $env:GITHUB_ENV
-      - name: Generate *.svg file for badge cpplint if success
-        if: env.cpplint_failures == 0
+      - name: Generate *.svg file for badge GoogleStyle cpplint if success
+        if: env.cpplint_failures == '0'
         uses: emibcn/badge-action@v2.0.2
         with:
           label: cpplint
           status: ${{env.cpplint_arrFilter_Count}} filters, linelength=${{env.cpplint_linelength}}
-          path: cpplint.svg
-      - name: Generate *.svg file for badge cpplint if failure
+          path: GoogleStyle_cpplint.svg
+      - name: Generate *.svg file for badge GoogleStyle cpplint if failure
         if: env.cpplint_failures > 0 || env.cpplint_failures == ''
         uses: emibcn/badge-action@v2.0.2
         with:
           label: cpplint
           status: failing
           color: red
-          path: cpplint.svg
-      - name: Put *.svg file to Gists for badge cpplint
+          path: GoogleStyle_cpplint.svg
+      - name: Put *.svg file to Gists for badge GoogleStyle cpplint
         uses: exuanbo/actions-deploy-gist@v1
         with:
           token: ${{ secrets.ACCESS_TO_GIST }}
           gist_id: 2af621bdd237231125e907ea81b1f8a8
-          file_path: cpplint.svg
+          file_path: GoogleStyle_cpplint.svg
+
+      - name: Cache tool cppcheck
+        uses: actions/cache@v3
+        with:
+          path: ${{env.dirSetupCppcheck}}
+          key: cache-key-tool-cppcheck-${{env.strNameCppcheckSetupFile}}
+        id: cache-tool-cppcheck
+      - name: Download tool cppcheck
+        if: steps.cache-tool-cppcheck.outputs.cache-hit != 'true'
+        uses: robinraju/release-downloader@v1.8
+        with:
+          repository: danmar/cppcheck
+          fileName: ${{env.strNameCppcheckSetupFile}}
+          tag: ${{env.strGhTagCppcheckSetupFile}}
+      - name: Install tool cppcheck
+        if: steps.cache-tool-cppcheck.outputs.cache-hit != 'true'
+        run: |
+          $arglist = "/i ""${{github.workspace}}\${{env.strNameCppcheckSetupFile}}"" INSTALLDIR=""${{env.dirSetupCppcheck}}"" TARGETDIR=""${{env.dirSetupCppcheck}}"" ALLUSERS=2 MSIINSTALLPERUSER=1 /quiet /norestart /log ""${{runner.temp}}\${{env.strNameCppcheckSetupFile}}.log"" "
+          
+          $uWait_seconds = 60;
+          $ps = new-object System.Diagnostics.Process; $ps.StartInfo.UseShellExecute = $false; $ps.StartInfo.WorkingDirectory = Get-Location;
+          $ps.StartInfo.Filename = "msiexec"
+          $ps.StartInfo.Arguments = $arglist
+          $uWait_milliseconds = $uWait_seconds *1000;
+          $ps.start( ); $ps.WaitForExit( $uWait_milliseconds );
+          
+          type "${{runner.temp}}\${{env.strNameCppcheckSetupFile}}.log"
+      - name: Run tool cppcheck
+        continue-on-error: true
+        run: | 
+          $common = ' --std=c++14 --platform=win32A --library=microsoft_sal --library=windows --enable=all -q --xml ';
+          $include = '';
+          $include += ' -I "resource"'
+          $include += ' -I "src"'
+          $include += ' -I "ThirdParty\SynCOMAPIv1_0\Include"'
+          $defines  = ''
+          $defines += ' -DDECLSPEC_IMPORT=__declspec(import)'
+          $defines += ' -D_X86_=1'
+          $defines += ' -D_M_HYBRID_X86_ARM64=1'
+          $suppress = ' --suppress=missingIncludeSystem --suppress=missingInclude:*\SynCtrl.h --suppress=preprocessorErrorDirective:*\SynCtrl.h'
+          $cppcheck_exe = "${{env.dirSetupCppcheck}}\cppcheck.exe"
+          $cppcheck_args = $common + $include + $defines + $suppress + ' ' + 'src';
+          $cppcheck_args; #
+          Start-Process -Wait -NoNewWindow $cppcheck_exe -ArgumentList $cppcheck_args -RedirectStandardError ${{runner.temp}}\cppcheck.xml
+          
+          [xml]$oSystem_Xml_XmlDocument = Get-Content ${{runner.temp}}\cppcheck.xml
+          $uCountError = $oSystem_Xml_XmlDocument.GetElementsByTagName( 'results' ).GetElementsByTagName( 'errors' ).GetElementsByTagName( 'error' ).Count;
+          "uCountError: '$uCountError'"; #
+          [xml]$oSystem_Xml_XmlDocument = Get-Content ${{runner.temp}}\cppcheck.xml
+          $child = $oSystem_Xml_XmlDocument.CreateElement( 'Arguments' )
+          $child.InnerText = $cppcheck_args;
+          $oSystem_Xml_XmlDocument.DocumentElement.AppendChild( $child );
+          $oSystem_Xml_XmlDocument.Save( "${{runner.temp}}\cppcheck.xml" )
+          type "${{runner.temp}}\cppcheck.xml" #
+          echo "cppcheck_uCountError=$uCountError" >> $env:GITHUB_ENV
+      - name: Generate *.svg file for badge cppcheck if success
+        if: env.cppcheck_uCountError == '0'
+        uses: emibcn/badge-action@v2.0.2
+        with:
+          label: cppcheck
+          status: passing
+          color: green
+          path: StaticAnalysis_cppcheck.svg
+      - name: Generate *.svg file for badge cppcheck if failure
+        if: env.cppcheck_uCountError > 0 || env.cppcheck_uCountError == ''
+        uses: emibcn/badge-action@v2.0.2
+        with:
+          label: cppcheck
+          status: failing
+          color: red
+          path: StaticAnalysis_cppcheck.svg
+      - name: Put *.svg file to Gists for badge cppcheck
+        uses: exuanbo/actions-deploy-gist@v1
+        with:
+          token: ${{ secrets.ACCESS_TO_GIST }}
+          gist_id: 2af621bdd237231125e907ea81b1f8a8
+          file_path: StaticAnalysis_cppcheck.svg
 
       - uses: actions/upload-artifact@v3
         with:
@@ -280,3 +357,4 @@ jobs:
             ${{runner.temp}}\GoogleTestCombinedOutput
             ${{runner.temp}}\metrixpp.txt
             ${{runner.temp}}\cpplint.xml
+            ${{runner.temp}}\cppcheck.xml
