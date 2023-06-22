@@ -1,0 +1,89 @@
+name: StaticAnalysis cppcheck
+on: { push: { paths-ignore: [ 'README.md', '**/requirements.txt' ] }, workflow_dispatch }
+# Configuration
+env:
+  strPlatform: x86 # or x64
+  strConfiguration: Debug # or Release
+  strNameCppcheckSetupFile: cppcheck-2.11-x64-Setup.msi
+  strGhTagCppcheckSetupFile: 2.11 # from https://github.com/danmar/cppcheck/releases/tag/
+jobs:
+  cppcheck:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v3
+      
+      - name: Set values (windows-latest)
+        run: | 
+          echo "dirSetupCppcheck=${env:Programfiles}\cppcheck" >> $env:GITHUB_ENV
+
+      - name: Cache tool cppcheck
+        uses: actions/cache@v3
+        with:
+          path: ${{env.dirSetupCppcheck}}
+          key: cache-key-tool-cppcheck-${{env.strNameCppcheckSetupFile}}
+        id: cache-tool-cppcheck
+      - name: Download tool cppcheck
+        if: steps.cache-tool-cppcheck.outputs.cache-hit != 'true'
+        uses: robinraju/release-downloader@v1.8
+        with:
+          repository: danmar/cppcheck
+          fileName: ${{env.strNameCppcheckSetupFile}}
+          tag: ${{env.strGhTagCppcheckSetupFile}}
+      - name: Install tool cppcheck
+        if: steps.cache-tool-cppcheck.outputs.cache-hit != 'true'
+        run: |
+          $arglist = "/i ""${{github.workspace}}\${{env.strNameCppcheckSetupFile}}"" INSTALLDIR=""${{env.dirSetupCppcheck}}"" /quiet /log ""${{runner.temp}}\${{env.strNameCppcheckSetupFile}}.log"" "
+          $arglist;
+          Start-Process -Verb RunAs -Wait "msiexec" -ArgumentList $arglist
+          type "${{runner.temp}}\${{env.strNameCppcheckSetupFile}}.log"
+
+      - name: Run tool cppcheck
+        run: | 
+          $include  = ' -I "' + ( $env:INCLUDE.Split( ';' ) -join '" -I "' ) + '"';
+          $include; #
+          $include += ' -I "resource"'
+          $include += ' -I "src"'
+          $include += ' -I "ThirdParty\SynCOMAPIv1_0\Include"'
+          $defines  = ' -DDECLSPEC_IMPORT=__declspec(import)'
+          $defines += ' -D_X86_=1'
+          $defines += ' -D_M_HYBRID_X86_ARM64=1'
+          $suppress = ' --suppress=syntaxError:"*\WTypesbase.h":359'
+          $common = '--std=c++14 --platform=win32A --library=microsoft_sal --library=windows --enable=all --xml -q';
+          $cppcheck_exe = "${{env.dirSetupCppcheck}}\cppcheck.exe"
+          $cppcheck_args = $common + $include + $defines + $suppress + ' ' + 'src';
+          $cppcheck_args; #
+          Start-Process -Wait -NoNewWindow $cppcheck_exe -ArgumentList $cppcheck_args -RedirectStandardError ${{runner.temp}}\cppcheck.xml
+          
+          [xml]$oSystem_Xml_XmlDocument = Get-Content ${{runner.temp}}\cppcheck.xml
+          $uCountError = $oSystem_Xml_XmlDocument.GetElementsByTagName( 'results' ).GetElementsByTagName( 'errors' ).GetElementsByTagName( 'error' ).Count;
+          "uCountError: '$uCountError'"; #
+          [xml]$oSystem_Xml_XmlDocument = Get-Content ${{runner.temp}}\cppcheck.xml
+          $child = $oSystem_Xml_XmlDocument.CreateElement( 'Arguments' )
+          $child.InnerText = $cppcheck_args;
+          $oSystem_Xml_XmlDocument.DocumentElement.AppendChild( $child );
+          $oSystem_Xml_XmlDocument.Save( "${{runner.temp}}\cppcheck.xml" )
+          type "${{runner.temp}}\cppcheck.xml" #
+          echo "cppcheck_uCountError=$uCountError" >> $env:GITHUB_ENV
+
+      - name: Generate *.svg file for badge cppcheck if success
+        if: env.cppcheck_uCountError == 0
+        uses: emibcn/badge-action@v2.0.2
+        with:
+          label: cppcheck
+          status: passing
+          color: green
+          path: cppcheck.svg
+      - name: Generate *.svg file for badge cppcheck if failure
+        if: env.cppcheck_uCountError > 0 || env.cppcheck_uCountError == ''
+        uses: emibcn/badge-action@v2.0.2
+        with:
+          label: cppcheck
+          status: failing
+          color: red
+          path: StaticAnalysis_cppcheck.svg
+      - name: Put *.svg file to Gists for badge cppcheck
+        uses: exuanbo/actions-deploy-gist@v1
+        with:
+          token: ${{ secrets.ACCESS_TO_GIST }}
+          gist_id: 2af621bdd237231125e907ea81b1f8a8
+          file_path: StaticAnalysis_cppcheck.svg
