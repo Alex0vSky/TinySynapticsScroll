@@ -4,15 +4,11 @@ https://en.wikipedia.org/wiki/C++
 
 [![Run tests, then collect result and coverage](https://github.com/Alexovsky5/turbo-octo-adventure/actions/workflows/TestsResultAndCoverage.yml/badge.svg)](https://github.com/Alexovsky5/turbo-octo-adventure/actions/workflows/TestsResultAndCoverage.yml)
 
-[![amount testsuites Windows-x86-Debug](
-https://gist.githubusercontent.com/Alexovsky5/2af621bdd237231125e907ea81b1f8a8/raw/GoogleTest-testsuites-Windows-x86-Debug.svg
-)](
-https://alexovsky5.github.io/sturdy-octo-disco/GoogleTestCombinedOutput/GoogleTestCombinedOutput.html
+[![cpplint](https://gist.githubusercontent.com/Alexovsky5/2af621bdd237231125e907ea81b1f8a8/raw/GoogleStyle_cpplint.svg)](
+https://alexovsky5.github.io/sturdy-octo-disco/cpplint.xml
 )
-[![tests coverage Windows-x86-Debug](
-https://gist.githubusercontent.com/Alexovsky5/2af621bdd237231125e907ea81b1f8a8/raw/TestsCoverage-Occ-Windows-x86-Debug.svg
-)](
-https://alexovsky5.github.io/sturdy-octo-disco/HtmlReportOcc/index.html
+[![cppcheck](https://gist.githubusercontent.com/Alexovsky5/2af621bdd237231125e907ea81b1f8a8/raw/StaticAnalysis_cppcheck.svg)](
+https://alexovsky5.github.io/sturdy-octo-disco/cppcheck.xml
 )
 
 [![LinesOfСode](
@@ -26,11 +22,15 @@ https://gist.githubusercontent.com/Alexovsky5/2af621bdd237231125e907ea81b1f8a8/r
 https://alexovsky5.github.io/sturdy-octo-disco/metrixpp.txt
 )
 
-[![cpplint](https://gist.githubusercontent.com/Alexovsky5/2af621bdd237231125e907ea81b1f8a8/raw/GoogleStyle_cpplint.svg)](
-https://alexovsky5.github.io/sturdy-octo-disco/cpplint.xml
+[![amount testsuites Windows-x86-Debug](
+https://gist.githubusercontent.com/Alexovsky5/2af621bdd237231125e907ea81b1f8a8/raw/GoogleTest-testsuites-Windows-x86-Debug.svg
+)](
+https://alexovsky5.github.io/sturdy-octo-disco/GoogleTestCombinedOutput/GoogleTestCombinedOutput.html
 )
-[![cppcheck](https://gist.githubusercontent.com/Alexovsky5/2af621bdd237231125e907ea81b1f8a8/raw/StaticAnalysis_cppcheck.svg)](
-https://alexovsky5.github.io/sturdy-octo-disco/cppcheck.xml
+[![tests coverage Windows-x86-Debug](
+https://gist.githubusercontent.com/Alexovsky5/2af621bdd237231125e907ea81b1f8a8/raw/TestsCoverage-Occ-Windows-x86-Debug.svg
+)](
+https://alexovsky5.github.io/sturdy-octo-disco/HtmlReportOcc/index.html
 )
 
 <!-- 
