@@ -33,10 +33,8 @@ https://gist.githubusercontent.com/Alex0vSky/2af621bdd237231125e907ea81b1f8a8/ra
 https://Alex0vSky.github.io/sturdy-octo-disco/HtmlReportOcc/index.html
 )
 
-<!-- 
-[![cpp-linter](https://github.com/cpp-linter/cpp-linter-action/actions/workflows/cpp-linter.yml/badge.svg)](https://github.com/cpp-linter/cpp-linter-action/actions/workflows/cpp-linter.yml)
-[![cccc](https://github.com/sarnold/cccc-action/actions/workflows/main.yml/badge.svg)](https://github.com/sarnold/cccc-action/actions/workflows/main.yml)
--->
-
-# turbo-octo-adventure
-Description (optional)
+# TinySynapticsScroll
+Publication of a home pet project.
+Written in order to minimize the amount of memory consumed by the process.
+The scroll function code is taken from the https://github.com/awahlig/two-finger-scroll repo.
+Application and tray icon taken from here https://icon-icons.com/download/57949/ICO/32/ and modified.
