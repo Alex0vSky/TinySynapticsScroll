@@ -12,21 +12,34 @@ jobs:
       contents: write # read for "actions/checkout@v3" when GITHUB_TOKEN, write for put in release
     steps:
       - uses: actions/checkout@v3
+        with:
+          ref: ${{ github.head_ref }}   # checkout the correct branch name
+          fetch-depth: 0                # fetch the whole repo history
 
       - name: Set values (windows-latest)
-        run: | # build from *.sln, all tests
+        run: | 
           echo "strCfg=${{env.strPlatform}}-${{env.strConfiguration}}" >> $env:GITHUB_ENV
 
-      - name: Download artifact
-        uses: dawidd6/action-download-artifact@v2
-        with:
-          github_token: ${{secrets.GITHUB_TOKEN}}
-          workflow: build-release-debug-x86.yml
-          name: artifact-build-release-${{env.strCfg}}
-          path: artifact-build-release-${{env.strCfg}}
-          search_artifacts: true
+      - name: Git Version
+        id: version
+        uses: codacy/git-version@2.7.1
 
-      - name: Release
-        uses: softprops/action-gh-release@v1
-        with:
-          files: artifact-build-release/*
+      - name: Debug
+        run: | 
+          echo "github.ref: '${{ github.ref }}'"
+          echo "version: '${{ steps.version.outputs.version }}'"
+          echo "previous-version: '${{ steps.version.outputs.previous-version }}'"
+
+#      - name: Download artifact
+#        uses: dawidd6/action-download-artifact@v2
+#        with:
+#          github_token: ${{secrets.GITHUB_TOKEN}}
+#          workflow: build-release-debug-x86.yml
+#          name: artifact-build-release-${{env.strCfg}}
+#          path: artifact-build-release-${{env.strCfg}}
+#          search_artifacts: true
+#
+#      - name: Release
+#        uses: softprops/action-gh-release@v1
+#        with:
+#          files: artifact-build-release/*
