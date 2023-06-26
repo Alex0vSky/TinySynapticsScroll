@@ -1,0 +1,32 @@
+name: try tags
+on: { push: { paths-ignore: [ 'README.md', '**/requirements.txt' ] }, workflow_dispatch }
+# Configuration
+env:
+  strPlatform: x86 # or x64
+  strConfiguration: Debug # or Release
+jobs:
+  try-tags:
+    runs-on: windows-latest
+    permissions:
+      actions: read # for "dawidd6/action-download-artifact@v2"
+      contents: write # read for "actions/checkout@v3" when GITHUB_TOKEN, write for put in release
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Set values (windows-latest)
+        run: | # build from *.sln, all tests
+          echo "strCfg=${{env.strPlatform}}-${{env.strConfiguration}}" >> $env:GITHUB_ENV
+
+      - name: Download artifact
+        uses: dawidd6/action-download-artifact@v2
+        with:
+          github_token: ${{secrets.GITHUB_TOKEN}}
+          workflow: build-release.yml
+          name: artifact-build-release-${{env.strCfg}}
+          path: artifact-build-release
+          search_artifacts: true
+
+      - name: Release
+        uses: softprops/action-gh-release@v1
+        with:
+          files: artifact-build-release/*
