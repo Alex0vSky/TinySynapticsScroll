@@ -1,0 +1,22 @@
+// src\Version.h - versioning, use PE-file resources via TinySynapticsScroll.rc, file will be pathed in CI
+#pragma once
+#define A0S_VERSION_MAJOR 0
+#define A0S_VERSION_MINOR 0
+#define A0S_VERSION_PATCH 0
+#define A0S_VERSION_BUILD 0
+
+#define A0S_stringify(a) A0S_stringify_(a)
+#define A0S_stringify_(a) #a
+
+namespace prj_sysw { namespace TinySynapticsScroll {
+struct Version { 
+	static const char *getSemver( ) {
+		static const char *szSemver = 
+			"" A0S_stringify( A0S_VERSION_MAJOR ) 
+			"." A0S_stringify( A0S_VERSION_MINOR ) 
+			"." A0S_stringify( A0S_VERSION_PATCH ) 
+			"." A0S_stringify( A0S_VERSION_BUILD );
+		return szSemver;
+	}
+};
+}} // namespace prj_sysw::TinySynapticsScroll _

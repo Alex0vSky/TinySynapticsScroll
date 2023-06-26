@@ -44,13 +44,12 @@
     <ClInclude Include="src\PersistSettings\Autorun.h" />
     <ClInclude Include="src\PersistSettings\Scroll.h" />
     <ClInclude Include="src\RestoreTouchPadFromSuspend.h" />
-    <ClInclude Include="src\TinySynapticsScroll.h" />
     <ClInclude Include="src\Tool\ErrorHandler.h" />
     <ClInclude Include="src\Tool\HeapMem.h" />
     <ClInclude Include="src\Tool\Registry.h" />
-    <ClInclude Include="src\Tool\Zeroid.h" />
     <ClInclude Include="src\Trait.h" />
     <ClInclude Include="src\Tray.h" />
+    <ClInclude Include="src\Version.h" />
     <ClInclude Include="src\WndProc.h" />
     <ClInclude Include="src\WrapperTouchPad.h" />
   </ItemGroup>
@@ -121,7 +120,6 @@
     <IntDir>bin\x86\$(Configuration)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <LinkIncremental>true</LinkIncremental>
     <OutDir>$(SolutionDir)bin\x86\$(Configuration)\</OutDir>
     <IntDir>bin\x86\$(Configuration)\</IntDir>
   </PropertyGroup>
@@ -150,7 +148,6 @@
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalOptions>Shlwapi.lib %(AdditionalOptions)</AdditionalOptions>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -177,14 +174,14 @@
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
-      <EnableCOMDATFolding>true</EnableCOMDATFolding>
-      <OptimizeReferences>true</OptimizeReferences>
       <IgnoreAllDefaultLibraries>true</IgnoreAllDefaultLibraries>
       <SetChecksum>true</SetChecksum>
       <ImageHasSafeExceptionHandlers>false</ImageHasSafeExceptionHandlers>
       <GenerateDebugInformation>false</GenerateDebugInformation>
       <AdditionalDependencies>Comctl32.lib; kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <LinkTimeCodeGeneration>Default</LinkTimeCodeGeneration>
+      <OptimizeReferences>true</OptimizeReferences>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">

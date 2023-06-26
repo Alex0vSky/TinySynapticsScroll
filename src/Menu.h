@@ -8,12 +8,12 @@ class Menu {
 	T *m_poDialog;
 
 	bool create_(HWND hWnd) const {
+		// @insp https://learn.microsoft.com/en-us/windows/win32/menurc/using-menus#using-menu-item-bitmaps
 		POINT lpClickPoint;
 		HMENU hMenu, hSubMenu;
 		// get mouse cursor position x and y as lParam has the uMsg itself
 		::GetCursorPos( &lpClickPoint );
 
-		//@insp https://learn.microsoft.com/en-us/windows/win32/menurc/using-menus#using-menu-item-bitmaps
 		hMenu = ::CreateMenu( );
 		hSubMenu = ::CreatePopupMenu( );
 		::AppendMenuA( hMenu, MF_POPUP, (UINT_PTR)hSubMenu, "" );
@@ -22,8 +22,8 @@ class Menu {
 		::AppendMenuA( hSubMenu, MF_STRING, (UINT_PTR)EnuIdPopup::Exit, "Stop and unload" ); // MFS_DEFAULT = bold
 
 		// Make bold font of last item
-		MENUITEMINFOA stMii; 
-		Tool::Zeroid( stMii ); stMii.cbSize = sizeof( stMii );
+		MENUITEMINFOA stMii = { };
+		stMii.cbSize = sizeof( stMii );
 		stMii.fMask = MIIM_STATE;
 		::GetMenuItemInfoA( hSubMenu, (UINT)GetMenuItemCount( hSubMenu ) - 1, TRUE, &stMii );
 		stMii.fState |= MFS_DEFAULT;

@@ -1,4 +1,4 @@
-// src\Tool\HeapMem.h - allocation tiny code, prepared for unittest
+// src\Tool\HeapMem.h - allocations tiny code
 #pragma once
 namespace prj_sysw { namespace TinySynapticsScroll { namespace Tool { 
 class HeapMem {

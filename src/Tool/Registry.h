@@ -1,4 +1,4 @@
-// src\Tool\Registry.h - little registry operations
+// src\Tool\Registry.h - minor registry operations
 #pragma once
 namespace prj_sysw { namespace TinySynapticsScroll { namespace Tool { 
 class Registry {
@@ -44,7 +44,7 @@ class Registry {
 		return ERROR_SUCCESS == ::RegQueryValueExW( 
 			m_hSubKey, wcsValueName, nullptr, &dwType, reinterpret_cast<LPBYTE>( pdwReadValue ), &cbData );
 	}
-	bool createAndSetValueDword(const wchar_t *wcsValueName, const DWORD dwValue) const { 
+	bool createAndSetValueDword(const wchar_t *wcsValueName, DWORD dwValue) const { 
 		return ERROR_SUCCESS == ::RegSetValueExW( 
 			m_hSubKey, wcsValueName, 0, REG_DWORD, (LPBYTE)&dwValue, sizeof( DWORD ) );
 	}

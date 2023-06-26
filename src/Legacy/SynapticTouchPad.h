@@ -1,5 +1,12 @@
 // src\SynapticTouchPad.h - activate Synaptic touchPad interaction
+// @from https://github.com/awahlig/two-finger-scroll
 #pragma once
+#ifdef __clang__
+#	pragma clang diagnostic push
+#	pragma clang diagnostic ignored "-Wlanguage-extension-token"
+#	pragma clang diagnostic ignored "-Wnon-virtual-dtor"
+//#	pragma clang diagnostic ignored "-XXX"
+#endif // __clang__
 namespace prj_sysw { namespace TinySynapticsScroll { namespace Legacy { 
 class SynapticTouchPad : public _ISynDeviceEvents {
 	// Names without *Ctrl is usable without create Ole/COM server
@@ -225,31 +232,32 @@ public:
 		HRESULT hRv; 
 		// STA apartment
 		if ( FAILED( hRv = ::CoInitializeEx( 0, 0 ) ) ) 
-			// Com not initialized
 			return false;
+			// Com not initialized
 		long devHandle = -1;
 
 		if ( FAILED( hRv = ::CoCreateInstance( _uuidof( SynAPI ), 0, CLSCTX_INPROC_SERVER, _uuidof( ISynAPI ), (void **)&m_ifcApiTouchPad ) ) )
+			return false;
 			// COM API not found, this happens (I guess) if we start before the Synaptics driver is up and running.
-			return false;
 		if ( FAILED( hRv = m_ifcApiTouchPad ->Initialize( ) ) ) 
-			// API was not initialized
 			return false;
+			// API was not initialized
 
 		if ( FAILED( hRv = m_ifcApiTouchPad ->FindDevice( SE_ConnectionAny, SE_DeviceTouchPad, &devHandle ) ) ) 
+			return false;
 			// Error Synaptics TouchPad device find
-			return false;
 		if ( devHandle < 0 ) 
-			// No Synaptics TouchPad device found
 			return false;
+			// No Synaptics TouchPad device found
 
 		if ( FAILED( m_ifcApiTouchPad ->CreateDevice( devHandle, &m_ifcDevTouchPad ) ) )
-			// Device error
 			return false;
+			// Device error
 		if ( FAILED( m_ifcDevTouchPad ->CreatePacket( &m_ifcPacketTouchPad ) ) ) 
-			// Device error
 			return false;
-		m_ifcApiTouchPad ->Release( ), m_ifcApiTouchPad = nullptr;
+			// Device error
+		m_ifcApiTouchPad ->Release( );
+		m_ifcApiTouchPad = nullptr;
 
 		// Set calllback. Goto "_ISynDeviceEvents::OnSynDevicePacket() override" with HWND=nullptr
 		if ( FAILED( m_ifcDevTouchPad ->SetSynchronousNotification( this ) ) ) 
@@ -259,12 +267,18 @@ public:
 		return true;
 	}
 	void stop() {
-		if ( m_ifcApiTouchPad )
-			m_ifcApiTouchPad ->Release( ), m_ifcApiTouchPad = nullptr;
-		if ( m_ifcDevTouchPad )
-			m_ifcDevTouchPad ->Release( ), m_ifcDevTouchPad = nullptr;
-		if ( m_ifcPacketTouchPad )
-			m_ifcPacketTouchPad ->Release( ), m_ifcPacketTouchPad = nullptr;
+		if ( m_ifcApiTouchPad ) {
+			m_ifcApiTouchPad ->Release( );
+			m_ifcApiTouchPad = nullptr;
+		}
+		if ( m_ifcDevTouchPad ) {
+			m_ifcDevTouchPad ->Release( );
+			m_ifcDevTouchPad = nullptr;
+		}
+		if ( m_ifcPacketTouchPad ) {
+			m_ifcPacketTouchPad ->Release( );
+			m_ifcPacketTouchPad = nullptr;
+		}
 		::CoUninitialize( );
 	}
 
@@ -278,3 +292,6 @@ public:
 	TTrackBar *scrollSpeed;
 };
 }}} // namespace prj_sysw::TinySynapticsScroll::Legacy _
+#ifdef __clang__
+#	pragma clang diagnostic pop
+#endif // __clang__

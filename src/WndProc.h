@@ -1,4 +1,4 @@
-// src\WndProc_.h - base message behavior, and forward window message to others class
+// src\WndProc.h - base messages behavior, and forward window message to others class
 #pragma once
 namespace prj_sysw { namespace TinySynapticsScroll { 
 namespace detail_ { 
@@ -38,8 +38,6 @@ class WndProc_ : public ForwardToInstance::Base {
 		, m_poMenu( poMenu )
     {}
 
-	//using parrent_t = ForwardToInstance::OfWindow< // clang failure
-	//	decltype( &WndProc_::messagesHandler_ ), &WndProc_::messagesHandler_, decltype( cast_v ), cast_v >; // clang failure
 	using parrent_t = ForwardToInstance::OfWindow< 
 			decltype( &WndProc_::messagesHandler_ )
 			, &WndProc_::messagesHandler_

@@ -12,6 +12,7 @@ class Tray {
 	static const UINT c_uIdTrayIcon = 1;
 	NOTIFYICONDATAA m_stNotifyIconData;
 
+	// @insp ...
 	template <std::size_t N1, std::size_t N2>
 	static constexpr void str_chars_(const char (&szSrc)[N1], char (&szDst)[N2]) {
 		static_assert( N1 <= N2, "source 'szSrc' string is too long" );
@@ -36,8 +37,7 @@ class Tray {
 		const INITCOMMONCONTROLSEX stIccex = { sizeof( INITCOMMONCONTROLSEX ), ICC_UPDOWN_CLASS | ICC_LISTVIEW_CLASSES };
 		if ( !::InitCommonControlsEx( &stIccex ) ) 
 			return false;
-		WNDCLASSEXA stWc;
-		Tool::Zeroid( stWc );
+		WNDCLASSEXA stWc = { };
 		stWc.cbSize = sizeof( stWc ); 
 		stWc.style = CS_HREDRAW | CS_VREDRAW; 
 		stWc.lpfnWndProc = lpfnWndProc;
@@ -60,7 +60,8 @@ class Tray {
 		if ( !m_hHiddenWnd ) 
 			return false;
 
-		Tool::Zeroid( m_stNotifyIconData ); m_stNotifyIconData.cbSize = sizeof( m_stNotifyIconData );
+		m_stNotifyIconData = { }; 
+		m_stNotifyIconData.cbSize = sizeof( m_stNotifyIconData );
 		m_stNotifyIconData.hWnd = m_hHiddenWnd;
 		m_stNotifyIconData.uID = c_uIdTrayIcon;
 		m_stNotifyIconData.uFlags = NIF_ICON | NIF_MESSAGE | NIF_TIP;

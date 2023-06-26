@@ -1,5 +1,8 @@
 #include "pch.h"
 
+MOCK_STDCALL_FUNC( VOID, SetLastError, DWORD );
+MOCK_STDCALL_FUNC( DWORD, GetLastError );
+
 // Get type MOCK_METHOD impl, disambiguate the overload @insp https://stackoverflow.com/questions/40135561/decltype-for-overloaded-member-function
 #define DECL_MOCK_METHOD_ptmf_type( T, P, _MethodName, _TypeName )										\
 	using _TypeName = decltype(																			\
@@ -49,12 +52,29 @@ NAMESPACE_TEST(ForwardToInstance_, Dialog, failSetWindowLongPtrA) {
 	HWND m_hDialog = (HWND)2;
 	DialogFuncMock oDialogFuncMock;
 	LONG_PTR loDialogFuncMock = reinterpret_cast< LONG_PTR >( &oDialogFuncMock );
+	EXPECT_MODULE_FUNC_CALL( SetLastError, 0 )
+		.Times( 1 );
 	EXPECT_MODULE_FUNC_CALL( SetWindowLongPtrA, m_hDialog, GWLP_USERDATA, loDialogFuncMock )
 		.Times( 1 )
 		.WillOnce( Return( FALSE ) );
+	EXPECT_MODULE_FUNC_CALL( GetLastError )
+		.Times( 1 )
+		.WillOnce( Return( ERROR_INVALID_HANDLE ) ); // any errors value
+	EXPECT_CALL( oDialogFuncMock, dialogFunc_( _, _, _ ) )
+		.Times( 0 );
 
 	EXPECT_FALSE( DialogFuncMock::systemCallback( m_hDialog, WM_INITDIALOG, 0, LPARAM( &oDialogFuncMock ) ) );
 	EXPECT_EQ( m_hDialog, oDialogFuncMock.getHwnd( ) );
+
+	// @bug WinApi GetLastError already use in gmock-win32
+	EXPECT_MODULE_FUNC_CALL( GetLastError )
+		.Times( ::testing::AnyNumber( ) )
+		.WillRepeatedly( Return( 
+				INVOKE_REAL_MODULE_FUNC( GetLastError ) 
+			) );
+
+	RESTORE_MODULE_FUNC( SetLastError );
+	RESTORE_MODULE_FUNC( GetLastError );
 }
 } // namespace Dialog _
 

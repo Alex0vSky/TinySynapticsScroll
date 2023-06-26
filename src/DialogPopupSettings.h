@@ -106,13 +106,13 @@ class DialogPopupSettings
 				(HINSTANCE)::GetModuleHandleA( NULL )
 				, static_cast<LPCTSTR>( MAKEINTRESOURCE( IDD_DIALOGBAR ) )
 				, hWndParrent
-				, DialogPopupSettings_::parrent_t::systemCallback
+				, detail_::DialogPopupSettings_< T, T2 >::parrent_t::systemCallback
 				, (LPARAM)this
 			);
 #pragma warning( pop )
 		if ( !hWnd )
 			return false;
-		if ( !init_( ) )
+		if ( !detail_::DialogPopupSettings_< T, T2 >::init_( ) )
 			return false;
 		::ShowWindow( hWnd, SW_SHOW );
 		return true;

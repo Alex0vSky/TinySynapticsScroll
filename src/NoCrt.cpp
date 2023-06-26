@@ -1,4 +1,4 @@
-// src\NoCrt.cpp - crt functional replacement for release version. "cl /Oi- " and no "/GL"
+// src\NoCrt.cpp - crt functionals replacement for release version. "cl /Oi- " and no "/GL"
 #include "MsvcGenerated\stdafx.h"
 #ifndef _DEBUG
 // cause: "{}" on array/struct init

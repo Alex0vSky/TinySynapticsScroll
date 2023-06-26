@@ -1,4 +1,4 @@
-// src\TinySynapticsScroll.cpp - main, entry point. Icon: https://icon-icons.com/ru/download/57949/
+// src\TinySynapticsScroll.cpp - entry point. Icon: https://icon-icons.com/download/57949/ICO/32/
 #include "MsvcGenerated\stdafx.h"
 #include "Main.h"
 #ifdef _DEBUG

@@ -26,13 +26,13 @@ namespace ptsf {
 	template<typename T> 
 	struct field; // primary
 	template<typename R, typename C> 
-	struct field< R(C::*) > { using type = R; };
+	struct field< R C::* > { using type = R; };
 	template<typename StructT> 
 	using field_t = typename field< StructT >::type;
 	template<typename T> 
 	struct ztruct; // primary
 	template<typename R, typename C> 
-	struct ztruct< R(C::*) > { using type = C; };
+	struct ztruct< R C::* > { using type = C; };
 	template<typename T> using 
 	struct_t = typename ztruct< T >::type;
 } // namespace ptsf _

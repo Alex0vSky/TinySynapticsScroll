@@ -19,7 +19,7 @@ struct Config {
 		// Config location in registry 
 		static const Tool::Registry::EnuRootKey s_enuRootKey = Tool::Registry::EnuRootKey::HKCU;
 		static const wchar_t *getRegSubkey() {
-			static const wchar_t *s_wcsSubKey = L"Software\\TinySynapticsScroll"; // L"Software\\TwoFingerScroll"
+			static const wchar_t *s_wcsSubKey = L"Software\\TinySynapticsScroll";
 			return s_wcsSubKey;
 		}
 		struct Mode {

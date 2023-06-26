@@ -1,4 +1,5 @@
-// src\ForwardToInstance.h - convert static call to class instance. // @insp https://stackoverflow.com/questions/35178779/wndproc-as-class-method @insp https://devblogs.microsoft.com/oldnewthing/20191014-00/?p=102992 @insp https://learn.microsoft.com/en-us/windows/win32/winmsg/using-window-procedures
+// src\ForwardToInstance.h - convert static call to class instance
+// @insp https://stackoverflow.com/questions/35178779/wndproc-as-class-method @insp https://devblogs.microsoft.com/oldnewthing/20191014-00/?p=102992 @insp https://learn.microsoft.com/en-us/windows/win32/winmsg/using-window-procedures
 #pragma once
 namespace prj_sysw { namespace TinySynapticsScroll { namespace ForwardToInstance { 
 class Base;
@@ -36,7 +37,8 @@ static LRESULT viaWindowLongPtr(
 				:reinterpret_cast<T *>( pStruct ->*VPTSF );
 		self ->setHwnd( hWndMsg );
 		::SetLastError( 0 );
-		if ( !::SetWindowLongPtrA( hWndMsg, GWLP_USERDATA, reinterpret_cast< LONG_PTR >( self ) ) || 0 != ::GetLastError( ) ) 
+		LONG_PTR previousOrError = ::SetWindowLongPtrA( hWndMsg, GWLP_USERDATA, reinterpret_cast< LONG_PTR >( self ) );
+		if ( !previousOrError && 0 != ::GetLastError( ) ) 
 			return FALSE;
 	} else {
 		self = reinterpret_cast< T * >( ::GetWindowLongPtrA( hWndMsg, GWLP_USERDATA ) );
@@ -72,8 +74,8 @@ struct OfWindow {
 	) {
 		return detail_::viaWindowLongPtr< TPTMF, std::remove_const_t< TPTSF > >( 
 				hWndMsg, uMsg, wParam, lParam, WM_NCCREATE, VPTMF, VPTSF
-				, [](HWND hWndMsg, UINT uMsg, WPARAM wParam, LPARAM lParam) ->LRESULT {
-						return ::DefWindowProcA( hWndMsg, uMsg, wParam, lParam );
+				, [](HWND hWndMsg_, UINT uMsg_, WPARAM wParam_, LPARAM lParam_) ->LRESULT {
+						return ::DefWindowProcA( hWndMsg_, uMsg_, wParam_, lParam_ );
 					}
 			);
 	}

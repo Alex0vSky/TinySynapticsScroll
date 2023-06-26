@@ -1,4 +1,4 @@
-// src\PersistSettings\Autorun.h - place current touchPad autorun setup to ui, store value in registry
+// src\PersistSettings\Autorun.h - place current touchPad autoruns setup to ui, store value in registry
 #pragma once
 namespace prj_sysw { namespace TinySynapticsScroll { namespace PersistSettings { 
 template<class T = Tool::Registry>

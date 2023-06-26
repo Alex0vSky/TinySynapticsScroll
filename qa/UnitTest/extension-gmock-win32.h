@@ -893,6 +893,7 @@ _Pragma( "optimize( \"\", on )" )
 #ifdef    MOCK_STDCALL_FUNC
 #undef    MOCK_STDCALL_FUNC
 #endif // MOCK_STDCALL_FUNC
+// TODO: avoid to directly use WinApi like GetLastError in gmock-win32\src\gmock-win32.cpp, cause: conflicts with user hooks
 #define MOCK_STDCALL_FUNC(r, m, ...) \
 	MOCK_STDCALL_DECLARE_FUNC(r, m, __VA_ARGS__); \
 	MOCK_DEFINE_FUNC( m )
