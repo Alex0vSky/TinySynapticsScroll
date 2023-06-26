@@ -38,3 +38,6 @@ Publication of a home pet project.
 Written in order to minimize the amount of memory consumed by the process.
 The scroll function code is taken from the https://github.com/awahlig/two-finger-scroll repo.
 Application and tray icon taken from here https://icon-icons.com/download/57949/ICO/32/ and modified.
+
+This application is a permanently resident program with the ability to control through the system tray (where the clock is).
+Inside it is a COM client interacting with the SynCOM.dll library.
