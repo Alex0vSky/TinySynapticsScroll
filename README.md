@@ -45,9 +45,12 @@ Application and tray icon taken from here https://icon-icons.com/download/57949/
 This application is a permanently resident program with the ability to control through the system tray (where the clock is).
 Inside it is a COM client interacting with the SynCOM.dll library.
 
+
 The application consists of one file. Does not require installation. The application saves settings in the registry. 
 In the settings you can specify autorun with Windows.
 In the settings, you can adjust the speed and acceleration of scrolling.
 
 The testing process is implemented through CI gitgub actions.
 Code verification aka StaticAnalysis and code metrics is implemented through CI gitgub actions.
+
+Building the project and tests from the source code requires the presence of the Microsoft Visual Studio 2019 Community, and using *.sln and *.vcxproj project files.
