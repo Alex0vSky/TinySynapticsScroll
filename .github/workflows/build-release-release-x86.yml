@@ -1,0 +1,73 @@
+name: Build release and public result (Release-x86) 
+on: { push: { paths-ignore: [ 'README.md', '**/requirements.txt' ] }, workflow_dispatch }
+# Configuration
+env:
+  strConfiguration: Release
+  strPatchVersionBase: 0
+jobs:
+  build-release:
+    runs-on: windows-latest
+    permissions:
+      actions: read # for "dawidd6/action-download-artifact@v2"
+      contents: write # read for "actions/checkout@v3" when GITHUB_TOKEN, write for put in release
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Set values (windows-latest)
+        run: | # build from *.sln
+          echo "dirExecutables_x86=${{github.workspace}}\bin\x86\Release" >> $env:GITHUB_ENV
+          echo "dirExecutables_x64=${{github.workspace}}\bin\x64\Release" >> $env:GITHUB_ENV
+
+      # TODO: from gist
+      - name: Get version values
+        run: | 
+          echo "strVersionMajor=1" >> $env:GITHUB_ENV
+          echo "strVersionMinor=2" >> $env:GITHUB_ENV
+          echo "strVersionPatch=3" >> $env:GITHUB_ENV
+          $strVersionBuild=( [int]${{ env.strPatchVersionBase }} + [int]${{ github.run_number }} + [int]${{ github.run_attempt }} )
+          echo "strVersionBuild=$strVersionBuild" >> $env:GITHUB_ENV
+
+      - name: Set version
+        run: | 
+          $ffnVersion='src\Version.h'
+          (Get-Content $ffnVersion).replace('#define A0S_VERSION_MAJOR 0', "#define A0S_VERSION_MAJOR ${{ env.strVersionMajor }}") | 
+            Set-Content $ffnVersion                                                                                           
+          (Get-Content $ffnVersion).replace('#define A0S_VERSION_MINOR 0', "#define A0S_VERSION_MINOR ${{ env.strVersionMinor }}") |
+            Set-Content $ffnVersion                                                                                           
+          (Get-Content $ffnVersion).replace('#define A0S_VERSION_PATCH 0', "#define A0S_VERSION_PATCH ${{ env.strVersionPatch }}") | 
+            Set-Content $ffnVersion                                                                                           
+          (Get-Content $ffnVersion).replace('#define A0S_VERSION_BUILD 0', "#define A0S_VERSION_BUILD ${{ env.strVersionBuild }}") | 
+            Set-Content $ffnVersion
+          type $ffnVersion; #
+          $strSemver='${{ env.strVersionMajor }}.${{ env.strVersionMinor }}.${{env.strVersionPatch }}.${{ env.strVersionBuild }}';
+          echo "strSemver='$strSemver'" >> $env:GITHUB_ENV
+          echo "strTag='v$strSemver'" >> $env:GITHUB_ENV
+
+      - name: Add MSBuild to PATH
+        uses: microsoft/setup-msbuild@v1.1
+      - name: Build release
+        run: | # build from *.sln
+          MSBuild . -noLogo -verbosity:minimal -m -p:Platform=x86 -p:Configuration=Release
+          MSBuild . -noLogo -verbosity:minimal -m -p:Platform=x64 -p:Configuration=Release
+
+      # TODO: repair me, via config visual studio
+      - name: Ugly patch
+        run: | 
+          mv -v ${{env.dirExecutables_x86}}\TinySynapticsScroll.exe ${{env.dirExecutables_x86}}\TinySynapticsScroll-x86.exe
+          mv -v ${{env.dirExecutables_x64}}\TinySynapticsScroll.exe ${{env.dirExecutables_x64}}\TinySynapticsScroll-x64.exe
+
+      - uses: actions/upload-artifact@v3
+        with:
+          name: artifact-build-release-all
+          path: |
+            ${{env.dirExecutables_x86}}\*.exe
+            ${{env.dirExecutables_x64}}\*.exe
+
+      - name: Release
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: ${{ env.strTag }}
+          body: First release
+          files: |
+            ${{env.dirExecutables_x86}}\*.exe
+            ${{env.dirExecutables_x64}}\*.exe
