@@ -1,4 +1,5 @@
 name: Run tests, then collect result and coverage
+#on: { push: { paths-ignore: [ 'README.md', '**/requirements.txt' ] }, workflow_dispatch }
 on: { workflow_dispatch }
 # Configuration
 env:
@@ -27,8 +28,8 @@ jobs:
 
       - name: Set values (windows-latest)
         run: | # build from *.sln, all tests
-          echo "strCfg=${{env.strPlatform}}-${{env.strConfiguration}}" >> $env:GITHUB_ENV
           echo "dirTestExecutables=${{github.workspace}}\qa\UnitTest\bin\${{env.strPlatform}}\${{env.strConfiguration}}" >> $env:GITHUB_ENV
+          echo "strCfg=${{env.strPlatform}}-${{env.strConfiguration}}" >> $env:GITHUB_ENV
           echo "dirSetupOcc=${env:Programfiles}\Occ" >> $env:GITHUB_ENV
           echo "dirSetupCppcheck=${env:Programfiles}\cppcheck" >> $env:GITHUB_ENV
 
@@ -128,7 +129,7 @@ jobs:
             || env.strCoverageValue > 30 && 'red,red,orange'
             || env.strCoverageValue > 20 && 'red,red,red,orange'
             || 'red' }}
-          path: ${{runner.os}}-${{env.strCfg}}.svg
+          path: TestsCoverage-Occ-${{runner.os}}-${{env.strCfg}}.svg
       # env-s not pass between steps when failure
       - name: Generate *.svg file for badge TestsCoverage if failure
         if: ${{ failure( ) }}
@@ -137,14 +138,14 @@ jobs:
           label: Tests coverage
           status: failing
           color: red
-          path: ${{runner.os}}-${{env.strCfg}}.svg
+          path: TestsCoverage-Occ-${{runner.os}}-${{env.strCfg}}.svg
       - name: Put *.svg file to Gists for badge TestsCoverage
         if: ${{ success( ) || failure( ) }} # yes, not 'always( )' because 'cancelled( )'
         uses: exuanbo/actions-deploy-gist@v1
         with:
           token: ${{ secrets.ACCESS_TO_GIST }}
           gist_id: 2af621bdd237231125e907ea81b1f8a8
-          file_path: ${{runner.os}}-${{env.strCfg}}.svg
+          file_path: TestsCoverage-Occ-${{runner.os}}-${{env.strCfg}}.svg
 
       - uses: actions/setup-python@v4
         with:
@@ -156,7 +157,7 @@ jobs:
       - name: Merge xml reports
         run: junitparser merge --suite-name AllTests --glob "${{runner.temp}}\${{env.relGtestOutput}}\*.xml" "${{env.strCfg}}.xml"
       - name: Install gtest xml to html converter
-        run: git clone https://github.com/Alexovsky5/gtest_report
+        run: git clone https://github.com/Alex0vSky/gtest_report
       - name: Convert xml to html
         working-directory: ./gtest_report # directory html_resources must be in current dir
         run: |
@@ -184,7 +185,7 @@ jobs:
       - name: Run metrics code
         run: |
           $strVersionMetrixpp=( pip show metrixpp |findstr Version ) -replace 'Version: ',''
-          "`nVersion: $strVersionMetrixpp" > ${{runner.temp}}\metrixpp.txt
+          "Version: $strVersionMetrixpp" > ${{runner.temp}}\metrixpp.txt
           metrix++ collect --log-level=ERROR --std.code.lines.code --std.code.lines.comments --std.code.complexity.cyclomatic --db-file=${{runner.temp}}\metrixpp.db -- ${{github.workspace}}\src
           metrix++ view --log-level=ERROR --db-file=${{runner.temp}}\metrixpp.db -- ${{github.workspace}}\src >> ${{runner.temp}}\metrixpp.txt
           metrix++ view --log-level=ERROR --format=xml --db-file=${{runner.temp}}\metrixpp.db -- ${{github.workspace}}\src > ${{runner.temp}}\metrixpp.xml
@@ -333,7 +334,7 @@ jobs:
         uses: emibcn/badge-action@v2.0.2
         with:
           label: cppcheck
-          status: passing
+          status: enable=all
           color: green
           path: StaticAnalysis_cppcheck.svg
       - name: Generate *.svg file for badge cppcheck if failure
@@ -341,7 +342,7 @@ jobs:
         uses: emibcn/badge-action@v2.0.2
         with:
           label: cppcheck
-          status: failing
+          status: ${{env.cppcheck_uCountError}} errors
           color: red
           path: StaticAnalysis_cppcheck.svg
       - name: Put *.svg file to Gists for badge cppcheck
@@ -355,8 +356,9 @@ jobs:
         with:
           name: artifact-coverage-tests-OpenCppCoverage-${{env.strCfg}}
           path: |
-            ${{runner.temp}}\${{env.relHtmlReport}}
-            ${{runner.temp}}\GoogleTestCombinedOutput
-            ${{runner.temp}}\metrixpp.txt
-            ${{runner.temp}}\cpplint.xml
-            ${{runner.temp}}\cppcheck.xml
+            ${{ runner.temp }}\${{ env.relHtmlReport }}
+            ${{ runner.temp }}\GoogleTestCombinedOutput
+            ${{ runner.temp }}\metrixpp.txt
+            ${{ runner.temp }}\cpplint.xml
+            ${{ runner.temp }}\cppcheck.xml
+            ${{ runner.temp }}\${{ env.strCoberturaReport }}
