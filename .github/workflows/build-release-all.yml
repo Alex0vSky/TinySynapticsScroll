@@ -64,17 +64,25 @@ jobs:
 #          mv -v ${{env.dirExecutables_x86}}\TinySynapticsScroll.exe ${{env.dirExecutables_x86}}\TinySynapticsScroll-x86.exe
 #          mv -v ${{env.dirExecutables_x64}}\TinySynapticsScroll.exe ${{env.dirExecutables_x64}}\TinySynapticsScroll-x64.exe
 
+      - name: Mmm
+        run: | 
+          mkdir asd
+          mv -v ${{env.dirExecutables_x86}}\TinySynapticsScroll.exe asd
+          mv -v ${{env.dirExecutables_x64}}\TinySynapticsScroll.exe asd
+
       - name: Release
         uses: softprops/action-gh-release@v1
         with:
           tag_name: ${{ env.strTag }}
           body: First release
+#            ${{github.workspace}}\bin\*.exe
           files: |
-            ${{github.workspace}}\bin\*.exe
+            asd/*
 
+#      # Warning: only this '/' slashes!
 #      - uses: actions/upload-artifact@v3
 #        with:
 #          name: artifact-build-release-all
 #          path: |
-#            ${{env.dirExecutables_x86}}\*.exe
-#            ${{env.dirExecutables_x64}}\*.exe
+#            ${{env.dirExecutables_x86}}/*.exe
+#            ${{env.dirExecutables_x64}}/*.exe
