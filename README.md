@@ -45,4 +45,6 @@ Application and tray icon taken from here https://icon-icons.com/download/57949/
 This application is a permanently resident program with the ability to control through the system tray (where the clock is).
 Inside it is a COM client interacting with the SynCOM.dll library.
 
-The application consists of one file. Does not require installation. The application saves settings in the registry. In the settings you can specify autorun with Windows.
+The application consists of one file. Does not require installation. The application saves settings in the registry. 
+In the settings you can specify autorun with Windows.
+In the settings, you can adjust the speed and acceleration of scrolling.
