@@ -44,8 +44,7 @@ jobs:
             Set-Content $ffnVersion
           type $ffnVersion; #
           $strSemver='${{ env.strVersionMajor }}.${{ env.strVersionMinor }}.${{env.strVersionPatch }}.${{ env.strVersionBuild }}';
-          echo "strSemver='$strSemver'" >> $env:GITHUB_ENV
-          echo "strTag='v$strSemver'" >> $env:GITHUB_ENV
+          echo "strTag=v$strSemver" >> $env:GITHUB_ENV
           
 #      - name: Add MSBuild to PATH
 #        uses: microsoft/setup-msbuild@v1.1
