@@ -24,7 +24,7 @@ jobs:
           echo "strVersionMajor=1" >> $env:GITHUB_ENV
           echo "strVersionMinor=2" >> $env:GITHUB_ENV
           echo "strVersionPatch=3" >> $env:GITHUB_ENV
-          $strVersionBuild=( [int]${{ env.strPatchVersionBase }} + [int]${{ github.run_number }} + [int]${{ github.run_attempt }} )
+          $strVersionBuild=( [int]${{ env.strPatchVersionBase }} + [int]${{ github.run_number }} + ( [int]${{ github.run_attempt }} - 1 ) )
           echo "strVersionBuild=$strVersionBuild" >> $env:GITHUB_ENV
 
       - name: Set version
@@ -51,17 +51,10 @@ jobs:
           MSBuild . -noLogo -verbosity:minimal -m -p:Platform=x64 -p:Configuration=Release
 
       # TODO: repair me, via config visual studio
-      - name: Ugly patch
-        run: | 
-          mv -v ${{env.dirExecutables_x86}}\TinySynapticsScroll.exe ${{env.dirExecutables_x86}}\TinySynapticsScroll-x86.exe
-          mv -v ${{env.dirExecutables_x64}}\TinySynapticsScroll.exe ${{env.dirExecutables_x64}}\TinySynapticsScroll-x64.exe
-
-      - uses: actions/upload-artifact@v3
-        with:
-          name: artifact-build-release-all
-          path: |
-            ${{env.dirExecutables_x86}}\*.exe
-            ${{env.dirExecutables_x64}}\*.exe
+#      - name: Ugly patch
+#        run: | 
+#          mv -v ${{env.dirExecutables_x86}}\TinySynapticsScroll.exe ${{env.dirExecutables_x86}}\TinySynapticsScroll-x86.exe
+#          mv -v ${{env.dirExecutables_x64}}\TinySynapticsScroll.exe ${{env.dirExecutables_x64}}\TinySynapticsScroll-x64.exe
 
       - name: Release
         uses: softprops/action-gh-release@v1
@@ -69,5 +62,12 @@ jobs:
           tag_name: ${{ env.strTag }}
           body: First release
           files: |
+            ${{env.dirExecutables_x86}}\*.exe
+            ${{env.dirExecutables_x64}}\*.exe
+
+      - uses: actions/upload-artifact@v3
+        with:
+          name: artifact-build-release-all
+          path: |
             ${{env.dirExecutables_x86}}\*.exe
             ${{env.dirExecutables_x64}}\*.exe
