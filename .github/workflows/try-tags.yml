@@ -26,8 +26,11 @@ jobs:
           path: artifact-build-release-${{env.strCfg}}
           search_artifacts: true
 
+      - name: Generate Changelog
+        run: echo "# Good things have arrived" > ${{ github.workspace }}-CHANGELOG.txt
       - name: Release
         uses: softprops/action-gh-release@v1
         with:
+          body_path: ${{ github.workspace }}-CHANGELOG.txt
           files: artifact-build-release-${{env.strCfg}}/*
           tag_name: v0.0.1.1
