@@ -1,5 +1,5 @@
 name: Build and public release
-on: { push: { paths-ignore: [ 'README.md', '**/requirements.txt' ] }, workflow_dispatch }
+on: { workflow_dispatch }
 # Configuration
 env:
   strExe: TinySynapticsScroll
