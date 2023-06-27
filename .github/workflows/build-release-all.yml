@@ -46,10 +46,10 @@ jobs:
             Set-Content $ffnVersion                                                                                           
           (Get-Content $ffnVersion).replace('#define A0S_VERSION_BUILD 0', '#define A0S_VERSION_BUILD ${{ env.strVersionBuild }}') | 
             Set-Content $ffnVersion
-          type $ffnVersion; #
-          $strTag='${{ env.strVersionMajor }}.${{ env.strVersionMinor }}';
-          echo "strTag=v$strTag" >> $env:GITHUB_ENV
-          $strSemver="$strTag.${{ env.strVersionPatch }}.${{ env.strVersionBuild }}";
+          $strMajorMinor='${{ env.strVersionMajor }}.${{ env.strVersionMinor }}';
+          echo "strTag=$strMajorMinor" >> $env:GITHUB_ENV
+          echo "strVTag=v$strMajorMinor" >> $env:GITHUB_ENV
+          $strSemver="$strMajorMinor.${{ env.strVersionPatch }}.${{ env.strVersionBuild }}";
           echo "strSemver=$strSemver" >> $env:GITHUB_ENV
           
       - name: Add MSBuild to PATH
@@ -67,11 +67,11 @@ jobs:
 
       - name: Renaming to versioning names
         run: | 
-          mv -v ${{env.dirExecutables_x86}}\${{env.strExe}}.exe ${{runner.temp}}\${{env.strExe}}-${{ env.strSemver }}-x86.exe
-          mv -v ${{env.dirExecutables_x64}}\${{env.strExe}}.exe ${{runner.temp}}\${{env.strExe}}-${{ env.strSemver }}-x64.exe
+          mv -v ${{env.dirExecutables_x86}}\${{env.strExe}}.exe ${{runner.temp}}\${{env.strExe}}-${{ env.strTag }}-x86.exe
+          mv -v ${{env.dirExecutables_x64}}\${{env.strExe}}.exe ${{runner.temp}}\${{env.strExe}}-${{ env.strTag }}-x64.exe
       - name: Replace '\\' for softprops/action-gh-release
         run: | 
-          $strGlob="${{runner.temp}}/${{env.strExe}}-${{ env.strSemver }}-*.exe";
+          $strGlob="${{runner.temp}}/${{env.strExe}}-${{ env.strTag }}-*.exe";
           $strGlob = $strGlob -replace '\\','/';
           echo "strGlob=$strGlob" >> $env:GITHUB_ENV
 
@@ -79,7 +79,7 @@ jobs:
       - name: Release
         uses: softprops/action-gh-release@v1
         with:
-          tag_name: ${{ env.strTag }}
+          tag_name: ${{ env.strVTag }}
           fail_on_unmatched_files: true
-          body: First release
+          body: Version ${{ env.strSemver }}
           files: ${{ env.strGlob }}
