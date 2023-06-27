@@ -18,11 +18,11 @@ https://Alex0vSky.github.io/project-qa-report/TinySynapticsScroll/HtmlReportOcc/
 
 # TinySynapticsScroll ![icon1](https://github.com/Alex0vSky/TinySynapticsScroll/assets/52796897/ba4cfb9b-0568-4221-a64d-4eba135c9bca)
 The application allows you to use two-finger scrolling on __the Synaptics touchpad__.
-Publication of a home pet project.
 Written in order to minimize the amount of memory consumed by the process.
 The scroll function code is taken from the [awahlig/two-finger-scroll](https://github.com/awahlig/two-finger-scroll) repo.
 Application and tray icon taken from here [icon-icons.com](https://icon-icons.com/download/57949/ICO/32/) and modified.
-Inside it is a __COM client__ interacting with the __SynCOM.dll__ library.
+Inside it is a __COM client__ interacting with the __SynCOM.dll__ library. 
+> Publication of a home pet project.
 
 ## Requirements
 Requires installed touchpad drivers and SynCOM.dll library.
