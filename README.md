@@ -16,7 +16,7 @@ https://Alex0vSky.github.io/project-qa-report/TinySynapticsScroll/GoogleTestComb
 https://Alex0vSky.github.io/project-qa-report/TinySynapticsScroll/HtmlReportOcc/index.html
 )
 
-# TinySynapticsScroll [<img alt="icon1" style="margin-bottom:-5px" src=https://github.com/Alex0vSky/TinySynapticsScroll/assets/52796897/ba4cfb9b-0568-4221-a64d-4eba135c9bca>]()
+# [<img alt="icon1" style="margin-bottom:-6px" src=https://github.com/Alex0vSky/TinySynapticsScroll/assets/52796897/ba4cfb9b-0568-4221-a64d-4eba135c9bca>]() TinySynapticsScroll
 The application allows you to use two-finger scrolling on __the Synaptics touchpad__.
 Written in order to minimize the amount of memory consumed by the process.
 The scroll function code is taken from the [awahlig/two-finger-scroll](https://github.com/awahlig/two-finger-scroll) repo.
