@@ -5,32 +5,32 @@ https://en.wikipedia.org/wiki/C++
 [![Run tests, then collect result and coverage](https://github.com/Alex0vSky/turbo-octo-adventure/actions/workflows/TestsResultAndCoverage.yml/badge.svg)](https://github.com/Alex0vSky/turbo-octo-adventure/actions/workflows/TestsResultAndCoverage.yml)
 
 [![cpplint](https://gist.githubusercontent.com/Alex0vSky/2af621bdd237231125e907ea81b1f8a8/raw/GoogleStyle_cpplint.svg)](
-https://Alex0vSky.github.io/sturdy-octo-disco/cpplint.xml
+https://Alex0vSky.github.io/project-qa-report/TinySynapticsScroll/cpplint.xml
 )
 [![cppcheck](https://gist.githubusercontent.com/Alex0vSky/2af621bdd237231125e907ea81b1f8a8/raw/StaticAnalysis_cppcheck.svg)](
-https://Alex0vSky.github.io/sturdy-octo-disco/cppcheck.xml
+https://Alex0vSky.github.io/project-qa-report/TinySynapticsScroll/cppcheck.xml
 )
 
 [![LinesOfСode](
 https://gist.githubusercontent.com/Alex0vSky/2af621bdd237231125e907ea81b1f8a8/raw/Metrixpp-LinesOfСode.svg
 )](
-https://Alex0vSky.github.io/sturdy-octo-disco/metrixpp.txt
+https://Alex0vSky.github.io/project-qa-report/TinySynapticsScroll/metrixpp.txt
 )
 [![Comments](
 https://gist.githubusercontent.com/Alex0vSky/2af621bdd237231125e907ea81b1f8a8/raw/Metrixpp-Comments.svg
 )](
-https://Alex0vSky.github.io/sturdy-octo-disco/metrixpp.txt
+https://Alex0vSky.github.io/project-qa-report/TinySynapticsScroll/metrixpp.txt
 )
 
 [![amount testsuites Windows-x86-Debug](
 https://gist.githubusercontent.com/Alex0vSky/2af621bdd237231125e907ea81b1f8a8/raw/GoogleTest-testsuites-Windows-x86-Debug.svg
 )](
-https://Alex0vSky.github.io/sturdy-octo-disco/GoogleTestCombinedOutput/GoogleTestCombinedOutput.html
+https://Alex0vSky.github.io/project-qa-report/TinySynapticsScroll/GoogleTestCombinedOutput/GoogleTestCombinedOutput.html
 )
 [![tests coverage Windows-x86-Debug](
 https://gist.githubusercontent.com/Alex0vSky/2af621bdd237231125e907ea81b1f8a8/raw/TestsCoverage-Occ-Windows-x86-Debug.svg
 )](
-https://Alex0vSky.github.io/sturdy-octo-disco/HtmlReportOcc/index.html
+https://Alex0vSky.github.io/project-qa-report/TinySynapticsScroll/HtmlReportOcc/index.html
 )
 
 # TinySynapticsScroll ![icon1](https://github.com/Alex0vSky/TinySynapticsScroll/assets/52796897/ba4cfb9b-0568-4221-a64d-4eba135c9bca)
