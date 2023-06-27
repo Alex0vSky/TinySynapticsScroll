@@ -19,8 +19,8 @@ jobs:
           $dirExecutables_x64='${{github.workspace}}\bin\x64\Release';
           $dirExecutables_x86 = $dirExecutables_x86 -replace '\\','/';
           $dirExecutables_x64 = $dirExecutables_x64 -replace '\\','/';
-          echo "dirExecutables_x86='$dirExecutables_x86'" >> $env:GITHUB_ENV
-          echo "dirExecutables_x64='$dirExecutables_x64'" >> $env:GITHUB_ENV
+          echo "dirExecutables_x86=$dirExecutables_x86" >> $env:GITHUB_ENV
+          echo "dirExecutables_x64=$dirExecutables_x64" >> $env:GITHUB_ENV
 
       # TODO: from gist
       - name: Get version values
