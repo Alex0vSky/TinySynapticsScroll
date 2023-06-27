@@ -34,6 +34,9 @@ https://Alex0vSky.github.io/sturdy-octo-disco/HtmlReportOcc/index.html
 )
 
 # TinySynapticsScroll
+The application allows you to use two-finger scrolling on the Synaptics touchpad.
+Requires installed touchpad drivers and SynCOM.dll library.
+
 Publication of a home pet project.
 Written in order to minimize the amount of memory consumed by the process.
 The scroll function code is taken from the https://github.com/awahlig/two-finger-scroll repo.
