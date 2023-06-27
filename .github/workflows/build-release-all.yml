@@ -43,12 +43,20 @@ jobs:
           echo "strSemver='$strSemver'" >> $env:GITHUB_ENV
           echo "strTag='v$strSemver'" >> $env:GITHUB_ENV
 
-      - name: Add MSBuild to PATH
-        uses: microsoft/setup-msbuild@v1.1
-      - name: Build release
-        run: | # build from *.sln
-          MSBuild . -noLogo -verbosity:minimal -m -p:Platform=x86 -p:Configuration=Release
-          MSBuild . -noLogo -verbosity:minimal -m -p:Platform=x64 -p:Configuration=Release
+#      - name: Add MSBuild to PATH
+#        uses: microsoft/setup-msbuild@v1.1
+#      - name: Build release
+#        run: | # build from *.sln
+#          MSBuild . -noLogo -verbosity:minimal -m -p:Platform=x86 -p:Configuration=Release
+#          MSBuild . -noLogo -verbosity:minimal -m -p:Platform=x64 -p:Configuration=Release
+      - name: Download artifact
+        uses: dawidd6/action-download-artifact@v2
+        with:
+          github_token: ${{secrets.GITHUB_TOKEN}}
+          workflow: build-release-all.yml
+          name: artifact-build-release-all
+          path: ${{github.workspace}}\bin
+          search_artifacts: true
 
       # TODO: repair me, via config visual studio
 #      - name: Ugly patch
@@ -62,12 +70,11 @@ jobs:
           tag_name: ${{ env.strTag }}
           body: First release
           files: |
-            ${{env.dirExecutables_x86}}\*.exe
-            ${{env.dirExecutables_x64}}\*.exe
+            ${{github.workspace}}\bin\*.exe
 
-      - uses: actions/upload-artifact@v3
-        with:
-          name: artifact-build-release-all
-          path: |
-            ${{env.dirExecutables_x86}}\*.exe
-            ${{env.dirExecutables_x64}}\*.exe
+#      - uses: actions/upload-artifact@v3
+#        with:
+#          name: artifact-build-release-all
+#          path: |
+#            ${{env.dirExecutables_x86}}\*.exe
+#            ${{env.dirExecutables_x64}}\*.exe
