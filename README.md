@@ -53,4 +53,13 @@ In the settings, you can adjust the speed and acceleration of scrolling.
 The testing process is implemented through CI gitgub actions.
 Code verification aka StaticAnalysis and code metrics is implemented through CI gitgub actions.
 
+CI gitgub actions uses:
+running tests based on google-test, a modified version of the smalti/gmock-win32 library is also used;
+releases of OpenCppCoverage/OpenCppCoverage to get code coverage with tests, in the form of html;
+py junitparser to combine junit test reports into one file;
+fork repo burlachenkok/gtest_report updated to work with Python3 to get html from junit reports;
+py metrixpp to get code metrics;
+cpplint releases to bring code style closer to GoogleStyle;
+cppcheck releases to statically analyze the code for errors.
+
 Building the project and tests from the source code requires the presence of the Microsoft Visual Studio 2019 Community, and using *.sln and *.vcxproj project files.
