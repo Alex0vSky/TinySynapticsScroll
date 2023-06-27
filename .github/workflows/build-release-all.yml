@@ -14,9 +14,13 @@ jobs:
       - uses: actions/checkout@v3
 
       - name: Set values (windows-latest)
-        run: | # build from *.sln
-          echo "dirExecutables_x86=${{github.workspace}}\bin\x86\Release" >> $env:GITHUB_ENV
-          echo "dirExecutables_x64=${{github.workspace}}\bin\x64\Release" >> $env:GITHUB_ENV
+        run: | # build from *.sln, replace for softprops/action-gh-release
+          $dirExecutables_x86='${{github.workspace}}\bin\x86\Release';
+          $dirExecutables_x64='${{github.workspace}}\bin\x64\Release';
+          $dirExecutables_x86 = $dirExecutables_x86 -replace '\\','/';
+          $dirExecutables_x64 = $dirExecutables_x64 -replace '\\','/';
+          echo "dirExecutables_x86='$dirExecutables_x86'" >> $env:GITHUB_ENV
+          echo "dirExecutables_x64='$dirExecutables_x64'" >> $env:GITHUB_ENV
 
       # TODO: from gist
       - name: Get version values
@@ -42,7 +46,7 @@ jobs:
           $strSemver='${{ env.strVersionMajor }}.${{ env.strVersionMinor }}.${{env.strVersionPatch }}.${{ env.strVersionBuild }}';
           echo "strSemver='$strSemver'" >> $env:GITHUB_ENV
           echo "strTag='v$strSemver'" >> $env:GITHUB_ENV
-
+          
 #      - name: Add MSBuild to PATH
 #        uses: microsoft/setup-msbuild@v1.1
 #      - name: Build release
@@ -69,9 +73,11 @@ jobs:
         uses: softprops/action-gh-release@v1
         with:
           tag_name: ${{ env.strTag }}
+          fail_on_unmatched_files: true
           body: First release
           files: |
-            ${{github.workspace}}/bin/*.exe
+            ${{env.dirExecutables_x86}}/*.exe
+            ${{env.dirExecutables_x64}}/*.exe
 
 #      - uses: actions/upload-artifact@v3
 #        with:
