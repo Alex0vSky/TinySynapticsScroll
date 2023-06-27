@@ -63,10 +63,10 @@ jobs:
           search_artifacts: true
 
       # TODO: repair me, via config visual studio
-#      - name: Ugly patch
-#        run: | 
-#          mv -v ${{env.dirExecutables_x86}}\TinySynapticsScroll.exe ${{env.dirExecutables_x86}}\TinySynapticsScroll-x86.exe
-#          mv -v ${{env.dirExecutables_x64}}\TinySynapticsScroll.exe ${{env.dirExecutables_x64}}\TinySynapticsScroll-x64.exe
+      - name: Ugly patch
+        run: | 
+          mv -v ${{env.dirExecutables_x86}}\TinySynapticsScroll.exe ${{env.dirExecutables_x86}}\TinySynapticsScroll-x86-Release.exe
+          mv -v ${{env.dirExecutables_x64}}\TinySynapticsScroll.exe ${{env.dirExecutables_x64}}\TinySynapticsScroll-x64-Release.exe
 
 #      # Warning: only this '/' slashes!
       - name: Release
