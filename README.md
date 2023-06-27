@@ -33,7 +33,7 @@ The application consists of one file. Does not require installation.
 ## Usage
 This application is a permanently resident program with the ability to control through the system tray (where the clock is).
 The application saves settings in the registry. 
-In the settings you can specify autorun with __Windows__.
+In the settings you can specify autorun with ___Windows___.
 In the settings, you can adjust the speed and acceleration of scrolling.
 
 ## Tests
