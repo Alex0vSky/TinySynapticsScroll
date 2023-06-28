@@ -20,8 +20,7 @@ https://Alex0vSky.github.io/project-qa-report/TinySynapticsScroll/HtmlReportOcc/
 The application allows you to use two-finger scrolling on __the Synaptics touchpad__.
 
 ## Features
-Written in order to minimize the amount of memory consumed by the process.
-Inside it is a __COM client__ interacting with the __SynCOM.dll__ library. 
+- Written in order to minimize the amount of memory consumed by the process.
 > Publication of a home pet project.
 
 ## Requirements
@@ -35,6 +34,7 @@ This application is a permanently resident program with the ability to control t
 The application saves settings in the registry. 
 In the settings you can specify autorun with ___Windows___.
 In the settings, you can adjust the speed and acceleration of scrolling.
+Inside it is a __COM client__ interacting with the __SynCOM.dll__ library. 
 
 ## Tests
 The testing process is implemented through CI github actions.
