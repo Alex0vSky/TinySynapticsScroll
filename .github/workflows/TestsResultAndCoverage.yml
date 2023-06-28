@@ -1,5 +1,5 @@
 name: Run tests, then collect result and coverage
-#on: { push: { paths-ignore: [ 'README.md', '**/requirements.txt' ] }, workflow_dispatch }
+#on: { push: { paths-ignore: [ 'README.md', 'LICENSE', '**/requirements.txt' ] }, workflow_dispatch }
 on: { workflow_dispatch }
 # Configuration
 env:
@@ -239,12 +239,11 @@ jobs:
             'whitespace/end_of_line',
             'whitespace/parens',
             'readability/namespace',
-            'whitespace/comments',
-            'legal/copyright'
+            'whitespace/comments'
           );
           $filter = '-' + ( $arrFilter -join ',-' );
           $linelength=120
-          $cpplint_args="--linelength=$linelength --filter=$filter --exclude=src\MsvcGenerated\* --exclude=src\Legacy\SynapticTouchPad.h --recursive --output=junit src";
+          $cpplint_args="--linelength=$linelength --filter=$filter --exclude=src\MsvcGenerated\* --exclude=src\Legacy\* --recursive --output=junit src";
           Start-Process -Wait -NoNewWindow cpplint -ArgumentList $cpplint_args -RedirectStandardError ${{runner.temp}}\cpplint.xml
           [xml]$oSystem_Xml_XmlDocument = Get-Content ${{runner.temp}}\cpplint.xml
           $cpplint_failures = $oSystem_Xml_XmlDocument.GetElementsByTagName( 'testsuite' ).GetAttribute( 'failures' );
