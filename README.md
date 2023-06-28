@@ -1,4 +1,4 @@
-# [<img alt="icon1" style="margin-bottom: -5px" src=https://github.com/Alex0vSky/TinySynapticsScroll/assets/52796897/ba4cfb9b-0568-4221-a64d-4eba135c9bca>]() _TinySynapticsScroll_
+# [<img alt="icon1" style="margin-bottom: -5px" src=https://github.com/Alex0vSky/TinySynapticsScroll/assets/52796897/e0a3428d-4577-4461-bc1b-22525ecf3595>]() _TinySynapticsScroll_
 [![cpp-logo](https://img.shields.io/badge/C++v14-Solutions-blue.svg?style=flat&logo=c%2B%2B)](
 https://en.wikipedia.org/wiki/C++
 ) [![Run tests, then collect result and coverage](https://github.com/Alex0vSky/turbo-octo-adventure/actions/workflows/TestsResultAndCoverage.yml/badge.svg)](https://github.com/Alex0vSky/turbo-octo-adventure/actions/workflows/TestsResultAndCoverage.yml)
@@ -58,6 +58,12 @@ Can ask questions. PRs are accepted. No requirements for contributing.
 ## Thanks
 The scroll function code is taken from the [awahlig/two-finger-scroll](https://github.com/awahlig/two-finger-scroll) repo.
 Application and tray icon taken from here [icon-icons.com](https://icon-icons.com/download/57949/ICO/32/) and modified.
+
+<div style="display: none;">
+  
+![forGitHubReadme_icon1](https://github.com/Alex0vSky/TinySynapticsScroll/assets/52796897/e0a3428d-4577-4461-bc1b-22525ecf3595)  
+
+</div>
 
 ## License
 See the [LICENSE](https://github.com/Alex0vSky/TinySynapticsScroll/blob/main/LICENSE) file for license rights and limitations (MIT).
