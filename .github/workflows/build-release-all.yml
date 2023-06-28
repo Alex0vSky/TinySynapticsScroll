@@ -32,7 +32,7 @@ jobs:
           echo "strVersionMajor=$strVersionMajor" >> $env:GITHUB_ENV
           echo "strVersionMinor=$strVersionMinor" >> $env:GITHUB_ENV
           echo "strVersionPatch=$strVersionPatch" >> $env:GITHUB_ENV
-          $strVersionBuild=( [int]${{ env.strPatchVersionBase }} + [int]${{ github.run_number }} + ( [int]${{ github.run_attempt }} - 1 ) )
+          $strVersionBuild=( [int]${{ env.strPatchVersionBase }} + [int]${{ github.run_number }} )
           echo "strVersionBuild=$strVersionBuild" >> $env:GITHUB_ENV
 
       - name: Set version
@@ -76,7 +76,7 @@ jobs:
           echo "strGlob=$strGlob" >> $env:GITHUB_ENV
 
       # Warning: only this '/' slashes!
-      - name: Release
+      - name: Creating GitHub Release
         uses: softprops/action-gh-release@v1
         with:
           tag_name: ${{ env.strVTag }}
