@@ -59,11 +59,5 @@ Can ask questions. PRs are accepted. No requirements for contributing.
 The scroll function code is taken from the [awahlig/two-finger-scroll](https://github.com/awahlig/two-finger-scroll) repo.
 Application and tray icon taken from here [icon-icons.com](https://icon-icons.com/download/57949/ICO/32/) and modified.
 
-<div style="display: none;">
-  
-![forGitHubReadme_icon1](https://github.com/Alex0vSky/TinySynapticsScroll/assets/52796897/e0a3428d-4577-4461-bc1b-22525ecf3595)  
-
-</div>
-
 ## License
 See the [LICENSE](https://github.com/Alex0vSky/TinySynapticsScroll/blob/main/LICENSE) file for license rights and limitations (MIT).
