@@ -1,5 +1,5 @@
 // src\Main.h - code main class, for unittests code coverage
-#pragma once
+#pragma once // Copyright 2023 Alex0vSky (https://github.com/Alex0vSky)
 #include "resource.h" // NOLINT(build/include_subdir)
 #include "Tool\ErrorHandler.h"
 #include "Tool\HeapMem.h"

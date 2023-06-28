@@ -1,6 +1,6 @@
 // src\ForwardToInstance.h - convert static call to class instance
 // @insp https://stackoverflow.com/questions/35178779/wndproc-as-class-method @insp https://devblogs.microsoft.com/oldnewthing/20191014-00/?p=102992 @insp https://learn.microsoft.com/en-us/windows/win32/winmsg/using-window-procedures
-#pragma once
+#pragma once // Copyright 2023 Alex0vSky (https://github.com/Alex0vSky)
 namespace prj_sysw { namespace TinySynapticsScroll { namespace ForwardToInstance { 
 class Base;
 namespace detail_ { 

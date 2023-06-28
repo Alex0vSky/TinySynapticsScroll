@@ -1,4 +1,5 @@
 // src\TinySynapticsScroll.cpp - entry point. Icon: https://icon-icons.com/download/57949/ICO/32/
+// Copyright 2023 Alex0vSky (https://github.com/Alex0vSky)
 #include "MsvcGenerated\stdafx.h"
 #include "Main.h"
 #ifdef _DEBUG

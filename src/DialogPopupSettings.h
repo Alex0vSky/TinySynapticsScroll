@@ -1,5 +1,5 @@
 // src\DialogPopupSettings.h - create popup dialog from menu of tray icon
-#pragma once
+#pragma once // Copyright 2023 Alex0vSky (https://github.com/Alex0vSky)
 namespace prj_sysw { namespace TinySynapticsScroll { 
 namespace detail_ { 
 template<class T = PersistSettings::Scroll<>, class T2 = PersistSettings::Autorun<>>

@@ -1,5 +1,5 @@
 // src\WndProc.h - base messages behavior, and forward window message to others class
-#pragma once
+#pragma once // Copyright 2023 Alex0vSky (https://github.com/Alex0vSky)
 namespace prj_sysw { namespace TinySynapticsScroll { 
 namespace detail_ { 
 template<class T = RestoreTouchPadFromSuspend< >, class T2 = Tray< >, class T3 = Menu< >>

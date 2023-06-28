@@ -1,5 +1,5 @@
 // src\Tool\ErrorHandler.h - little error handling and logging
-#pragma once
+#pragma once // Copyright 2023 Alex0vSky (https://github.com/Alex0vSky)
 namespace prj_sysw { namespace TinySynapticsScroll { namespace Tool { 
 class ErrorHandler {
  public:

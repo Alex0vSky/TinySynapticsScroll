@@ -1,5 +1,6 @@
-// src\SynapticTouchPad.h - activate Synaptic touchPad interaction
+// src\Legacy\SynapticTouchPad.h - activate Synaptic touchPad interaction
 // @from https://github.com/awahlig/two-finger-scroll
+// NOLINT(legal/copyright)
 #pragma once
 #ifdef __clang__
 #	pragma clang diagnostic push

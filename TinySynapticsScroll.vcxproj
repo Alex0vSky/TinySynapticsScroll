@@ -129,7 +129,6 @@
     <IntDir>bin\x64\$(Configuration)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <LinkIncremental>true</LinkIncremental>
     <OutDir>$(SolutionDir)bin\x64\$(Configuration)\</OutDir>
     <IntDir>bin\x64\$(Configuration)\</IntDir>
   </PropertyGroup>

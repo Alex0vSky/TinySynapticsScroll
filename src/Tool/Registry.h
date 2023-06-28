@@ -1,5 +1,5 @@
 // src\Tool\Registry.h - minor registry operations
-#pragma once
+#pragma once // Copyright 2023 Alex0vSky (https://github.com/Alex0vSky)
 namespace prj_sysw { namespace TinySynapticsScroll { namespace Tool { 
 class Registry {
 	const HKEY m_hRootKey;

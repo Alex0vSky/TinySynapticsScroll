@@ -1,5 +1,5 @@
 // src\Version.h - versioning, use PE-file resources via TinySynapticsScroll.rc, file will be pathed in CI
-#pragma once
+#pragma once // Copyright 2023 Alex0vSky (https://github.com/Alex0vSky)
 #define A0S_VERSION_MAJOR 0
 #define A0S_VERSION_MINOR 0
 #define A0S_VERSION_PATCH 0

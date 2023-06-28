@@ -1,5 +1,5 @@
 // src\PersistSettings\Scroll.h - place current touchPad settings values to ui, store changed values in registry
-#pragma once
+#pragma once // Copyright 2023 Alex0vSky (https://github.com/Alex0vSky)
 namespace prj_sysw { namespace TinySynapticsScroll { namespace PersistSettings { 
 template<class T = Tool::Registry, class T2 = WrapperTouchPad<> >
 class Scroll {

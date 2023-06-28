@@ -1,4 +1,5 @@
 // src\NoCrt.cpp - crt functionals replacement for release version. "cl /Oi- " and no "/GL"
+// Copyright 2023 Alex0vSky (https://github.com/Alex0vSky)
 #include "MsvcGenerated\stdafx.h"
 #ifndef _DEBUG
 // cause: "{}" on array/struct init

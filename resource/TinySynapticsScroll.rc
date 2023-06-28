@@ -68,14 +68,14 @@ BEGIN
     BEGIN
         BLOCK "000904b0"
         BEGIN
-            VALUE "CompanyName", "Alex0vSky github MIT license pet project"
-            VALUE "FileDescription", "Allow two finger scrolling on Synaptics touchpad device"
+            VALUE "CompanyName", "Alex0vSky github pet project"
+            VALUE "FileDescription", "Allow two-finger scrolling on a Synaptics touchpad"
             VALUE "ProductVersion", A0S_stringify(A0S_VERSION_MAJOR) "." A0S_stringify(A0S_VERSION_MINOR) "." A0S_stringify(A0S_VERSION_PATCH) "." A0S_stringify(A0S_VERSION_BUILD)
             VALUE "FileVersion", A0S_stringify(A0S_VERSION_MAJOR) "." A0S_stringify(A0S_VERSION_MINOR) "." A0S_stringify(A0S_VERSION_PATCH) "." A0S_stringify(A0S_VERSION_BUILD)
             VALUE "InternalName", "TinySynapticsScroll.exe"
-            VALUE "LegalCopyright", "Copyright (C) 2023"
+            VALUE "LegalCopyright", ""
             VALUE "OriginalFilename", "TinySynapticsScroll.exe"
-            VALUE "ProductName", "Tiny Synaptics scroll application"
+            VALUE "ProductName", "Tiny Synaptics scrolling application"
         END
     END
     BLOCK "VarFileInfo"

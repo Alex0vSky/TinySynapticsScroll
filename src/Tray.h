@@ -1,5 +1,5 @@
 // src\Tray.h - systemtray, create and process window messages
-#pragma once
+#pragma once // Copyright 2023 Alex0vSky (https://github.com/Alex0vSky)
 namespace prj_sysw { namespace TinySynapticsScroll { 
 class WndProc;
 template<class T = WndProc, class T2 = Menu< > >

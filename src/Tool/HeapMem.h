@@ -1,5 +1,5 @@
 // src\Tool\HeapMem.h - allocations tiny code
-#pragma once
+#pragma once // Copyright 2023 Alex0vSky (https://github.com/Alex0vSky)
 namespace prj_sysw { namespace TinySynapticsScroll { namespace Tool { 
 class HeapMem {
 	mutable size_t m_cbAllocSize;

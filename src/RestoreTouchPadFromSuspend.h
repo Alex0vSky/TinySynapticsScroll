@@ -1,5 +1,5 @@
 // src\RestoreTouchPadFromSuspend.h - trickly restore a touchpad when goaway from power suspend mode
-#pragma once
+#pragma once // Copyright 2023 Alex0vSky (https://github.com/Alex0vSky)
 namespace prj_sysw { namespace TinySynapticsScroll { 
 template<class T = WrapperTouchPad< > >
 class RestoreTouchPadFromSuspend {
