@@ -20,7 +20,7 @@ https://Alex0vSky.github.io/project-qa-report/TinySynapticsScroll/HtmlReportOcc/
 The application allows you to use two-finger scrolling on __the Synaptics touchpad__.
 
 ## Features
-- Written in order to minimize the amount of memory consumed by the process.
+Written in order to minimize the amount of memory consumed by the process.
 > Publication of a home pet project.
 
 ## Requirements
