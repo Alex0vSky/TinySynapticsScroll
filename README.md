@@ -1,7 +1,7 @@
 # ![forGitHubReadme_icon1](https://github.com/Alex0vSky/TinySynapticsScroll/assets/52796897/e0a3428d-4577-4461-bc1b-22525ecf3595) _TinySynapticsScroll_
 [![cpp-logo](https://img.shields.io/badge/C++v14-Solutions-blue.svg?style=flat&logo=c%2B%2B)](
 https://en.wikipedia.org/wiki/C++
-) [![Run tests, then collect result and coverage](https://github.com/Alex0vSky/turbo-octo-adventure/actions/workflows/TestsResultAndCoverage.yml/badge.svg)](https://github.com/Alex0vSky/turbo-octo-adventure/actions/workflows/TestsResultAndCoverage.yml)
+) [![Run tests, then collect result and coverage](https://github.com/Alex0vSky/TinySynapticsScroll/actions/workflows/TestsResultAndCoverage.yml/badge.svg)](https://github.com/Alex0vSky/TinySynapticsScroll/actions/workflows/TestsResultAndCoverage.yml)
 
 [![cpplint](https://gist.githubusercontent.com/Alex0vSky/2af621bdd237231125e907ea81b1f8a8/raw/GoogleStyle_cpplint.svg)](
 https://Alex0vSky.github.io/project-qa-report/TinySynapticsScroll/cpplint.xml
