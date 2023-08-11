@@ -38,14 +38,15 @@ jobs:
       - name: Set version
         run: | 
           $ffnVersion='src\Version.h'
-          (Get-Content $ffnVersion).replace('#define A0S_VERSION_MAJOR 0', '#define A0S_VERSION_MAJOR ${{ env.strVersionMajor }}') | 
-            Set-Content $ffnVersion                                                                                           
-          (Get-Content $ffnVersion).replace('#define A0S_VERSION_MINOR 0', '#define A0S_VERSION_MINOR ${{ env.strVersionMinor }}') |
-            Set-Content $ffnVersion                                                                                           
-          (Get-Content $ffnVersion).replace('#define A0S_VERSION_PATCH 0', '#define A0S_VERSION_PATCH ${{ env.strVersionPatch }}') | 
-            Set-Content $ffnVersion                                                                                           
-          (Get-Content $ffnVersion).replace('#define A0S_VERSION_BUILD 0', '#define A0S_VERSION_BUILD ${{ env.strVersionBuild }}') | 
-            Set-Content $ffnVersion
+          $env:strText=[System.IO.File]::ReadAllText( $ffnVersion );
+          Function defineReplacer_ ( $name, $value ) {
+              $env:strText=[Regex]::Replace( $env:strText, "(#define\s+$name\s+)\d+", ( '${1}' + $value ) );
+          }
+          defineReplacer_ 'A0S_VERSION_MAJOR' ${{ env.strVersionMajor }}
+          defineReplacer_ 'A0S_VERSION_MINOR' ${{ env.strVersionMinor }}
+          defineReplacer_ 'A0S_VERSION_PATCH' ${{ env.strVersionPatch }}
+          defineReplacer_ 'A0S_VERSION_BUILD' ${{ env.strVersionBuild }}
+          [System.IO.File]::WriteAllText( $ffnVersion, $env:strText )
           $strMajorMinor='${{ env.strVersionMajor }}.${{ env.strVersionMinor }}';
           echo "strTag=$strMajorMinor" >> $env:GITHUB_ENV
           echo "strVTag=v$strMajorMinor" >> $env:GITHUB_ENV
