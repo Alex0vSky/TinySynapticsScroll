@@ -20,7 +20,7 @@ https://Alex0vSky.github.io/project-qa-report/TinySynapticsScroll/HtmlReportOcc/
 The application allows you to use two-finger scrolling on __the Synaptics touchpad__.
 
 ## Features
-Written in order to minimize the amount of memory consumed by the process.
+Written in order to minimize the amount of memory consumed by the process. The process consumes memory from 250 to 500 kilobytes.
 > Publication of a home pet project.
 
 ## Requirements
@@ -50,7 +50,7 @@ CI github actions uses:
 + _cppcheck_ releases to statically analyze the code for errors.
 
 ## Build
-Building the project and tests from the source code requires the presence of the __Microsoft Visual Studio 2019 Community__, and using *.sln and *.vcxproj project files.
+Building the project and tests from the source code requires the presence of the __Microsoft Visual Studio 2019 Community__, and using *.sln and *.vcxproj project files. The project is also ready to be built via __clang__ version __12.0.0__, which comes with __VIsualStudioCommunity2019__.
 
 ## Contributing
 Can ask questions. PRs are accepted. No requirements for contributing.
