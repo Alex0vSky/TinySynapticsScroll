@@ -297,7 +297,7 @@ jobs:
         if: steps.cache-tool-cppcheck.outputs.cache-hit != 'true'
         run: |
           $arglist = "/i ""${{github.workspace}}\${{env.strNameCppcheckSetupFile}}"" INSTALLDIR=""${{env.dirSetupCppcheck}}"" TARGETDIR=""${{env.dirSetupCppcheck}}"" ALLUSERS=2 MSIINSTALLPERUSER=1 /quiet /norestart /log ""${{runner.temp}}\${{env.strNameCppcheckSetupFile}}.log"" "
-          $uWait_seconds = 60;
+          $uWait_seconds = 120;
           $ps = new-object System.Diagnostics.Process; $ps.StartInfo.UseShellExecute = $false; $ps.StartInfo.WorkingDirectory = Get-Location;
           $ps.StartInfo.Filename = "msiexec"
           $ps.StartInfo.Arguments = $arglist
