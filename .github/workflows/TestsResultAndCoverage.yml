@@ -231,6 +231,7 @@ jobs:
       - name: Install GoogleStyle cpplint
         run: pip install cpplint
       - name: Run GoogleStyle cpplint
+        id: RunToolGoogleStyleCpplint
         continue-on-error: true # when cpplint return error
         run: | 
           $strVersionCpplint=(pip show cpplint |findstr Version) -replace 'Version: ',''
@@ -258,7 +259,7 @@ jobs:
           echo "cpplint_arrFilter_Count=$($arrFilter.Count)" >> $env:GITHUB_ENV
           echo "cpplint_linelength=$linelength" >> $env:GITHUB_ENV
       - name: Generate *.svg file for badge GoogleStyle cpplint if success
-        if: env.cpplint_failures == '0'
+        if: steps.RunToolGoogleStyleCpplint.outcome == 'success' && env.cpplint_failures == '0'
         uses: emibcn/badge-action@v2.0.2
         with:
           label: cpplint
@@ -302,8 +303,9 @@ jobs:
           $ps.StartInfo.Arguments = $arglist
           $uWait_milliseconds = $uWait_seconds *1000;
           $ps.start( ); $ps.WaitForExit( $uWait_milliseconds );
-          #type "${{runner.temp}}\${{env.strNameCppcheckSetupFile}}.log"
+          type "${{runner.temp}}\${{env.strNameCppcheckSetupFile}}.log"
       - name: Run tool cppcheck
+        id: RunToolCppcheck
         continue-on-error: true
         run: | 
           $common = ' --std=c++14 --platform=win32A --library=microsoft_sal --library=windows --enable=all -q --xml ';
@@ -329,7 +331,7 @@ jobs:
           $oSystem_Xml_XmlDocument.Save( "${{runner.temp}}\cppcheck.xml" )
           echo "cppcheck_uCountError=$uCountError" >> $env:GITHUB_ENV
       - name: Generate *.svg file for badge cppcheck if success
-        if: env.cppcheck_uCountError == '0'
+        if: steps.RunToolCppcheck.outcome == 'success' && env.cppcheck_uCountError == '0'
         uses: emibcn/badge-action@v2.0.2
         with:
           label: cppcheck
