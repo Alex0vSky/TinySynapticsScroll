@@ -14,6 +14,8 @@ class SynapticTouchPad : public _ISynDeviceEvents {
 	ISynAPI *m_ifcApiTouchPad;
 	ISynDevice *m_ifcDevTouchPad;
 	ISynPacket *m_ifcPacketTouchPad;
+	// Last packet timestamp
+	ULONGLONG m_ullTickCount;
 
 	// Mock VCL(Borland C++) part1
 	struct TTrackBar { int Position; int Max; int Min; };
@@ -97,6 +99,8 @@ class SynapticTouchPad : public _ISynDeviceEvents {
 	}
 	// Called from "MainThread" via "::DispatchMessageA();"
 	HRESULT STDMETHODCALLTYPE OnSynDevicePacket(long) override {
+		//Tool::ErrorHandler::log( "SynapticTouchPad::OnSynDevicePacket LoadPacket() on\n" );
+		m_ullTickCount = ::GetTickCount64( );
 		// get the pointing data packet
 		while ( S_OK == ( m_ifcDevTouchPad ->LoadPacket( m_ifcPacketTouchPad ) ) ) {
 			long nof, fstate, xd, yd;
@@ -187,6 +191,7 @@ public:
 		: m_ifcApiTouchPad( nullptr )
 		, m_ifcDevTouchPad( nullptr )
 		, m_ifcPacketTouchPad( nullptr )
+		, m_ullTickCount( 0 )
 		, scrollTouchPos{ }
 		, scrollLinearEdge_{ }
 		, scrollLinear_{ }
@@ -282,7 +287,10 @@ public:
 		}
 		::CoUninitialize( );
 	}
-
+	
+	void getLastPacketTickCount(ULONGLONG *pullOut) const {
+		*pullOut = m_ullTickCount;
+	}
 	// Mock VCL(Borland C++) part2
 	TCheckBox *scrollAccEnabled;
 	TCheckBox *scrollLinearEdge;

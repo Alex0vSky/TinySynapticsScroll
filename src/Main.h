@@ -35,14 +35,15 @@ struct Main {
 		if ( !oTray.init( WndProc::systemCallback, &oWndProc, oMenu ) )
 			return Tool::ErrorHandler::showMsg( "SistemTray initialization" );
 
-		CEmptyWorkingSet< > oEmptyWorkingSet( oTray );
+		CEmptyWorkingSet< > oEmptyWorkingSet( oTray, &oTouchPad );
 		MSG stMsg = { };
 		while ( ::GetMessageA( &stMsg, oTouchPad.getHwndForMessagesDispatch( oTray.getHwnd( ) ), 0, 0 ) ) {
 			// Automatic translate and dispatch message to dialog by single call 
 			// @insp https://devblogs.microsoft.com/oldnewthing/20131009-00/?p=2983
-			if ( !::IsDialogMessageA( oDialog.getHandle( ), &stMsg ) ) 
+			if ( !::IsDialogMessageA( oDialog.getHandle( ), &stMsg ) ) {
 				(void)::TranslateMessage( &stMsg ), ::DispatchMessageA( &stMsg );
-			oEmptyWorkingSet.handleWindowMessage( stMsg );
+				oEmptyWorkingSet.handleWindowMessage( stMsg );
+			}
 		}
 		return static_cast< UINT >( stMsg.wParam );
 	}

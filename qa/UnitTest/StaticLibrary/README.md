@@ -1,4 +1,5 @@
-Blabla it together.
+Putting It All Together.
+
 NuGet package gmock disadvantages in portability area:
 is difficult to use pch -- need change *.cc files;
 for C++ builds is difficult to known *.h files location;

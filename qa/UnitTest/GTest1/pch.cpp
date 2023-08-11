@@ -14,4 +14,5 @@ MOCK_DEFINE_FUNC( DestroyWindow );
 MOCK_DEFINE_FUNC( MessageBoxA );
 MOCK_DEFINE_FUNC( SetTimer );
 MOCK_DEFINE_FUNC( KillTimer );
+MOCK_DEFINE_FUNC( GetTickCount64 );
 

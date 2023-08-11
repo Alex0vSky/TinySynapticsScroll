@@ -5,6 +5,7 @@ namespace testWrapperTouchPad {
 struct MockLegacySynapticTouchPad : public Legacy::SynapticTouchPad { 
 	MOCK_METHOD(bool, run, () );
 	MOCK_METHOD(void, stop, () );
+	MOCK_METHOD(void, getLastPacketTickCount, (ULONGLONG *), (const) );
 	struct { 
 		bool Checked; auto operator ->() { RightArrow( ); return this; }; MOCK_METHOD(void, RightArrow, (), () );
 	} scrollAccEnabled;
@@ -108,6 +109,10 @@ NAMESPACE_TEST_F(WrapperTouchPad_, Manage, enable) {
 	EXPECT_CALL( m_poLegacy ->scrollSpeed, RightArrow( ) );
 	m_oWrapper.setValueSpeed( uValue );
 	EXPECT_EQ( uValue, m_poLegacy ->scrollSpeed.Position );
+	
+	ULONGLONG ullOut;
+	EXPECT_CALL( m_oWrapper.m_oSynapticTouchPad, getLastPacketTickCount( &ullOut ) );
+	m_oWrapper.getLastPacketTickCount( &ullOut );
 }
 
 NAMESPACE_TEST_F(WrapperTouchPad_, Context, WndHandleForMessagesDispatch) {

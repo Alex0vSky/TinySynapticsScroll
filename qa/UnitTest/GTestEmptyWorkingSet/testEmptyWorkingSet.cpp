@@ -14,6 +14,9 @@ static struct {
 //#include "../../../resource/resource.h"
 //class WndProc;
 //#include "../../../src/Tray.h"
+#include "../../../src/Tool/ErrorHandler.h"
+#include "../../../src/Legacy/SynapticTouchPad.h"
+#include "../../../src/WrapperTouchPad.h"
 #include "../../../src/CEmptyWorkingSet.h"
 #undef EmptyWorkingSet
 #ifdef TEST_NEED_POP
@@ -32,12 +35,16 @@ namespace testCEmptyWorkingSet {
 struct MockTray {
 	MOCK_METHOD(HWND, getHwnd, (), (const) );
 };
+struct TouchPad {
+	MOCK_METHOD(void, getLastPacketTickCount, (ULONGLONG *), (const) );
+};
 
 class ContextBeforeCtor_ : public ::testing::Test {
 protected:
 	static const DWORD c_dwClearMemTimerId = 1;
 	const HWND m_hWnd = (HWND)31;
 	MockTray m_oMockTray;
+	TouchPad m_oTouchPad;
 	ContextBeforeCtor_()
 	{
 		EXPECT_CALL( m_oMockTray, getHwnd( ) )
@@ -47,9 +54,9 @@ protected:
 };
 class Context : public ContextBeforeCtor_ {
 protected:
-	CEmptyWorkingSet< MockTray > m_oCEmptyWorkingSet;
+	CEmptyWorkingSet< MockTray, TouchPad > m_oCEmptyWorkingSet;
 	Context() 
-		: m_oCEmptyWorkingSet( m_oMockTray )
+		: m_oCEmptyWorkingSet( m_oMockTray, &m_oTouchPad )
 	{}
 	void SetUp() override {
 		VERIFY_AND_CLEAR_MODULE_FUNC_EXPECTATIONS( SetTimer );
@@ -63,6 +70,8 @@ NAMESPACE_TEST_F(CEmptyWorkingSet_HandleWindowMessage, WM_TIMER_, onlyOne) {
 			delete g_poMockMethodHolder;
 		});
 	EXPECT_CALL( *g_poMockMethodHolder, EmptyWorkingSet_( ::GetCurrentProcess( ) ) );
+	ULONGLONG ullOut;
+	EXPECT_CALL( m_oTouchPad, getLastPacketTickCount( _ ) );
 
 	MSG stMsg;
 	stMsg.message = WM_TIMER;

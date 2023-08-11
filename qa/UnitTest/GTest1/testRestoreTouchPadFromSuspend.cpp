@@ -1,7 +1,5 @@
 #include "pch.h"
 
-MOCK_STDCALL_FUNC(ULONGLONG, GetTickCount64 );
-
 namespace testRestoreTouchPadFromSuspend {
 
 class Context : public ::testing::Test {

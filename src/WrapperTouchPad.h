@@ -41,6 +41,11 @@ class WrapperTouchPad {
 	void setValueSpeed(unsigned int uValue) {
 		m_oSynapticTouchPad.scrollSpeed ->Position = static_cast<int>( uValue );
 	}
+
+	void getLastPacketTickCount(ULONGLONG *pullOut) const {
+		m_oSynapticTouchPad.getLastPacketTickCount( pullOut );
+	}
+
 	WrapperTouchPad(const WrapperTouchPad &) = delete;
 	WrapperTouchPad &operator = (const WrapperTouchPad &) = delete;
 };
