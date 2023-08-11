@@ -70,11 +70,28 @@ NAMESPACE_TEST_F(CEmptyWorkingSet_HandleWindowMessage, WM_TIMER_, onlyOne) {
 			delete g_poMockMethodHolder;
 		});
 	EXPECT_CALL( *g_poMockMethodHolder, EmptyWorkingSet_( ::GetCurrentProcess( ) ) );
-	ULONGLONG ullOut;
 	EXPECT_CALL( m_oTouchPad, getLastPacketTickCount( _ ) );
 
 	MSG stMsg;
 	stMsg.message = WM_TIMER;
+	stMsg.wParam = c_dwClearMemTimerId;
+	stMsg.hwnd = m_hWnd;
+	m_oCEmptyWorkingSet.handleWindowMessage( stMsg );
+}
+
+typedef Context noWM_TIMER_;
+NAMESPACE_TEST_F(CEmptyWorkingSet_HandleWindowMessage, noWM_TIMER_, onlyOne) {
+	g_poMockMethodHolder = new std::decay_t< decltype( *g_poMockMethodHolder ) >;
+    std::shared_ptr< void > finalAction(nullptr, [](auto&&...) {
+			delete g_poMockMethodHolder;
+		});
+	EXPECT_CALL( *g_poMockMethodHolder, EmptyWorkingSet_( ::GetCurrentProcess( ) ) )
+		.Times( 0 );
+	EXPECT_CALL( m_oTouchPad, getLastPacketTickCount( _ ) )
+		.Times( 0 );
+
+	MSG stMsg;
+	stMsg.message = WM_USER;
 	stMsg.wParam = c_dwClearMemTimerId;
 	stMsg.hwnd = m_hWnd;
 	m_oCEmptyWorkingSet.handleWindowMessage( stMsg );

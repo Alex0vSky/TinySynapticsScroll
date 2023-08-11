@@ -13,8 +13,7 @@ class CEmptyWorkingSet {
 	explicit CEmptyWorkingSet(const T &oTray, T2 *poTouchPad)
 		: c_hWnd( oTray.getHwnd( ) )
 		, c_hCurProc( ::GetCurrentProcess( ) )
-		, m_poTouchPad( poTouchPad ) 
-	{
+		, m_poTouchPad( poTouchPad ) {
 		::SetTimer( c_hWnd, c_dwClearMemTimerId, c_uPeriodMemClear_sec *1000, nullptr );
 	}
 	void handleWindowMessage(const MSG &stMsg) const {
@@ -27,8 +26,7 @@ class CEmptyWorkingSet {
 			if ( false 
 				|| ( !ullLastTick_milli )
 				|| ( ullLastTick_milli + c_uPeriodMemClear_sec *1000 >= ::GetTickCount64( ) ) 
-			) 
-			{
+			) {
 				//Tool::ErrorHandler::log( "CEmptyWorkingSet::handleWindowMessage EmptyWorkingSet\n" );
 				::EmptyWorkingSet( c_hCurProc ); // K32EmptyWorkingSet()
 			}
