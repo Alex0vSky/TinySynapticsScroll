@@ -17,6 +17,7 @@ env:
   module1: GTestDefWindowProc.exe
   module2: GTestEmptyWorkingSet.exe
   module3: GTestMem.exe
+  qa_artifact_name: current-project-qa-report
 jobs:
   collect-tests-code-coverage:
     runs-on: windows-latest
@@ -355,7 +356,7 @@ jobs:
 
       - uses: actions/upload-artifact@v3
         with:
-          name: artifact-coverage-tests-OpenCppCoverage-${{env.strCfg}}
+          name: ${{env.qa_artifact_name}}
           path: |
             ${{ runner.temp }}\${{ env.relHtmlReport }}
             ${{ runner.temp }}\GoogleTestCombinedOutput
@@ -363,3 +364,21 @@ jobs:
             ${{ runner.temp }}\cpplint.xml
             ${{ runner.temp }}\cppcheck.xml
             ${{ runner.temp }}\${{ env.strCoberturaReport }}
+            
+# TODO: To GitHubPages from here
+      - name: Parse current workflow filename (windows-latest)
+        run: | 
+          $strMagicPath = "/.github/workflows/";
+          $strRepo = "${{ github.repository }}";
+          $strRef = "${{ github.ref }}";
+          $strWorkflowFilename = "${{ github.workflow_ref }}";
+          $strWorkflowFilename = $strWorkflowFilename.Remove( 0, ( $strRepo + $strMagicPath ).Length );
+          $strWorkflowFilename = $strWorkflowFilename.Replace( ( '@' + $strRef ), '' );
+          echo "strWorkflowFilename=$strWorkflowFilename" >> $env:GITHUB_ENV
+      - name: Publish to GitHubPages
+        uses: peter-evans/repository-dispatch@v2
+        with:
+          token: ${{ secrets.ACCESS_TO_PUBLIC_REPO }}
+          repository: Alex0vSky/project-qa-report
+          event-type: a0s_event_public_pages
+          client-payload: '{"project": "${{ github.event.repository.name }}", "repo": "${{ github.repository }}", "workflow": "${{env.strWorkflowFilename}}", "artifact": "${{env.qa_artifact_name}}"}'
