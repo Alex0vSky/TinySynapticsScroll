@@ -1,5 +1,9 @@
 name: Try peter-evans/repository-dispatch, events sender
 on: [ workflow_dispatch ]
+# Configuration
+env:
+  strPlatform: x86 # or x64
+  strConfiguration: Debug # or Release
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -10,10 +14,15 @@ jobs:
     needs: build
     runs-on: ubuntu-latest
     steps:
+      - name: Set values (ubuntu-latest!!!!!!!!!!!!)
+        run: | 
+          echo "strCfg=${{env.strPlatform}}-${{env.strConfiguration}}" >> $GITHUB_ENV
+# run: echo "branch=${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}}" >> $GITHUB_OUTPUT
       - name: Repository Dispatch
         uses: peter-evans/repository-dispatch@v2
         with:
           token: ${{ secrets.ACCESS_TO_PUBLIC_REPO }}
           repository: Alex0vSky/project-qa-report
           event-type: my-event
-          client-payload: '{"ref": "${{ github.ref }}", "sha": "${{ github.sha }}"}'
+          client-payload: |
+            '{"project": "${{ github.event.repository.name }}", "repo": "${{ github.repository }}", "workflow": "${{ github.workflow_ref }}", "artifact": "artifact-coverage-tests-OpenCppCoverage-${{env.strCfg}}"}'
