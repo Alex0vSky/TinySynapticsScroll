@@ -21,7 +21,7 @@ jobs:
           $strRepo = "${{ github.repository }}";
           $strRef = "${{ github.ref }}";
           $strWorkflowFilename = "${{ github.workflow_ref }}";
-          $strWorkflowFilename = $strWorkflowFilename.Remove( 0, ( $strRepo + $strPartPath ).Length );
+          $strWorkflowFilename = $strWorkflowFilename.Remove( 0, ( $strRepo + $strMagicPath ).Length );
           $strWorkflowFilename = $strWorkflowFilename.Replace( ( '@' + $strRef ), '' );
           echo "strWorkflowFilename=$strWorkflowFilename" >> $env:GITHUB_ENV
 
