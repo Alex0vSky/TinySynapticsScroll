@@ -24,5 +24,4 @@ jobs:
           token: ${{ secrets.ACCESS_TO_PUBLIC_REPO }}
           repository: Alex0vSky/project-qa-report
           event-type: a0s_event_public_pages
-          client-payload: |
-            '{"project": "${{ github.event.repository.name }}", "repo": "${{ github.repository }}", "workflow": "${{ github.workflow_ref }}", "artifact": "artifact-coverage-tests-OpenCppCoverage-${{env.strCfg}}"}'
+          client-payload: '{"project": "${{ github.event.repository.name }}", "repo": "${{ github.repository }}", "workflow": "${{ github.run_id }}", "artifact": "artifact-coverage-tests-OpenCppCoverage-${{env.strCfg}}"}'
