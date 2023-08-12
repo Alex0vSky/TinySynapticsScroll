@@ -17,12 +17,18 @@ jobs:
       - name: Set values (windows-latest)
         run: | 
           echo "strCfg=${{env.strPlatform}}-${{env.strConfiguration}}" >> $env:GITHUB_ENV
-          echo "${{ toJson( github ) }}"
-# run: echo "branch=${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}}" >> $env:GITHUB_ENV
+          $strMagicPath = "/.github/workflows/";
+          $strRepo = "${{ github.repository }}";
+          $strRef = "${{ github.ref }}";
+          $strWorkflowFilename = "${{ github.workflow_ref }}";
+          $strWorkflowFilename = $strWorkflowFilename.Remove( 0, ( $strRepo + $strPartPath ).Length );
+          $strWorkflowFilename = $strWorkflowFilename.Replace( ( '@' + $strRef ), '' );
+          echo "strWorkflowFilename=$strWorkflowFilename" >> $env:GITHUB_ENV
+
       - name: Repository Dispatch
         uses: peter-evans/repository-dispatch@v2
         with:
           token: ${{ secrets.ACCESS_TO_PUBLIC_REPO }}
           repository: Alex0vSky/project-qa-report
           event-type: a0s_event_public_pages
-          client-payload: '{"project": "${{ github.event.repository.name }}", "repo": "${{ github.repository }}", "workflow": "${{ github.run_id }}", "artifact": "artifact-coverage-tests-OpenCppCoverage-${{env.strCfg}}"}'
+          client-payload: '{"project": "${{ github.event.repository.name }}", "repo": "${{ github.repository }}", "workflow": "${{env.strWorkflowFilename}}", "artifact": "artifact-coverage-tests-OpenCppCoverage-${{env.strCfg}}"}'
