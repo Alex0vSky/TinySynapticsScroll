@@ -1,5 +1,5 @@
 name: Try peter-evans/repository-dispatch, events sender
-on: [ workflow_dispatch ]
+on: { workflow_dispatch, push: { paths-ignore: [ 'README.md', 'LICENSE' ] } }
 # Configuration
 env:
   strPlatform: x86 # or x64
@@ -23,6 +23,6 @@ jobs:
         with:
           token: ${{ secrets.ACCESS_TO_PUBLIC_REPO }}
           repository: Alex0vSky/project-qa-report
-          event-type: my-event
+          event-type: a0s_event_public_pages
           client-payload: |
             '{"project": "${{ github.event.repository.name }}", "repo": "${{ github.repository }}", "workflow": "${{ github.workflow_ref }}", "artifact": "artifact-coverage-tests-OpenCppCoverage-${{env.strCfg}}"}'
