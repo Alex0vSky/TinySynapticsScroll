@@ -47,7 +47,7 @@ Code verification aka StaticAnalysis and code metrics is implemented through CI 
 ### CI github
 CI github actions uses:
 + running tests based on _google-test_, a modified version of the _smalti/gmock-win32_ library is also used;
-+ releases of _OpenCppCoverage/OpenCppCoverage_ to get code coverage with tests, in the form of html;
++ _OpenCppCoverage/OpenCppCoverage_ to get code coverage with tests, in the form of html;
 + py _junitparser_ to combine junit test reports into one file;
 + fork repo _burlachenkok/gtest_report_ updated to work with Python3 to get html from junit reports;
 + py _metrixpp_ to get code metrics;
