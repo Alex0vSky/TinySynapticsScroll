@@ -51,8 +51,8 @@ CI github actions uses:
 + py _junitparser_ to combine junit test reports into one file;
 + fork repo _burlachenkok/gtest_report_ updated to work with Python3 to get html from junit reports;
 + py _metrixpp_ to get code metrics;
-+ _cpplint_ releases to bring code style closer to GoogleStyle;
-+ _cppcheck_ releases to statically analyze the code for errors.
++ _cpplint_ to bring code style closer to GoogleStyle;
++ _cppcheck_ to statically analyze the code for errors.
 
 ## Build
 Building the project and tests from the source code requires the presence of the __Microsoft Visual Studio 2019 Community__, and using *.sln and *.vcxproj project files. The project is also ready to be built via __clang__ version __12.0.0__, which comes with __VIsualStudioCommunity2019__.
