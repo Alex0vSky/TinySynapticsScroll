@@ -63,6 +63,8 @@ Can ask questions. PRs are accepted. No requirements for contributing.
 ## Thanks
 The scroll function code is taken from the [awahlig/two-finger-scroll](https://github.com/awahlig/two-finger-scroll) repo.
 Application and tray icon taken from here [icon-icons.com](https://icon-icons.com/download/57949/ICO/32/) and modified.
++ googletest+googlemock [google/googletest](https://github.com/google/googletest)
++ vs_google_test_explorer_namespace.h [Macro to Enable Namespaces in Google Test Adapter for Visual Studio](https://bitbucket.org/CadActive/workspace/snippets/GrBakB/macro-to-enable-namespaces-in-google-test) by James Sullivan ([More](https://developercommunity.visualstudio.com/t/test-explorer-namespace-seems-to-not-be-working/663974))
 
 ## License
 See the [LICENSE](https://github.com/Alex0vSky/TinySynapticsScroll/blob/main/LICENSE) file for license rights and limitations (MIT).
